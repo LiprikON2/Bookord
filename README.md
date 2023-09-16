@@ -66,13 +66,13 @@ We can use predefined aliases for `import` paths already used in this project. F
 
 | Alias         | Target Path                |
 | ------------- | -------------------------- |
-| `@assets`     | `/assets`                  |
-| `@main`       | `/src/main`                |
-| `@renderer`   | `/src/renderer`            |
-| `@common`     | `/src/common`              |
-| `@misc`       | `/misc`                    |
-| `@src`        | `/src`                     |
-| `@components` | `/src/renderer/components` |
+| `~/assets`     | `/assets`                  |
+| `~/main`       | `/src/main`                |
+| `~/renderer`   | `/src/renderer`            |
+| `~/common`     | `/src/common`              |
+| `~/misc`       | `/misc`                    |
+| `~/src`        | `/src`                     |
+| `~/components` | `/src/renderer/components` |
 
 <br><br>
 
