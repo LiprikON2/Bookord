@@ -1,20 +1,22 @@
 import { app, BrowserWindow, session } from "electron";
 import path from "path";
+
 import { registerTitlebarIpc } from "~/misc/window/titlebarIPC";
+import { registerMainIPC } from "./mainIPC";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
 declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-let appWindow: BrowserWindow;
+let mainWindow: BrowserWindow;
 
 /**
  * Create Application Window
  * @returns {BrowserWindow} Application Window Instance
  */
-export const createAppWindow = (): BrowserWindow => {
+export const createMainWindow = (): BrowserWindow => {
     // Create new window instance
-    appWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width: 1024,
         height: 728,
         minHeight: 500,
@@ -36,7 +38,7 @@ export const createAppWindow = (): BrowserWindow => {
     });
 
     // Enable pinch-to-zoom
-    appWindow.webContents.setVisualZoomLevelLimits(1, 3);
+    mainWindow.webContents.setVisualZoomLevelLimits(1, 3);
 
     // Permissions API
     const partition = "default";
@@ -59,30 +61,31 @@ export const createAppWindow = (): BrowserWindow => {
     // TODO electronegativity
 
     // Load the index.html of the app window.
-    appWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY);
+    mainWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY);
 
     // Show window when its ready to
-    appWindow.on("ready-to-show", () => appWindow.show());
+    mainWindow.on("ready-to-show", () => mainWindow.show());
 
     // Register Inter Process Communication for main process
-    registerMainIPC();
+    registerAllIPC();
 
     // Close all windows when main window is closed
-    appWindow.on("close", () => {
-        appWindow = null;
+    mainWindow.on("close", () => {
+        mainWindow = null;
         app.quit();
     });
 
-    return appWindow;
+    return mainWindow;
 };
 
 /**
  * Register Inter Process Communication
  */
-const registerMainIPC = () => {
+const registerAllIPC = () => {
     /**
      * Here you can assign IPC related codes for the application window
      * to Communicate asynchronously from the main process to renderer processes.
      */
-    registerTitlebarIpc(appWindow);
+    registerTitlebarIpc(mainWindow);
+    registerMainIPC(mainWindow);
 };

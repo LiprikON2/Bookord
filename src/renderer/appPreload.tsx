@@ -1,4 +1,5 @@
 import "~/misc/window/windowPreload";
+import "~/main/mainPreload";
 
 console.log("[Preload]: Execution started");
 

@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from "electron";
-import { createAppWindow } from "./appWindow";
+import { createMainWindow } from "./mainWindow";
 
 /** Handle creating/removing shortcuts on Windows when installing/uninstalling. */
 if (require("electron-squirrel-startup")) {
@@ -11,7 +11,7 @@ if (require("electron-squirrel-startup")) {
  * initialization and is ready to create browser windows.
  * Some APIs can only be used after this event occurs.
  */
-app.on("ready", createAppWindow);
+app.on("ready", createMainWindow);
 
 /**
  * Emitted when the application is activated. Various actions can
@@ -25,7 +25,7 @@ app.on("activate", () => {
      * dock icon is clicked and there are no other windows open.
      */
     if (BrowserWindow.getAllWindows().length === 0) {
-        createAppWindow();
+        createMainWindow();
     }
 });
 

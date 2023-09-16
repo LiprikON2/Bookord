@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
+
+import context from "~/main/mainContextApi";
 import { icons } from "./Icons";
 import "./Application.scss";
+
+const getTest = async () => {
+    const res = await context.test();
+
+    console.log("res!", res);
+    return res;
+};
 
 const Application = () => {
     const [counter, setCounter] = useState(0);
@@ -26,7 +35,9 @@ const Application = () => {
         setVersions(versions);
     }, []);
 
-    useEffect(() => {}, []);
+    useEffect(() => {
+        getTest();
+    }, []);
 
     /**
      * On Dark theme change
