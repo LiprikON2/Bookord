@@ -21,7 +21,10 @@
             "~/renderer/*": ["./src/renderer/*"],
             "~/src/*": ["./src/*"],
             "~/misc/*": ["./misc/*"]
-        }
+        },
+
+        // Mobx
+        "useDefineForClassFields": true
     },
     "include": ["src/**/*", "tools/**/*"]
 }

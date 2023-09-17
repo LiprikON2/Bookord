@@ -1,10 +1,10 @@
 const webpack = require("webpack");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
-const { inDev } = require("./webpack.helpers");
+const { isDev } = require("./webpack.helpers");
 
 module.exports = [
     new ForkTsCheckerWebpackPlugin(),
-    inDev() && new webpack.HotModuleReplacementPlugin(),
-    inDev() && new ReactRefreshWebpackPlugin(),
+    isDev() && new webpack.HotModuleReplacementPlugin(),
+    isDev() && new ReactRefreshWebpackPlugin(),
 ].filter(Boolean);

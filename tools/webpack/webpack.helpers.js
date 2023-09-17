@@ -1,7 +1,7 @@
 const path = require("path");
 const cwd = process.cwd();
 
-function inDev() {
+function isDev() {
     return process.env.NODE_ENV == "development";
 }
 
@@ -14,6 +14,6 @@ function createWebpackAliases(aliases) {
 }
 
 module.exports = {
-    inDev,
+    isDev,
     createWebpackAliases,
 };

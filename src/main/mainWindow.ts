@@ -1,8 +1,10 @@
 import { app, BrowserWindow, session } from "electron";
 import path from "path";
 
-import { registerTitlebarIpc } from "~/misc/window/titlebarIPC";
-import { registerMainIPC } from "./mainIPC";
+import { isDev } from "~/common/helpers";
+import { registerTitlebarIpc } from "~/misc/window/titlebarIpc";
+import { registerMainIpc } from "./mainIpc";
+import electronDebug from "electron-debug";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -66,8 +68,19 @@ export const createMainWindow = (): BrowserWindow => {
     // Show window when its ready to
     mainWindow.on("ready-to-show", () => mainWindow.show());
 
+    // Only do these things when in development
+    if (isDev()) {
+        // Errors are thrown if the dev tools are opened
+        // before the DOM is ready
+        mainWindow.webContents.once("dom-ready", async () => {
+            // Provides dev tools shortcuts
+            electronDebug();
+            mainWindow.webContents.openDevTools();
+        });
+    }
+
     // Register Inter Process Communication for main process
-    registerAllIPC();
+    registerAllIpc();
 
     // Close all windows when main window is closed
     mainWindow.on("close", () => {
@@ -81,11 +94,11 @@ export const createMainWindow = (): BrowserWindow => {
 /**
  * Register Inter Process Communication
  */
-const registerAllIPC = () => {
+const registerAllIpc = () => {
     /**
      * Here you can assign IPC related codes for the application window
      * to Communicate asynchronously from the main process to renderer processes.
      */
     registerTitlebarIpc(mainWindow);
-    registerMainIPC(mainWindow);
+    registerMainIpc(mainWindow);
 };
