@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 
 import context from "~/main/mainContextApi";
-import { icons } from "./Icons";
+import { About } from "./About";
+import { Button, Center, Container, Space, useMantineColorScheme } from "@mantine/core";
+
 import "./Application.scss";
 
 const getTest = async () => {
@@ -12,28 +14,8 @@ const getTest = async () => {
 };
 
 const Application = () => {
-    const [counter, setCounter] = useState(0);
-    const [darkTheme, setDarkTheme] = useState(true);
-    const [versions, setVersions] = useState<Record<string, string>>({});
-
-    /**
-     * On component mount
-     */
-    useEffect(() => {
-        const useDarkTheme = parseInt(localStorage.getItem("dark-mode"));
-        if (isNaN(useDarkTheme)) {
-            setDarkTheme(true);
-        } else if (useDarkTheme == 1) {
-            setDarkTheme(true);
-        } else if (useDarkTheme == 0) {
-            setDarkTheme(false);
-        }
-
-        // Apply verisons
-        const app = document.getElementById("app");
-        const versions = JSON.parse(app.getAttribute("data-versions"));
-        setVersions(versions);
-    }, []);
+    const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+    const dark = colorScheme === "dark";
 
     useEffect(() => {
         getTest();
@@ -43,115 +25,29 @@ const Application = () => {
      * On Dark theme change
      */
     useEffect(() => {
-        if (darkTheme) {
-            localStorage.setItem("dark-mode", "1");
+        if (dark) {
             document.body.classList.add("dark-mode");
         } else {
-            localStorage.setItem("dark-mode", "0");
             document.body.classList.remove("dark-mode");
         }
-    }, [darkTheme]);
+        console.log("colorScheme", colorScheme);
+    }, [dark]);
 
     /**
      * Toggle Theme
      */
     const toggleTheme = () => {
-        setDarkTheme(!darkTheme);
+        toggleColorScheme(dark ? "light" : "dark");
     };
 
     return (
-        <div id="erwt">
-            <div className="header">
-                <div className="main-heading">
-                    <h1 className="themed">ERWT - Electron Boilerplate</h1>
-                </div>
-                <div className="main-teaser">
-                    <div>
-                        Robust boilerplate for Desktop Applications with Electron and ReactJS.
-                        <br />
-                        Hot Reloading is used in this project for fast development experience.
-                        <br />
-                        If you think the project is useful enough, just spread the word around!
-                    </div>
-                </div>
-                <div className="versions">
-                    <div className="item">
-                        <div>
-                            <img className="item-icon" src={icons.bookord} /> Bookord
-                        </div>
-                        <span>{versions?.bookord}</span>
-                    </div>
-                    <div className="item">
-                        <div>
-                            <img className="item-icon" src={icons.electron} /> Electron
-                        </div>
-                        <span>{versions?.electron}</span>
-                    </div>
-                    <div className="item">
-                        <div>
-                            <img className="item-icon" src={icons.chrome} /> Chrome
-                        </div>
-                        <span>{versions?.chrome}</span>
-                    </div>
-                    <div className="item">
-                        <div>
-                            <img className="item-icon" src={icons.typescript} /> Typescript
-                        </div>
-                        <span>{versions?.typescript}</span>
-                    </div>
-                    <div className="item">
-                        <div>
-                            <img className="item-icon" src={icons.nodejs} /> Nodejs
-                        </div>
-                        <span>{versions?.node}</span>
-                    </div>
-                    <div className="item">
-                        <div>
-                            <img className="item-icon" src={icons.react} /> React
-                        </div>
-                        <span>{versions?.react}</span>
-                    </div>
-                    <div className="item">
-                        <div>
-                            <img className="item-icon" src={icons.webpack} /> Webpack
-                        </div>
-                        <span>{versions?.webpack}</span>
-                    </div>
-                    <div className="item">
-                        <div>
-                            <img className="item-icon" src={icons.license} /> License
-                        </div>
-                        <span>{versions?.license}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div className="footer">
-                <div className="center">
-                    <button
-                        onClick={() => {
-                            if (counter > 99) return alert("Going too high!!");
-                            setCounter(counter + 1);
-                        }}
-                    >
-                        Increment {counter != 0 ? counter : ""} <span>{counter}</span>
-                    </button>
-                    &nbsp;&nbsp; &nbsp;&nbsp;
-                    <button
-                        onClick={() => {
-                            if (counter == 0) return alert("Oops.. thats not possible!");
-                            setCounter(counter > 0 ? counter - 1 : 0);
-                        }}
-                    >
-                        Decrement <span>{counter}</span>
-                    </button>
-                    &nbsp;&nbsp; &nbsp;&nbsp;
-                    <button onClick={toggleTheme}>
-                        {darkTheme ? "Light Theme" : "Dark Theme"}
-                    </button>
-                </div>
-            </div>
-        </div>
+        <Container>
+            <Center>
+                <Button onClick={() => toggleTheme()}>Toggle Theme</Button>
+            </Center>
+            <Space h="md" />
+            <About />
+        </Container>
     );
 };
 

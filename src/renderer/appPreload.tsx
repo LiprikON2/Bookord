@@ -18,18 +18,6 @@ window.addEventListener("DOMContentLoaded", () => {
         versions[type] = process.versions[type].replace("+", "");
     }
 
-    // NPM deps versions
-    for (const type of ["react"]) {
-        const v = env["npm_package_dependencies_" + type];
-        if (v) versions[type] = v.replace("^", "");
-    }
-
-    // NPM @dev deps versions
-    for (const type of ["webpack", "typescript"]) {
-        const v = env["npm_package_devDependencies_" + type];
-        if (v) versions[type] = v.replace("^", "");
-    }
-
     // Set versions to app data
     app.setAttribute("data-versions", JSON.stringify(versions));
 });

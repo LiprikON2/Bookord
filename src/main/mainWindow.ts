@@ -66,7 +66,11 @@ export const createMainWindow = (): BrowserWindow => {
     mainWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY);
 
     // Show window when its ready to
-    mainWindow.on("ready-to-show", () => mainWindow.show());
+    mainWindow.on("ready-to-show", () => {
+        mainWindow.maximize();
+        mainWindow.focus();
+        !isDev() && mainWindow.show();
+    });
 
     // Only do these things when in development
     if (isDev()) {

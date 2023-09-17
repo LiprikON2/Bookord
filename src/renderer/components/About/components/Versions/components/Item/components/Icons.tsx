@@ -17,3 +17,5 @@ export const icons = {
     webpack,
     license,
 };
+
+export type Icon = keyof typeof icons;
