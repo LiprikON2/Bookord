@@ -2,7 +2,7 @@ import React from "react";
 import { Text } from "@mantine/core";
 
 import { icons, type Icon } from "./components/Icons";
-import { useVersions } from "../../hooks";
+import { useVersions } from "./hooks";
 import classes from "./Item.module.css";
 
 export const Item = ({ type }: { type: Icon }) => {
