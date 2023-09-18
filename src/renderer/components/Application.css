@@ -5,19 +5,19 @@
  */
 
 :root {
-    // Application
+    /* Application */
     --app-accent-color: var(--mantine-color-orange-8);
-    // --app-color: white;
+    /* --app-color: white; */
     --app-bgcolor: #202020;
     --app-border-color: #3b3f44;
 
-    // Scrollbar
+    /* Scrollbar */
     --scroll-width: 0.625rem;
     --scroll-track-bgcolor: #2f2f2f52;
     --scroll-thumb-bgcolor: rgba(59, 59, 59, 0.747);
     --scroll-thumb-hover-bgcolor: #555;
 
-    // Titlebar
+    /* Titlebar */
     --titlebar-bgcolor: hsl(0deg 0% 10%);
     --titlebar-color: hsl(0, 0%, 85%);
     --titlebar-title-color: hsl(0, 0%, 85%);
@@ -44,15 +44,15 @@
  */
 
 body:not(.dark-mode) {
-    // Application
+    /* Application */
     --app-bgcolor: #f1f0f0;
 
-    // Scrollbar
+    /* Scrollbar */
     --scroll-track-bgcolor: #2f2f2f1f;
     --scroll-thumb-bgcolor: rgb(59 59 59 / 30%);
     --scroll-thumb-hover-bgcolor: var(--app-accent-color);
 
-    // Titlebar
+    /* Titlebar */
     --titlebar-bgcolor: #dcddde;
     --titlebar-color: #1f1f1f;
     --titlebar-title-color: var(--titlebar-color);

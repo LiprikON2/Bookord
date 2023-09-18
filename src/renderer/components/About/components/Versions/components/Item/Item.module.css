@@ -1,0 +1,28 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+
+    background: #191919;
+    color: #d1d1d1;
+    width: calc(50% - 1rem);
+    padding: rem(4px) rem(12px);
+    font-size: rem(14px);
+    margin: 0;
+    border-radius: rem(4px);
+
+    & > * {
+        display: flex;
+    }
+
+    @mixin light {
+        background: #fff;
+        color: #656565;
+    }
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    opacity: 0.8;
+}

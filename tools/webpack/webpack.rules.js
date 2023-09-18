@@ -1,3 +1,5 @@
+const postcssConfig = require("../postcss/postcss.config");
+
 module.exports = [
     {
         // Add support for native node modules
@@ -28,17 +30,42 @@ module.exports = [
     {
         // CSS Loader
         test: /\.css$/,
-        use: [{ loader: "style-loader" }, { loader: "css-loader" }],
+        use: [
+            { loader: "style-loader" },
+            { loader: "css-loader" },
+            {
+                loader: "postcss-loader",
+                options: { postcssOptions: postcssConfig },
+            },
+        ],
     },
     {
         // SCSS (SASS) Loader
         test: /\.s[ac]ss$/i,
-        use: [{ loader: "style-loader" }, { loader: "css-loader" }, { loader: "sass-loader" }],
+        use: [
+            { loader: "style-loader" },
+            { loader: "css-loader" },
+            // Postcss doesn't work
+            {
+                loader: "postcss-loader",
+                options: { postcssOptions: postcssConfig },
+            },
+            { loader: "sass-loader" },
+        ],
     },
     {
         // Less loader
         test: /\.less$/,
-        use: [{ loader: "style-loader" }, { loader: "css-loader" }, { loader: "less-loader" }],
+        use: [
+            { loader: "style-loader" },
+            { loader: "css-loader" },
+            // Postcss doesn't work
+            {
+                loader: "postcss-loader",
+                options: { postcssOptions: postcssConfig },
+            },
+            { loader: "less-loader" },
+        ],
     },
     {
         // Assets loader

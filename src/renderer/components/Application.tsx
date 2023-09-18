@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import context from "~/main/mainContextApi";
 import { About } from "./About";
 import { Button, Center, Container, Space, useMantineColorScheme } from "@mantine/core";
-
-import "./Application.scss";
+import "./Application.css";
 
 const getTest = async () => {
     const res = await context.test();
@@ -12,7 +11,7 @@ const getTest = async () => {
 };
 
 const Application = () => {
-    const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+    const { colorScheme, setColorScheme } = useMantineColorScheme();
     const dark = colorScheme === "dark";
 
     useEffect(() => {
@@ -35,7 +34,7 @@ const Application = () => {
      * Toggle Theme
      */
     const toggleTheme = () => {
-        toggleColorScheme(dark ? "light" : "dark");
+        setColorScheme(dark ? "light" : "dark");
     };
 
     return (

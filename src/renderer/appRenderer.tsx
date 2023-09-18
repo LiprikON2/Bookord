@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { type ColorScheme, MantineProvider, ColorSchemeProvider } from "@mantine/core";
+import { MantineProvider, ColorSchemeScript } from "@mantine/core";
+import "@mantine/core/styles.css";
 
 import { createRoot } from "react-dom/client";
 import WindowFrame from "~/misc/window/components/WindowFrame";
@@ -9,22 +10,17 @@ import { baseTheme } from "./theme";
 console.log("[Renderer]: Execution started");
 
 const App = () => {
-    const [colorScheme, setColorScheme] = useState<ColorScheme>("dark");
-
-    const toggleColorScheme = (value?: ColorScheme) =>
-        setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
-
     return (
-        <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-            {/* <MantineProvider withCSSVariables withNormalizeCSS withGlobalStyles theme={baseTheme}> */}
-            <MantineProvider withCSSVariables withNormalizeCSS theme={baseTheme}>
+        <>
+            <ColorSchemeScript defaultColorScheme="dark" />
+            <MantineProvider defaultColorScheme="dark" theme={baseTheme}>
                 <React.StrictMode>
                     <WindowFrame title="Bookord" platform="windows">
                         <Application />
                     </WindowFrame>
                 </React.StrictMode>
             </MantineProvider>
-        </ColorSchemeProvider>
+        </>
     );
 };
 
