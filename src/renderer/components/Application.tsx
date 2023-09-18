@@ -8,8 +8,6 @@ import "./Application.scss";
 
 const getTest = async () => {
     const res = await context.test();
-
-    console.log("res!", res);
     return res;
 };
 

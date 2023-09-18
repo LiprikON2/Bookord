@@ -6,8 +6,6 @@ export const registerMainIpc = (mainWindow: BrowserWindow) => {
         const res = new Promise((resolve, reject) => {
             resolve("HUUUH!");
         });
-
-        console.log("res", await res);
         return res;
     });
 };

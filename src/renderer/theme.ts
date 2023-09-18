@@ -5,8 +5,12 @@ const fontFamily =
 
 export const baseTheme: Partial<MantineTheme> = {
     colorScheme: "dark",
+    primaryShade: {
+        light: 6,
+        dark: 8,
+    },
     loader: "dots",
-    primaryColor: "cyan",
+    primaryColor: "orange",
     fontFamily,
     headings: {
         fontFamily: undefined,
