@@ -79,11 +79,8 @@ body,
 
 body {
     margin: 0;
-    font-size: var(--mantine-font-size-md);
-    font-family: var(--mantine-font-family);
     color: var(--app-color);
     background: var(--app-bgcolor);
-    line-height: 1.5;
 }
 
 #app {
@@ -226,4 +223,9 @@ body {
             color: #fff;
         }
     }
+}
+
+/* MANTINE */
+:root {
+    --mantine-scale: 1;
 }

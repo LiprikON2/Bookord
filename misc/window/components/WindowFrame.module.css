@@ -1,0 +1,5 @@
+.content {
+    position: relative;
+    overflow: auto;
+    flex: 1;
+}

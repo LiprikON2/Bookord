@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
+import { About } from "./About";
+import { Button, Center, Container, Space } from "@mantine/core";
 
 import context from "~/main/mainContextApi";
-import { About } from "./About";
-import { Button, Center, Container, Space, useMantineColorScheme } from "@mantine/core";
+import { useColorScheme } from "../hooks";
 import "./Application.css";
 
 const getTest = async () => {
@@ -10,13 +11,8 @@ const getTest = async () => {
     return res;
 };
 
-const Application = () => {
-    const { colorScheme, setColorScheme } = useMantineColorScheme();
-    const dark = colorScheme === "dark";
-
-    useEffect(() => {
-        getTest();
-    }, []);
+export const Application = () => {
+    const { dark, setColorScheme } = useColorScheme();
 
     /**
      * On Dark theme change
@@ -27,7 +23,6 @@ const Application = () => {
         } else {
             document.body.classList.remove("dark-mode");
         }
-        console.log("colorScheme", colorScheme);
     }, [dark]);
 
     /**
@@ -47,5 +42,3 @@ const Application = () => {
         </Container>
     );
 };
-
-export default Application;

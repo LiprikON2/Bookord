@@ -9,7 +9,7 @@ import "./Titlebar.less";
 
 type Props = {
     title: string;
-    mode: "centered-title";
+    mode?: "centered-title";
     icon?: string;
 };
 
@@ -39,7 +39,7 @@ const Titlebar = (props: Props) => {
     }, [menusVisible, menusRef]);
 
     useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
+        const handleClickOutside = (event: MouseEvent) => {
             if (activeMenuIndex.current != null) {
                 if (
                     menusRef[activeMenuIndex.current].current &&
@@ -49,7 +49,7 @@ const Titlebar = (props: Props) => {
                     closeActiveMenu();
                 }
             }
-        }
+        };
 
         if (activeMenuIndex != null) {
             document.addEventListener("mousedown", handleClickOutside);
@@ -62,7 +62,7 @@ const Titlebar = (props: Props) => {
         };
     }, [activeMenuIndex, menusRef]);
 
-    function showMenu(index: number, e: React.MouseEvent<HTMLDivElement>) {
+    const showMenu = (index: number, e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
         e.preventDefault();
 
@@ -75,9 +75,9 @@ const Titlebar = (props: Props) => {
             activeMenuIndex.current = index;
             menusRef[index].current?.parentElement?.classList.add("active");
         }
-    }
+    };
 
-    function onMenuHover(index: number) {
+    const onMenuHover = (index: number) => {
         if (activeMenuIndex.current != null) {
             menusRef[activeMenuIndex.current].current?.classList.toggle("active");
             menusRef[index].current?.classList.toggle("active");
@@ -86,17 +86,17 @@ const Titlebar = (props: Props) => {
 
             activeMenuIndex.current = index;
         }
-    }
+    };
 
-    function closeActiveMenu() {
+    const closeActiveMenu = () => {
         if (activeMenuIndex.current != null) {
             menusRef[activeMenuIndex.current].current?.classList.remove("active");
             menusRef[activeMenuIndex.current]?.current?.parentElement?.classList.remove("active");
             activeMenuIndex.current = null;
         }
-    }
+    };
 
-    function handleAction(action?: string, value?: string | number) {
+    const handleAction = (action?: string, value?: string | number) => {
         closeActiveMenu();
         const c: Record<string, CallableFunction> = context;
         if (action) {
@@ -106,7 +106,7 @@ const Titlebar = (props: Props) => {
                 console.log(`action [${action}] is not available in titlebar context`);
             }
         }
-    }
+    };
 
     return (
         <div className="window-titlebar">
@@ -131,48 +131,46 @@ const Titlebar = (props: Props) => {
                     hidden: !menusVisible,
                 })}
             >
-                {titlebarMenus.map((item, menuIndex) => {
-                    return (
-                        <div className="menu-item" key={`menu_${menuIndex}`}>
-                            <div
-                                className="menu-title"
-                                onClick={(e) => showMenu(menuIndex, e)}
-                                onMouseEnter={() => onMenuHover(menuIndex)}
-                                onMouseDown={(e) => e.preventDefault()}
-                            >
-                                {item.name}
-                            </div>
-                            <div className="menu-popup" ref={menusRef[menuIndex]}>
-                                {item.items?.map((menuItem, menuItemIndex) => {
-                                    if (menuItem.name === "__") {
-                                        return (
-                                            <div
-                                                key={`menu_${menuIndex}_popup_item_${menuItemIndex}`}
-                                                className="popup-item-separator"
-                                            ></div>
-                                        );
-                                    }
-
+                {titlebarMenus.map((item, menuIndex) => (
+                    <div className="menu-item" key={`menu_${menuIndex}`}>
+                        <div
+                            className="menu-title"
+                            onClick={(e) => showMenu(menuIndex, e)}
+                            onMouseEnter={() => onMenuHover(menuIndex)}
+                            onMouseDown={(e) => e.preventDefault()}
+                        >
+                            {item.name}
+                        </div>
+                        <div className="menu-popup" ref={menusRef[menuIndex]}>
+                            {item.items?.map((menuItem, menuItemIndex) => {
+                                if (menuItem.name === "__") {
                                     return (
                                         <div
                                             key={`menu_${menuIndex}_popup_item_${menuItemIndex}`}
-                                            className="menu-popup-item"
-                                            onClick={() =>
-                                                handleAction(menuItem.action, menuItem.value)
-                                            }
-                                            onMouseDown={(e) => e.preventDefault()}
-                                        >
-                                            <div className="popup-item-name">{menuItem.name}</div>
-                                            <div className="popup-item-shortcut">
-                                                {menuItem.shortcut}
-                                            </div>
-                                        </div>
+                                            className="popup-item-separator"
+                                        ></div>
                                     );
-                                })}
-                            </div>
+                                }
+
+                                return (
+                                    <div
+                                        key={`menu_${menuIndex}_popup_item_${menuItemIndex}`}
+                                        className="menu-popup-item"
+                                        onClick={() =>
+                                            handleAction(menuItem.action, menuItem.value)
+                                        }
+                                        onMouseDown={(e) => e.preventDefault()}
+                                    >
+                                        <div className="popup-item-name">{menuItem.name}</div>
+                                        <div className="popup-item-shortcut">
+                                            {menuItem.shortcut}
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
-                    );
-                })}
+                    </div>
+                ))}
             </section>
 
             <WindowControls platform={windowContext.platform} tooltips={true} />
