@@ -15,6 +15,8 @@ import { IconSearch } from "@tabler/icons-react";
 
 import { icons } from "~/components/Icons";
 import WindowControls from "~/misc/window/components/WindowControls";
+import { SideButton } from "./components";
+import classes from "./AppShell.module.css";
 
 export const AppShell = ({ children }: { children: React.ReactNode }) => {
     const [opened, { toggle }] = useDisclosure();
@@ -26,7 +28,7 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
             padding="md"
         >
             <MantineAppShell.Header>
-                <Group h="100%" px="md" justify="space-between">
+                <Group className={classes.titlebarGroup} h="100%" pl="md" justify="space-between">
                     <Group p={0}>
                         <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
                         <Group>
@@ -34,7 +36,7 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
                             <Text size="xl">Bookord</Text>
                         </Group>
                     </Group>
-                    <Group p={0} style={{ flexBasis: "40%" }}>
+                    <Group className={classes.searchGroup}>
                         <TextInput
                             size="xs"
                             w="100%"
@@ -48,7 +50,7 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
                             }
                         />
                     </Group>
-                    <Group p={0}>
+                    <Group className={classes.windowControlsGroup}>
                         <WindowControls platform="windows" tooltips={true} />
                     </Group>
                 </Group>
@@ -56,15 +58,15 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
             <MantineAppShell.Navbar p="md">
                 <MantineAppShell.Section>Navbar header</MantineAppShell.Section>
                 <MantineAppShell.Section grow my="md" component={ScrollArea}>
-                    60 links in a scrollable section
-                    {Array(10)
+                    {Array(5)
                         .fill(0)
                         .map((_, index) => (
                             <Skeleton key={index} h={28} mt="sm" animate={false} />
                         ))}
                 </MantineAppShell.Section>
                 <MantineAppShell.Section>
-                    Navbar footer – always at the bottom
+                    {/* <SideButton /> */}
+                    Bottom
                 </MantineAppShell.Section>
             </MantineAppShell.Navbar>
             <MantineAppShell.Main>{children}</MantineAppShell.Main>

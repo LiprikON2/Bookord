@@ -1,7 +1,7 @@
 .windowTitlebarControls {
     display: flex;
     align-items: stretch;
-    position: absolute;
+    /* position: absolute; */
     right: 0;
     top: 0;
     bottom: 0;
@@ -23,7 +23,7 @@
             color: #d8d9db;
         }
         &Close:hover {
-            background: #e10000;
+            background: var(--mantine-color-error);
         }
     }
 }
