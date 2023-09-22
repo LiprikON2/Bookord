@@ -1,10 +1,10 @@
 import { createTheme } from "@mantine/core";
 
-const fontFamily =
-    'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;';
+import "./theme.css";
 
 export const baseTheme = createTheme({
-    fontFamily,
+    fontFamily:
+        'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;',
     headings: {
         fontFamily: undefined,
         fontWeight: undefined,
@@ -39,11 +39,11 @@ export const baseTheme = createTheme({
         dark: [
             "#A6A7AB",
             "#909296",
-            "#2e2e2e",
+            "#5C5F66",
+            "#373A40",
             "#2d2c2c",
             "#242424",
             "#202020",
-            "#1f1f1f",
             "#1a1a1a",
             "#191919",
         ],
@@ -70,8 +70,5 @@ export const baseTheme = createTheme({
                 p: "xl",
             },
         },
-    },
-    other: {
-        test: "yes",
     },
 });

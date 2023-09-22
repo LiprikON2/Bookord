@@ -1,0 +1,11 @@
+/* MANTINE GLOBAL OVERRIDE */
+:root {
+    --mantine-scale: 1;
+}
+
+:root[data-mantine-color-scheme="dark"] {
+    --mantine-color-dimmed: var(--mantine-color-dark-2);
+}
+:root[data-mantine-color-scheme="light"] {
+    --mantine-color-dimmed: var(--mantine-color-gray-6);
+}
