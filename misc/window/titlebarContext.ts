@@ -22,37 +22,37 @@ const titlebarContext = {
     delete() {
         ipcRenderer.invoke("web-delete");
     },
-    select_all() {
+    selectAll() {
         ipcRenderer.invoke("web-select-all");
     },
     reload() {
         ipcRenderer.invoke("web-reload");
     },
-    force_reload() {
+    forceReload() {
         ipcRenderer.invoke("web-force-reload");
     },
-    toggle_devtools() {
+    toggleDevtools() {
         ipcRenderer.invoke("web-toggle-devtools");
     },
-    actual_size() {
+    actualSize() {
         ipcRenderer.invoke("web-actual-size");
     },
-    zoom_in() {
+    zoomIn() {
         ipcRenderer.invoke("web-zoom-in");
     },
-    zoom_out() {
+    zoomOut() {
         ipcRenderer.invoke("web-zoom-out");
     },
-    toggle_fullscreen() {
+    toggleFullscreen() {
         ipcRenderer.invoke("web-toggle-fullscreen");
     },
     minimize() {
         ipcRenderer.invoke("window-minimize");
     },
-    toggle_maximize() {
+    toggleMaximize() {
         ipcRenderer.invoke("window-toggle-maximize");
     },
-    open_url(url: string) {
+    openUrl(url: string) {
         ipcRenderer.invoke("open-url", url);
     },
 };

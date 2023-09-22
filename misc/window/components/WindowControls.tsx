@@ -3,6 +3,7 @@ import React from "react";
 import context from "../titlebarContextApi";
 
 import ControlButton from "./ControlButton";
+import classes from "./WindowControls.module.css";
 
 type Props = {
     platform: string;
@@ -16,20 +17,32 @@ const minimizePath = "M 0,5 10,5 10,6 0,6 Z";
 
 const WindowControls: React.FC<Props> = (props) => {
     return (
-        <section className={classNames("window-titlebar-controls", `type-${props.platform}`)}>
+        <section className={classes.windowTitlebarControls}>
             <ControlButton
+                className={classNames(
+                    classes[`${props.platform}OsControl`],
+                    classes[`${props.platform}OsControlMinimize`]
+                )}
                 name="minimize"
                 onClick={() => context.minimize()}
                 path={minimizePath}
                 title={props.tooltips ? "Minimize" : null}
             />
             <ControlButton
+                className={classNames(
+                    classes[`${props.platform}OsControl`],
+                    classes[`${props.platform}OsControlMaximize`]
+                )}
                 name="maximize"
-                onClick={() => context.toggle_maximize()}
+                onClick={() => context.toggleMaximize()}
                 path={maximizePath}
                 title={props.tooltips ? "Maximize" : null}
             />
             <ControlButton
+                className={classNames(
+                    classes[`${props.platform}OsControl`],
+                    classes[`${props.platform}OsControlClose`]
+                )}
                 name="close"
                 onClick={() => context.exit()}
                 path={closePath}

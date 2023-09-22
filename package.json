@@ -79,6 +79,7 @@
         "@mantine/hooks": "^7.0.0",
         "@mantine/notifications": "^7.0.0",
         "@mantine/spotlight": "^7.0.0",
+        "@tabler/icons-react": "^2.34.0",
         "electron-debug": "^3.2.0",
         "electron-squirrel-startup": "^1.0.0",
         "mobx": "^6.10.2",

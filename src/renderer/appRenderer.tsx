@@ -10,6 +10,7 @@ import { baseTheme } from "./theme";
 
 import WindowFrame from "~/misc/window/components/WindowFrame";
 import { Application } from "./Application";
+import { AppShell } from "./AppShell";
 
 console.log("[Renderer]: Execution started");
 
@@ -19,9 +20,13 @@ const App = () => {
             <ColorSchemeScript defaultColorScheme="dark" />
             <MantineProvider defaultColorScheme="dark" theme={baseTheme}>
                 <React.StrictMode>
-                    <WindowFrame title="Bookord" platform="windows">
+                    {/* <WindowFrame title="Bookord" platform="windows">
                         <Application />
-                    </WindowFrame>
+                    </WindowFrame> */}
+
+                    <AppShell>
+                        <Application />
+                    </AppShell>
                 </React.StrictMode>
             </MantineProvider>
         </>

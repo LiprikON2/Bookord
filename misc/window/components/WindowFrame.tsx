@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from "react";
 import Titlebar from "./Titlebar";
 import logo from "~/assets/images/logo.png";
 import classes from "./WindowFrame.module.css";
+
 type Props = {
     title?: string;
     borderColor?: string;

@@ -1,0 +1,58 @@
+.windowTitlebarControls {
+    display: flex;
+    align-items: stretch;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    color: #969799;
+    height: 28px;
+}
+
+.windowsOs {
+    &Control {
+        padding: 0 1.15rem;
+        font-size: 0.875rem;
+        display: flex;
+        height: 100%;
+        align-items: center;
+        -webkit-app-region: no-drag;
+
+        &:hover {
+            background: #242d38;
+            color: #d8d9db;
+        }
+        &Close:hover {
+            background: #e10000;
+        }
+    }
+}
+
+.macOs {
+    &Control {
+        width: 16px;
+        height: 16px;
+        background: #0e0e0e99;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.675rem;
+        color: transparent;
+        -webkit-app-region: no-drag;
+        opacity: 0.8;
+
+        &:hover {
+            opacity: 1;
+        }
+        &Close {
+            background: #f46d60;
+        }
+        &Maximize {
+            background: #59ca56;
+        }
+        &Minimize {
+            background: #f9c04e;
+        }
+    }
+}

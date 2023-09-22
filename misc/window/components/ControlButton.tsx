@@ -1,19 +1,17 @@
-import classNames from "classnames";
 import React from "react";
 
 interface IControlButtonProps {
     readonly name: string;
     readonly path: string;
     readonly title: string;
+    className: string;
 }
 
 const ControlButton: React.FC<IControlButtonProps & React.HTMLAttributes<HTMLDivElement>> = (
     props
 ) => {
-    const { name, path, title, ...rest } = props;
+    const { name, path, title, className, ...rest } = props;
     const { onClick } = rest;
-
-    const className = classNames("control", name);
 
     return (
         <div aria-label={name} className={className} onClick={onClick} title={title} {...rest}>

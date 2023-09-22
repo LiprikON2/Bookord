@@ -1,7 +1,7 @@
 import React from "react";
 import { Text } from "@mantine/core";
 
-import { icons, type Icon } from "./components/Icons";
+import { icons, type Icon } from "~/components/Icons";
 import { useVersions } from "./hooks";
 import classes from "./Item.module.css";
 
