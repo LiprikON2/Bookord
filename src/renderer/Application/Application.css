@@ -5,6 +5,7 @@
  */
 
 :root {
+    overflow: hidden;
     /* Application */
     --app-accent-color: var(--mantine-color-orange-8);
     /* --app-color: white; */

@@ -25,7 +25,9 @@ const App = () => {
                     </WindowFrame> */}
 
                     <AppShell>
-                        <Application />
+                        <ScrollArea h="100%" type="auto">
+                            <Application />
+                        </ScrollArea>
                     </AppShell>
                 </React.StrictMode>
             </MantineProvider>

@@ -1,3 +1,7 @@
+.root,
+.main {
+    height: 100%;
+}
 .main {
     --app-shell-padding: 0;
     --app-shell-edge-offset: var(--mantine-spacing-xs);

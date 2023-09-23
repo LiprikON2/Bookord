@@ -13,7 +13,12 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
             header={{ height: 48 }}
             navbar={{ width: 200, breakpoint: "sm", collapsed: { mobile: !opened } }}
             padding="md"
-            classNames={{ main: classes.main, navbar: classes.navbar, header: classes.header }}
+            classNames={{
+                root: classes.root,
+                main: classes.main,
+                navbar: classes.navbar,
+                header: classes.header,
+            }}
         >
             <MantineAppShell.Header>
                 <Titlebar opened={opened} toggle={toggle} />

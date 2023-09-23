@@ -17,6 +17,7 @@ export const baseTheme = createTheme({
             h6: { fontSize: "0.875rem", lineHeight: "1.5", fontWeight: undefined },
         },
     },
+    defaultRadius: "md",
 
     primaryColor: "orange",
     primaryShade: {

@@ -1,5 +1,5 @@
 import React from "react";
-import { Space, Tabs, rem } from "@mantine/core";
+import { Button, Space, Stack, Tabs, rem } from "@mantine/core";
 import { IconPhoto, IconMessageCircle, IconSettings } from "@tabler/icons-react";
 
 import { useIsMobile } from "~/renderer/hooks/useIsMobile";
@@ -16,6 +16,7 @@ export const Sidebar = () => {
         <Tabs
             classNames={{
                 root: classes.root,
+                list: classes.list,
                 tab: classes.tab,
             }}
             variant="outline"
@@ -26,21 +27,30 @@ export const Sidebar = () => {
             keepMounted={false}
             {...(isMobile ? mobileProps : desktopProps)}
         >
-            <Tabs.List>
-                <Tabs.Tab value="gallery" leftSection={<IconPhoto style={iconStyle} />}>
-                    Gallery
-                </Tabs.Tab>
-                <Tabs.Tab
-                    mb="auto"
-                    value="messages"
-                    leftSection={<IconMessageCircle style={iconStyle} />}
-                >
-                    Messages
-                </Tabs.Tab>
-                <Tabs.Tab value="settings" leftSection={<IconSettings style={iconStyle} />}>
+            <Stack p={0} m={0} gap={0} h="100%">
+                <Tabs.List>
+                    <Tabs.Tab value="gallery" leftSection={<IconPhoto style={iconStyle} />}>
+                        Gallery
+                    </Tabs.Tab>
+                    <Tabs.Tab
+                        value="messages"
+                        leftSection={<IconMessageCircle style={iconStyle} />}
+                    >
+                        Messages
+                    </Tabs.Tab>
+                    {/* <Tabs.Tab value="settings" leftSection={<IconSettings style={iconStyle} />}>
                     Settings
-                </Tabs.Tab>
-            </Tabs.List>
+                </Tabs.Tab> */}
+                </Tabs.List>
+                <Button
+                    className={classes.button}
+                    mt="auto"
+                    value="settings"
+                    leftSection={<IconSettings style={iconStyle} />}
+                >
+                    Settings
+                </Button>
+            </Stack>
 
             {/* <Tabs.Panel value="gallery">Gallery tab content</Tabs.Panel>
 

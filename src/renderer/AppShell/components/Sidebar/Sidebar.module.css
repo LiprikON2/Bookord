@@ -1,14 +1,27 @@
 .root {
     display: block;
+    height: 100%;
+
     @media (min-width: $mantine-breakpoint-sm) {
         position: relative;
-        left: rem(0.5);
+        left: rem(0.5px);
     }
 }
 
+.list {
+    height: 100%;
+}
 .tab {
+    /* color: var(--mantine-color-dimmed); */
     &[data-active] {
         background-color: var(--app-bgcolor);
         border-right: none;
+        /* color: var(--mantine-primary-color-filled); */
+    }
+}
+
+.button {
+    @media (min-width: $mantine-breakpoint-sm) {
+        margin-right: var(--mantine-spacing-sm);
     }
 }

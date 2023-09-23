@@ -22,6 +22,7 @@ export const Titlebar = ({ opened, toggle }: { opened: boolean; toggle: () => vo
                     size="xs"
                     w="100%"
                     placeholder="Search for books"
+                    radius="lg"
                     leftSectionPointerEvents="none"
                     leftSection={
                         <IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
