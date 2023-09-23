@@ -1,5 +1,5 @@
 import React from "react";
-import { MantineProvider, ColorSchemeScript } from "@mantine/core";
+import { MantineProvider, ColorSchemeScript, ScrollArea } from "@mantine/core";
 import { createRoot } from "react-dom/client";
 
 import "@mantine/core/styles.css";

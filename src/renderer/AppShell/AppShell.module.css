@@ -1,20 +1,50 @@
-.titlebarGroup {
-    -webkit-app-region: drag; /* Draggable */
-    * {
-        -webkit-app-region: no-drag;
-    }
-}
+.main {
+    --app-shell-padding: 0;
+    --app-shell-edge-offset: var(--mantine-spacing-xs);
 
-.searchGroup {
-    flex-basis: 40%;
-    padding: 0;
+    padding-left: var(--app-shell-navbar-offset);
+    padding-top: var(--app-shell-header-height);
+    padding-right: var(--app-shell-edge-offset);
+    padding-bottom: var(--app-shell-edge-offset);
+
+    position: relative;
+    z-index: 1;
+    background-color: var(--mantine-color-body);
 
     @media (max-width: $mantine-breakpoint-sm) {
-        flex-basis: 30%;
+        padding-left: var(--app-shell-edge-offset);
+        padding-top: var(--app-shell-edge-offset);
+    }
+
+    &::before {
+        content: "";
+        position: fixed;
+        background: var(--app-bgcolor);
+        border-radius: var(--mantine-radius-lg);
+        border: rem(1px) var(--mantine-color-default-border) solid;
+
+        top: var(--app-shell-header-height);
+        left: var(--app-shell-navbar-offset);
+        right: var(--app-shell-edge-offset);
+        height: calc(100% - var(--app-shell-header-height) - var(--app-shell-edge-offset));
+        z-index: -1;
+
+        @media (max-width: $mantine-breakpoint-sm) {
+            left: var(--app-shell-edge-offset);
+        }
     }
 }
 
-.windowControlsGroup {
-    align-self: flex-start;
-    padding: 0;
+.header {
+    border: none;
+}
+.navbar {
+    --app-shell-navbar-width: rem(200px);
+    padding-inline: var(--mantine-spacing-sm);
+    padding-block: var(--mantine-spacing-md);
+    border: none;
+
+    @media (min-width: $mantine-breakpoint-sm) {
+        padding-right: 0;
+    }
 }

@@ -1,0 +1,14 @@
+.root {
+    display: block;
+    @media (min-width: $mantine-breakpoint-sm) {
+        position: relative;
+        left: rem(0.5);
+    }
+}
+
+.tab {
+    &[data-active] {
+        background-color: var(--app-bgcolor);
+        border-right: none;
+    }
+}

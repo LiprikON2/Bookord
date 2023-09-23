@@ -11,12 +11,6 @@
     --app-bgcolor: #202020;
     --app-border-color: #3b3f44;
 
-    /* Scrollbar */
-    --scroll-width: 0.625rem;
-    --scroll-track-bgcolor: #2f2f2f52;
-    --scroll-thumb-bgcolor: rgba(59, 59, 59, 0.747);
-    --scroll-thumb-hover-bgcolor: #555;
-
     /* Titlebar */
     --titlebar-bgcolor: hsl(0deg 0% 10%);
     --titlebar-color: hsl(0, 0%, 85%);
@@ -46,11 +40,6 @@
 body:not(.dark-mode) {
     /* Application */
     --app-bgcolor: #f1f0f0;
-
-    /* Scrollbar */
-    --scroll-track-bgcolor: #2f2f2f1f;
-    --scroll-thumb-bgcolor: rgb(59 59 59 / 30%);
-    --scroll-thumb-hover-bgcolor: var(--app-accent-color);
 
     /* Titlebar */
     --titlebar-bgcolor: #dcddde;
@@ -96,22 +85,6 @@ body {
 
 .hidden {
     display: none !important;
-}
-
-::-webkit-scrollbar {
-    width: var(--scroll-width);
-
-    &-track {
-        background: var(--scroll-track-bgcolor);
-    }
-
-    &-thumb {
-        background: var(--scroll-thumb-bgcolor);
-    }
-
-    &-thumb:hover {
-        background: var(--scroll-thumb-hover-bgcolor);
-    }
 }
 
 /**

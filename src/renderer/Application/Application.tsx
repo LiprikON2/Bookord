@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { About } from "./About";
-import { Button, Center, Container, Space } from "@mantine/core";
+import { Button, Center, Container, Skeleton, Space } from "@mantine/core";
 
 import context from "~/main/mainContextApi";
 import { useColorScheme } from "../hooks";
@@ -39,6 +39,12 @@ export const Application = () => {
             </Center>
             <Space h="md" />
             <About />
+
+            {Array(20)
+                .fill(0)
+                .map((_, index) => (
+                    <Skeleton key={index} h={28} mt="sm" animate={false} />
+                ))}
         </Container>
     );
 };

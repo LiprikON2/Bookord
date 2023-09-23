@@ -6,7 +6,8 @@ import { Item } from "./components";
 const Versions = ({ children }: { children: React.ReactNode }) => {
     return (
         <Group
-            justify="apart"
+            justify="center"
+            maw="30rem"
             gap="md"
             my={0}
             mx="auto"

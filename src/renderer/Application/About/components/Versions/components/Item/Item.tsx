@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "@mantine/core";
+import { Text, Image } from "@mantine/core";
 
 import { icons, type Icon } from "~/components/Icons";
 import { useVersions } from "./hooks";
@@ -11,7 +11,7 @@ export const Item = ({ type }: { type: Icon }) => {
     return (
         <div className={classes.container}>
             <div>
-                <img className={classes.icon} src={icons[type]} />
+                <Image className={classes.icon} src={icons[type]} />
                 <Text style={{ textTransform: "capitalize" }}>{type}</Text>
             </div>
             <Text ta="right" c="dimmed">
