@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Space, Stack, Tabs, rem } from "@mantine/core";
+import { Button, Stack, Tabs, rem } from "@mantine/core";
 import { IconPhoto, IconMessageCircle, IconSettings } from "@tabler/icons-react";
 
 import { useIsMobile } from "~/renderer/hooks/useIsMobile";
@@ -38,25 +38,22 @@ export const Sidebar = () => {
                     >
                         Messages
                     </Tabs.Tab>
-                    {/* <Tabs.Tab value="settings" leftSection={<IconSettings style={iconStyle} />}>
-                    Settings
-                </Tabs.Tab> */}
                 </Tabs.List>
                 <Button
                     className={classes.button}
+                    variant="default"
                     mt="auto"
                     value="settings"
                     leftSection={<IconSettings style={iconStyle} />}
+                    styles={{
+                        inner: {
+                            justifyContent: "flex-start",
+                        },
+                    }}
                 >
                     Settings
                 </Button>
             </Stack>
-
-            {/* <Tabs.Panel value="gallery">Gallery tab content</Tabs.Panel>
-
-            <Tabs.Panel value="messages">Messages tab content</Tabs.Panel>
-
-            <Tabs.Panel value="settings">Settings tab content</Tabs.Panel> */}
         </Tabs>
     );
 };

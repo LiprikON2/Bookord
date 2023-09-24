@@ -35,5 +35,4 @@ const App = () => {
     );
 };
 
-// Render application in DOM
 createRoot(document.getElementById("app")).render(<App />);

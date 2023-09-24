@@ -17,7 +17,6 @@
 
     @media (max-width: $mantine-breakpoint-sm) {
         padding-left: var(--app-shell-edge-offset);
-        padding-top: var(--app-shell-edge-offset);
     }
 
     &::before {
