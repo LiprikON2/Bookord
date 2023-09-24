@@ -29,6 +29,43 @@ app.on("activate", () => {
     }
 });
 
+app.on("web-contents-created", (event, contents) => {
+    /**
+     * URL navigation
+     * https://www.electronjs.org/docs/latest/tutorial/security#13-disable-or-limit-navigation
+     */
+    contents.on("will-navigate", (contentsEvent, navigationUrl) => {
+        console.log("Attempted to navigate to url:", navigationUrl);
+        contentsEvent.preventDefault();
+    });
+
+    /**
+     * URL redirect
+     * https://www.electronjs.org/docs/latest/tutorial/security#13-disable-or-limit-navigation
+     */
+    contents.on("will-redirect", (contentsEvent, navigationUrl) => {
+        console.log("Attempted to redirect to url:", navigationUrl);
+        contentsEvent.preventDefault();
+    });
+
+    /**
+     * New window creation
+     * https://www.electronjs.org/docs/latest/tutorial/security#13-disable-or-limit-navigation
+     */
+    contents.setWindowOpenHandler(({ url }) => {
+        console.log("Attempted to open url:", url);
+        return { action: "deny" };
+    });
+    /**
+     * Webview creation
+     * https://www.electronjs.org/docs/latest/tutorial/security#12-verify-webview-options-before-creation
+     */
+    contents.on("will-attach-webview", (event, webPreferences, params) => {
+        console.log("Attempted to create webview");
+        event.preventDefault();
+    });
+});
+
 /**
  * Emitted when all windows have been closed.
  */

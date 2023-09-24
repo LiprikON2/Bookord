@@ -1,38 +1,57 @@
 import React from "react";
-import { MantineProvider, ColorSchemeScript, ScrollArea } from "@mantine/core";
+import {
+    RootRoute,
+    Route,
+    Router,
+    createHashHistory,
+    createMemoryHistory,
+} from "@tanstack/react-router";
 import { createRoot } from "react-dom/client";
+import { RouterProvider } from "@tanstack/react-router";
 
-import "@mantine/core/styles.css";
-import "@mantine/dropzone/styles.css";
-import "@mantine/notifications/styles.css";
-import "@mantine/spotlight/styles.css";
-import { baseTheme } from "./theme";
-
-import WindowFrame from "~/misc/window/components/WindowFrame";
+import { Root } from "./appRoot";
 import { Application } from "./Application";
-import { AppShell } from "./AppShell";
 
-console.log("[Renderer]: Execution started");
+const rootRoute = new RootRoute({
+    component: Root,
+});
 
-const App = () => {
-    return (
-        <>
-            <ColorSchemeScript defaultColorScheme="dark" />
-            <MantineProvider defaultColorScheme="dark" theme={baseTheme}>
-                <React.StrictMode>
-                    {/* <WindowFrame title="Bookord" platform="windows">
-                        <Application />
-                    </WindowFrame> */}
+const indexRoute = new Route({
+    getParentRoute: () => rootRoute,
+    path: "/",
+    component: () => <Application />,
+});
 
-                    <AppShell>
-                        <ScrollArea h="100%" type="auto">
-                            <Application />
-                        </ScrollArea>
-                    </AppShell>
-                </React.StrictMode>
-            </MantineProvider>
-        </>
-    );
-};
+const blogRoute = new Route({
+    getParentRoute: () => rootRoute,
+    path: "blog",
+});
 
-createRoot(document.getElementById("app")).render(<App />);
+const blogIndexRoute = new Route({
+    getParentRoute: () => blogRoute,
+    path: "/",
+    component: () => <h1>blogIndexRoute</h1>,
+});
+
+const routeTree = rootRoute.addChildren([
+    indexRoute.addChildren([blogRoute.addChildren([blogIndexRoute])]),
+]);
+
+// Hash routing can be helpful if your server doesn't support rewrites to index.html for HTTP requests
+// (among other environments that don't have a server).
+const hashHistory = createHashHistory();
+
+const memoryHistory = createMemoryHistory({
+    initialEntries: ["/"], // Pass your initial url
+});
+
+const router = new Router({ routeTree, history: memoryHistory });
+
+createRoot(document.getElementById("app")).render(<RouterProvider router={router} />);
+
+declare module "@tanstack/react-router" {
+    interface Register {
+        // This infers the type of our router and registers it across your entire project
+        router: typeof router;
+    }
+}

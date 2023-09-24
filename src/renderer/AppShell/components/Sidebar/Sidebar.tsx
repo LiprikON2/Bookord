@@ -4,6 +4,7 @@ import { IconPhoto, IconMessageCircle, IconSettings } from "@tabler/icons-react"
 
 import { useIsMobile } from "~/renderer/hooks/useIsMobile";
 import classes from "./Sidebar.module.css";
+import { Link } from "@tanstack/react-router";
 
 const desktopProps = { variant: "outline" };
 const mobileProps = { variant: "pills" };
@@ -53,6 +54,8 @@ export const Sidebar = () => {
                 >
                     Settings
                 </Button>
+                <Link to="/">/Home</Link>
+                <Link to="/blog">blog</Link>
             </Stack>
         </Tabs>
     );

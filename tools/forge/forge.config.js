@@ -10,7 +10,7 @@ module.exports = {
         // Set executable name
         executableName: "Bookord",
         // Set application copyright
-        appCopyright: "Copyright (C) 2021 Codesbiome, Guasam",
+        appCopyright: "Copyright (C)",
         // Set application icon
         icon: path.resolve("assets/images/appIcon.ico"),
     },

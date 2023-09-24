@@ -34,8 +34,10 @@ export const createMainWindow = (): BrowserWindow => {
             nodeIntegrationInWorker: false,
             nodeIntegrationInSubFrames: false,
             contextIsolation: true,
-            sandbox: false,
             preload: APP_WINDOW_PRELOAD_WEBPACK_ENTRY,
+            // TODO process sandboxing
+            // https://www.electronjs.org/docs/latest/tutorial/sandbox
+            sandbox: false,
         },
     });
 
@@ -78,6 +80,7 @@ export const createMainWindow = (): BrowserWindow => {
         // before the DOM is ready
         mainWindow.webContents.once("dom-ready", async () => {
             // Provides dev tools shortcuts
+            // TODO supress dev tools hmr errors
             electronDebug();
             mainWindow.webContents.openDevTools();
         });
@@ -95,6 +98,19 @@ export const createMainWindow = (): BrowserWindow => {
     return mainWindow;
 };
 
+const allowedOrigins = [new URL(APP_WINDOW_WEBPACK_ENTRY).host];
+/**
+ * IPC message sender validation
+ * https://www.electronjs.org/docs/latest/tutorial/security#17-validate-the-sender-of-all-ipc-messages
+ */
+const validateSender = (event: Electron.IpcMainInvokeEvent) => {
+    const { url } = event.senderFrame;
+    const host = new URL(url).host;
+    if (allowedOrigins.includes(host)) return true;
+
+    return false;
+};
+
 /**
  * Register Inter Process Communication
  */
@@ -103,6 +119,6 @@ const registerAllIpc = () => {
      * Here you can assign IPC related codes for the application window
      * to Communicate asynchronously from the main process to renderer processes.
      */
-    registerTitlebarIpc(mainWindow);
-    registerMainIpc(mainWindow);
+    registerTitlebarIpc(mainWindow, validateSender);
+    registerMainIpc(mainWindow, validateSender);
 };

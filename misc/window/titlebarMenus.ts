@@ -61,7 +61,7 @@ const titlebarMenus: TitlebarMenu[] = [
             },
             {
                 name: "Select All",
-                action: "select_all",
+                action: "selectAll",
                 shortcut: "Ctrl+A",
             },
         ],
@@ -76,12 +76,12 @@ const titlebarMenus: TitlebarMenu[] = [
             },
             {
                 name: "Force Reload",
-                action: "force_reload",
+                action: "forceReload",
                 shortcut: "Ctrl+Shift+R",
             },
             {
                 name: "Toogle Developer Tools",
-                action: "toggle_devtools",
+                action: "toggleDevtools",
                 shortcut: "Ctrl+Shift+I",
             },
             {
@@ -89,17 +89,17 @@ const titlebarMenus: TitlebarMenu[] = [
             },
             {
                 name: "Actual Size",
-                action: "actual_size",
+                action: "actualSize",
                 shortcut: "Ctrl+0",
             },
             {
                 name: "Zoom In",
-                action: "zoom_in",
+                action: "zoomIn",
                 shortcut: "Ctrl++",
             },
             {
                 name: "Zoom Out",
-                action: "zoom_out",
+                action: "zoomOut",
                 shortcut: "Ctrl+-",
             },
             {
@@ -107,7 +107,7 @@ const titlebarMenus: TitlebarMenu[] = [
             },
             {
                 name: "Toggle Fullscreen",
-                action: "toggle_fullscreen",
+                action: "toggleFullscreen",
                 shortcut: "F11",
             },
         ],

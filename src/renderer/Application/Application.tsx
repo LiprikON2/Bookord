@@ -13,18 +13,6 @@ const getTest = async () => {
 
 export const Application = () => {
     const { dark, setColorScheme } = useColorScheme();
-
-    /**
-     * On Dark theme change
-     */
-    useEffect(() => {
-        if (dark) {
-            document.body.classList.add("dark-mode");
-        } else {
-            document.body.classList.remove("dark-mode");
-        }
-    }, [dark]);
-
     /**
      * Toggle Theme
      */
