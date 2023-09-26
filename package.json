@@ -6,7 +6,9 @@
     "main": ".webpack/main",
     "scripts": {
         "dev": "cross-env NODE_ENV=development electron-forge start",
+        "//": "Creates executable",
         "package": "electron-forge package",
+        "//": "Creates executable, then makes installer for it",
         "make": "electron-forge make",
         "publish": "electron-forge publish",
         "lint": "eslint src/ --ext .ts,.js,.tsx,.jsx",

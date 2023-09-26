@@ -1,7 +1,7 @@
 import { ipcRenderer } from "electron";
 
 const mainContext = {
-    test() {
+    test(): Promise<string> {
         return ipcRenderer.invoke("test");
     },
 };
