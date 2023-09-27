@@ -1,5 +1,5 @@
-import classNames from "classnames";
 import React from "react";
+import clsx from "clsx";
 
 import { ControlButton } from "./components/ControlButton";
 import context from "./ipc/windowCotntrolsContextApi";
@@ -15,11 +15,11 @@ const closePath =
 const maximizePath = "M 0,0 0,10 10,10 10,0 Z M 1,1 9,1 9,9 1,9 Z";
 const minimizePath = "M 0,5 10,5 10,6 0,6 Z";
 
-export const WindowControls: React.FC<Props> = (props) => {
+export const WindowControls = (props: Props) => {
     return (
         <section className={classes.windowTitlebarControls}>
             <ControlButton
-                className={classNames(
+                className={clsx(
                     classes[`${props.platform}OsControl`],
                     classes[`${props.platform}OsControlMinimize`]
                 )}
@@ -29,7 +29,7 @@ export const WindowControls: React.FC<Props> = (props) => {
                 title={props.tooltips ? "Minimize" : null}
             />
             <ControlButton
-                className={classNames(
+                className={clsx(
                     classes[`${props.platform}OsControl`],
                     classes[`${props.platform}OsControlMaximize`]
                 )}
@@ -39,7 +39,7 @@ export const WindowControls: React.FC<Props> = (props) => {
                 title={props.tooltips ? "Maximize" : null}
             />
             <ControlButton
-                className={classNames(
+                className={clsx(
                     classes[`${props.platform}OsControl`],
                     classes[`${props.platform}OsControlClose`]
                 )}

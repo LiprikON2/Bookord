@@ -45,6 +45,7 @@
 .header {
     border: none;
 }
+
 .navbar {
     --app-shell-navbar-width: rem(200px);
     padding-inline: var(--mantine-spacing-sm);

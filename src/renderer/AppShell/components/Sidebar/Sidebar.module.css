@@ -39,11 +39,7 @@
     }
 }
 
-.button {
-    @mixin light {
-        background-color: var(--mantine-color-gray-1);
-    }
-    @media (min-width: $mantine-breakpoint-sm) {
-        margin-right: var(--mantine-spacing-sm);
-    }
+.icon {
+    width: rem(16);
+    height: rem(16);
 }

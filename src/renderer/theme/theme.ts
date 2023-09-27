@@ -1,6 +1,7 @@
 import { createTheme } from "@mantine/core";
 
 import "./theme.css";
+import button from "./components/Button.module.css";
 
 export const baseTheme = createTheme({
     fontFamily:
@@ -57,6 +58,16 @@ export const baseTheme = createTheme({
         Container: {
             defaultProps: {
                 p: "xl",
+            },
+        },
+        Button: {
+            classNames: {
+                root: button.root,
+            },
+        },
+        ActionIcon: {
+            classNames: {
+                root: button.root,
             },
         },
     },
