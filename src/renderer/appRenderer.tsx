@@ -1,16 +1,10 @@
 import React from "react";
-import {
-    RootRoute,
-    Route,
-    Router,
-    createHashHistory,
-    createMemoryHistory,
-} from "@tanstack/react-router";
+import { RootRoute, Route, Router, createMemoryHistory } from "@tanstack/react-router";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "@tanstack/react-router";
 
 import { Root } from "./appRoot";
-import { Application } from "./Application";
+import { Test } from "./scenes";
 
 const rootRoute = new RootRoute({
     component: Root,
@@ -19,7 +13,7 @@ const rootRoute = new RootRoute({
 const indexRoute = new Route({
     getParentRoute: () => rootRoute,
     path: "/",
-    component: () => <Application />,
+    component: () => <Test />,
 });
 
 const blogRoute = new Route({
@@ -37,12 +31,8 @@ const routeTree = rootRoute.addChildren([
     indexRoute.addChildren([blogRoute.addChildren([blogIndexRoute])]),
 ]);
 
-// Hash routing can be helpful if your server doesn't support rewrites to index.html for HTTP requests
-// (among other environments that don't have a server).
-const hashHistory = createHashHistory();
-
 const memoryHistory = createMemoryHistory({
-    initialEntries: ["/"], // Pass your initial url
+    initialEntries: ["/"],
 });
 
 const router = new Router({ routeTree, history: memoryHistory });

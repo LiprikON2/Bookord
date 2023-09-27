@@ -13,6 +13,8 @@
 }
 
 .tab {
+    font-size: var(--mantine-font-size-md);
+
     color: var(--mantine-color-gray-5);
     @mixin light {
         color: var(--mantine-color-dark-2);

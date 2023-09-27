@@ -1,37 +1,20 @@
-:root {
-    overflow: hidden;
-}
-
-:root,
-body,
-#app {
-    height: 100%;
-}
-
-body {
-    margin: 0;
-    color: var(--app-color);
-    background: var(--app-bgcolor);
-}
-
 #app {
     display: flex;
     flex-direction: column;
     user-select: none;
-
-    &.has-border {
-        border: var(--app-border-color);
-    }
+    height: 100%;
 }
 
 /* MANTINE GLOBAL OVERRIDE */
-:root {
+html:root {
     --mantine-scale: 1;
 }
 
-:root[data-mantine-color-scheme="dark"] {
+html:root[data-mantine-color-scheme="dark"] {
     --mantine-color-dimmed: var(--mantine-color-dark-2);
+    --mantine-color-placeholder: var(--mantine-color-dark-2);
 }
-:root[data-mantine-color-scheme="light"] {
+html:root[data-mantine-color-scheme="light"] {
     --mantine-color-dimmed: var(--mantine-color-gray-6);
+    --mantine-color-placeholder: var(--mantine-color-gray-6);
 }

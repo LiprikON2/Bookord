@@ -13,7 +13,9 @@ export const Titlebar = ({ opened, toggle }: { opened: boolean; toggle: () => vo
                 <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
                 <Group>
                     <Image m={4} h={24} w={24} src={icons.bookord} />
-                    <Text size="xl">Bookord</Text>
+                    <Text size="xl" c="gray.1">
+                        Bookord
+                    </Text>
                 </Group>
             </Group>
             <Group className={classes.searchGroup}>

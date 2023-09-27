@@ -1,26 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { AppShell as MantineAppShell } from "@mantine/core";
 
 import { Sidebar, Titlebar } from "./components";
 import classes from "./AppShell.module.css";
-import { useColorScheme } from "~/renderer/hooks";
 
 export const AppShell = ({ children }: { children: React.ReactNode }) => {
     const [opened, { toggle }] = useDisclosure();
-    const { dark } = useColorScheme();
-
-    // TODO move into separate hook
-    /**
-     * On Dark theme change
-     */
-    useEffect(() => {
-        if (dark) {
-            document.body.classList.add("dark-mode");
-        } else {
-            document.body.classList.remove("dark-mode");
-        }
-    }, [dark]);
 
     return (
         <MantineAppShell
