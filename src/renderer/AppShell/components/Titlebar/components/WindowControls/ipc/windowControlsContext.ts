@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 
-const titlebarContext = {
+const windowControlsContext = {
     exit() {
         ipcRenderer.invoke("window-close");
     },
@@ -57,6 +57,6 @@ const titlebarContext = {
     },
 };
 
-export type TitlebarContextApi = typeof titlebarContext;
+export type WindowControlsContextApi = typeof windowControlsContext;
 
-export default titlebarContext;
+export default windowControlsContext;

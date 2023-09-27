@@ -22,7 +22,8 @@
     &::before {
         content: "";
         position: fixed;
-        background: var(--app-bgcolor);
+        background-color: var(--mantine-color-dark-6);
+
         border-radius: var(--mantine-radius-lg);
         border: rem(1px) var(--mantine-color-default-border) solid;
 
@@ -34,6 +35,9 @@
 
         @media (max-width: $mantine-breakpoint-sm) {
             left: var(--app-shell-edge-offset);
+        }
+        @mixin light {
+            background-color: var(--mantine-color-gray-1);
         }
     }
 }

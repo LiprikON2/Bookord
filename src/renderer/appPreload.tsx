@@ -1,5 +1,5 @@
-import "~/misc/window/windowPreload";
 import "~/main/mainPreload";
+import "~/renderer/AppShell/components/Titlebar/components/WindowControls/ipc/windowControlsPreload";
 
 console.log("[Preload]: Execution started");
 

@@ -1,12 +1,12 @@
 .windowTitlebarControls {
     display: flex;
     align-items: stretch;
-    /* position: absolute; */
     right: 0;
     top: 0;
     bottom: 0;
-    color: #969799;
     height: 28px;
+
+    color: var(--mantine-color-gray-6);
 }
 
 .windowsOs {
@@ -19,11 +19,14 @@
         -webkit-app-region: no-drag;
 
         &:hover {
-            background: #242d38;
-            color: #d8d9db;
+            background-color: var(--mantine-color-dark-3);
+            color: var(--mantine-color-gray-1);
         }
         &Close:hover {
             background: var(--mantine-color-error);
+        }
+        svg {
+            margin-left: 1.2px;
         }
     }
 }
@@ -32,12 +35,12 @@
     &Control {
         width: 16px;
         height: 16px;
-        background: #0e0e0e99;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         margin-right: 0.675rem;
+        margin-top: 0.25rem;
         color: transparent;
         -webkit-app-region: no-drag;
         opacity: 0.8;

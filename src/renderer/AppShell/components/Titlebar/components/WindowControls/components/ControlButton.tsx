@@ -7,8 +7,8 @@ interface IControlButtonProps {
     className: string;
 }
 
-const ControlButton: React.FC<IControlButtonProps & React.HTMLAttributes<HTMLDivElement>> = (
-    props
+export const ControlButton = (
+    props: IControlButtonProps & React.HTMLAttributes<HTMLDivElement>
 ) => {
     const { name, path, title, className, ...rest } = props;
     const { onClick } = rest;
@@ -21,5 +21,3 @@ const ControlButton: React.FC<IControlButtonProps & React.HTMLAttributes<HTMLDiv
         </div>
     );
 };
-
-export default ControlButton;

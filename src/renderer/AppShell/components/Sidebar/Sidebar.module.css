@@ -11,16 +11,36 @@
 .list {
     height: 100%;
 }
+
 .tab {
-    /* color: var(--mantine-color-dimmed); */
+    color: var(--mantine-color-gray-5);
+    @mixin light {
+        color: var(--mantine-color-dark-2);
+    }
+
+    &:hover,
     &[data-active] {
-        background-color: var(--app-bgcolor);
+        color: var(--mantine-color-gray-1);
+
+        @mixin light {
+            color: var(--mantine-color-dark-5);
+        }
+    }
+
+    &[data-active] {
+        background-color: var(--mantine-color-dark-6);
         border-right: none;
-        /* color: var(--mantine-primary-color-filled); */
+
+        @mixin light {
+            background-color: var(--mantine-color-gray-1);
+        }
     }
 }
 
 .button {
+    @mixin light {
+        background-color: var(--mantine-color-gray-1);
+    }
     @media (min-width: $mantine-breakpoint-sm) {
         margin-right: var(--mantine-spacing-sm);
     }

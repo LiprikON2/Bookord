@@ -4,7 +4,6 @@ import { Button, Center, Container, Skeleton, Space } from "@mantine/core";
 
 import context from "~/main/mainContextApi";
 import { useColorScheme } from "../hooks";
-import "./Application.css";
 
 const getTest = async () => {
     const res = await context.test();

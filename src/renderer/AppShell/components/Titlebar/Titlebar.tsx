@@ -1,9 +1,8 @@
 import React from "react";
-import { Image, Burger, Group, TextInput, Text, rem, Code, Pill } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { Image, Burger, Group, TextInput, Text, rem, Pill } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 
-import WindowControls from "~/misc/window/components/WindowControls";
+import { WindowControls } from "./components/WindowControls";
 import { icons } from "~/components/Icons";
 import classes from "./Titlebar.module.css";
 

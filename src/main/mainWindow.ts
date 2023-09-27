@@ -1,10 +1,10 @@
 import { app, BrowserWindow, session } from "electron";
+import electronDebug from "electron-debug";
 import path from "path";
 
 import { isDev } from "~/common/helpers";
-import { registerTitlebarIpc } from "~/misc/window/titlebarIpc";
-import { registerMainIpc } from "./mainIpc";
-import electronDebug from "electron-debug";
+import { registerMainIpc } from "~/main/mainIpc";
+import { registerWindowControlsIpc } from "~/renderer/appIpc";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -119,6 +119,6 @@ const registerAllIpc = () => {
      * Here you can assign IPC related codes for the application window
      * to Communicate asynchronously from the main process to renderer processes.
      */
-    registerTitlebarIpc(mainWindow, validateSender);
+    registerWindowControlsIpc(mainWindow, validateSender);
     registerMainIpc(mainWindow, validateSender);
 };

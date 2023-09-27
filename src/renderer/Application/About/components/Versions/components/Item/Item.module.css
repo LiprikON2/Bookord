@@ -3,8 +3,9 @@
     justify-content: space-between;
     gap: 0.5rem;
 
-    background: #191919;
-    color: #d1d1d1;
+    background-color: var(--mantine-color-dark-4);
+    color: var(--mantine-color-gray-3);
+
     width: 14rem;
     padding: rem(4px) rem(12px);
     font-size: rem(14px);
@@ -16,8 +17,8 @@
     }
 
     @mixin light {
-        background: #fff;
-        color: #656565;
+        background-color: var(--mantine-color-gray-3);
+        color: var(--mantine-color-dark-4);
     }
 }
 

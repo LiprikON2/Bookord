@@ -1,3 +1,29 @@
+:root {
+    overflow: hidden;
+}
+
+:root,
+body,
+#app {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    color: var(--app-color);
+    background: var(--app-bgcolor);
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+
+    &.has-border {
+        border: var(--app-border-color);
+    }
+}
+
 /* MANTINE GLOBAL OVERRIDE */
 :root {
     --mantine-scale: 1;

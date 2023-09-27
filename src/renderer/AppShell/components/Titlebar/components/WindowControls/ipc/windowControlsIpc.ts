@@ -1,6 +1,6 @@
 import { BrowserWindow, ipcMain, shell } from "electron";
 
-export const registerTitlebarIpc = (
+export const registerWindowControlsIpc = (
     mainWindow: BrowserWindow,
     validateSender: (e: Electron.IpcMainInvokeEvent) => boolean
 ) => {

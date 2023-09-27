@@ -1,8 +1,8 @@
 import classNames from "classnames";
 import React from "react";
-import context from "../titlebarContextApi";
 
-import ControlButton from "./ControlButton";
+import { ControlButton } from "./components/ControlButton";
+import context from "./ipc/windowCotntrolsContextApi";
 import classes from "./WindowControls.module.css";
 
 type Props = {
@@ -15,7 +15,7 @@ const closePath =
 const maximizePath = "M 0,0 0,10 10,10 10,0 Z M 1,1 9,1 9,9 1,9 Z";
 const minimizePath = "M 0,5 10,5 10,6 0,6 Z";
 
-const WindowControls: React.FC<Props> = (props) => {
+export const WindowControls: React.FC<Props> = (props) => {
     return (
         <section className={classes.windowTitlebarControls}>
             <ControlButton
@@ -51,5 +51,3 @@ const WindowControls: React.FC<Props> = (props) => {
         </section>
     );
 };
-
-export default WindowControls;
