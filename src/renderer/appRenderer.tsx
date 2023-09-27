@@ -1,43 +1,66 @@
 import React from "react";
-import { RootRoute, Route, Router, createMemoryHistory } from "@tanstack/react-router";
+import {
+    RootRoute,
+    Route,
+    Router,
+    createHashHistory,
+    createMemoryHistory,
+} from "@tanstack/react-router";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "@tanstack/react-router";
 
 import { Root } from "./appRoot";
-import { Test } from "./scenes";
+import { Library, Test } from "./scenes";
+import { isDev } from "~/common/helpers";
 
-const rootRoute = new RootRoute({
+// Only importing and using Devtools in Development
+const TanStackRouterDevtools = isDev()
+    ? React.lazy(() =>
+          // Lazy load in development
+          import("@tanstack/router-devtools").then((res) => ({
+              default: res.TanStackRouterDevtools,
+          }))
+      )
+    : (): any => null; // Render nothing in production
+
+export const rootRoute = new RootRoute({
     component: Root,
 });
 
-const indexRoute = new Route({
+export const libraryRoute = new Route({
     getParentRoute: () => rootRoute,
     path: "/",
-    component: () => <Test />,
+    component: Library,
 });
 
-const blogRoute = new Route({
+export const testRoute = new Route({
     getParentRoute: () => rootRoute,
-    path: "blog",
+    path: "test",
 });
 
-const blogIndexRoute = new Route({
-    getParentRoute: () => blogRoute,
+export const testIndexRoute = new Route({
+    getParentRoute: () => testRoute,
     path: "/",
-    component: () => <h1>blogIndexRoute</h1>,
+    component: Test,
 });
 
 const routeTree = rootRoute.addChildren([
-    indexRoute.addChildren([blogRoute.addChildren([blogIndexRoute])]),
+    libraryRoute.addChildren([testRoute.addChildren([testIndexRoute])]),
 ]);
 
+// const hashHistory = createHashHistory(); // Bugged
 const memoryHistory = createMemoryHistory({
     initialEntries: ["/"],
 });
 
 const router = new Router({ routeTree, history: memoryHistory });
 
-createRoot(document.getElementById("app")).render(<RouterProvider router={router} />);
+createRoot(document.getElementById("app")).render(
+    <>
+        <TanStackRouterDevtools router={router} position="bottom-right" />
+        <RouterProvider router={router} />
+    </>
+);
 
 declare module "@tanstack/react-router" {
     interface Register {

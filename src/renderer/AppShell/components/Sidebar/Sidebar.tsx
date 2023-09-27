@@ -4,14 +4,18 @@ import { IconPhoto, IconMessageCircle, IconSettings } from "@tabler/icons-react"
 
 import { useIsMobile } from "~/renderer/hooks/useIsMobile";
 import classes from "./Sidebar.module.css";
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
+import { libraryRoute, testRoute } from "~/renderer/appRenderer";
+
+type SidebarLocation = typeof libraryRoute.to | typeof testRoute.to;
 
 const desktopProps = { variant: "outline" };
 const mobileProps = { variant: "pills" };
-const iconStyle = { width: rem(12), height: rem(12) };
+const iconStyle = { width: rem(16), height: rem(16) };
 
 export const Sidebar = () => {
     const isMobile = useIsMobile();
+    const navigate = useNavigate();
 
     return (
         <Tabs
@@ -21,20 +25,25 @@ export const Sidebar = () => {
                 tab: classes.tab,
             }}
             variant="outline"
-            color="var(--app-bgcolor)"
             orientation="vertical"
             radius="md"
-            defaultValue="gallery"
-            keepMounted={false}
+            defaultValue={libraryRoute.to}
+            keepMounted={true}
+            onChange={(to: SidebarLocation) => navigate({ from: "/", to })}
             {...(isMobile ? mobileProps : desktopProps)}
         >
             <Stack p={0} m={0} gap={0} h="100%">
                 <Tabs.List>
-                    <Tabs.Tab value="gallery" leftSection={<IconPhoto style={iconStyle} />}>
-                        Gallery
+                    <Tabs.Tab
+                        value={libraryRoute.to}
+                        role="link"
+                        leftSection={<IconPhoto style={iconStyle} />}
+                    >
+                        Library
                     </Tabs.Tab>
                     <Tabs.Tab
-                        value="messages"
+                        value={testRoute.to}
+                        role="link"
                         leftSection={<IconMessageCircle style={iconStyle} />}
                     >
                         Messages
@@ -54,8 +63,6 @@ export const Sidebar = () => {
                 >
                     Settings
                 </Button>
-                <Link to="/">/Home</Link>
-                <Link to="/blog">blog</Link>
             </Stack>
         </Tabs>
     );
