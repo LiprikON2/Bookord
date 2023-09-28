@@ -13,7 +13,10 @@ export const ThemeToggle = () => {
             onClick={() => setColorScheme(dark ? "light" : "dark")}
             variant="default"
             aria-label="Toggle color scheme"
-            // p="md"
+            h="100%"
+            w="auto"
+            style={{ aspectRatio: "1 / 1" }}
+            size="lg"
         >
             <IconSun className={clsx(classes.icon, classes.light)} stroke={1.5} />
             <IconMoon className={clsx(classes.icon, classes.dark)} stroke={1.5} />

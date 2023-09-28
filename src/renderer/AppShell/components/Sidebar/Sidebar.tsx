@@ -1,10 +1,11 @@
 import React from "react";
 import { Stack, Tabs } from "@mantine/core";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useRouter } from "@tanstack/react-router";
 
 import { useIsMobile } from "~/renderer/hooks/useIsMobile";
 import classes from "./Sidebar.module.css";
 import { Bottom } from "./components";
+import { useHistory } from "~/renderer/hooks";
 
 type Link = {
     to: string; // TODO change to the inferred type
@@ -15,9 +16,23 @@ type Link = {
 const desktopProps = { variant: "outline" };
 const mobileProps = { variant: "pills" };
 
-const Sidebar = ({ links, children }: { links: Link[]; children: React.ReactNode }) => {
+const Sidebar = ({
+    links,
+    close,
+    children,
+}: {
+    links: Link[];
+    close: () => void;
+    children: React.ReactNode;
+}) => {
     const isMobile = useIsMobile();
     const navigate = useNavigate();
+    const { currentPath } = useHistory();
+
+    const changeTab = (to: any) => {
+        navigate({ to });
+        close();
+    };
 
     return (
         <Tabs
@@ -29,9 +44,9 @@ const Sidebar = ({ links, children }: { links: Link[]; children: React.ReactNode
             variant="outline"
             orientation="vertical"
             radius="md"
-            defaultValue={links[0].to}
+            defaultValue={currentPath}
             keepMounted={true}
-            onChange={(to: any) => navigate({ to })}
+            onChange={changeTab}
             {...(isMobile ? mobileProps : desktopProps)}
         >
             <Stack p={0} m={0} gap={0} h="100%">

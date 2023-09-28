@@ -18,12 +18,16 @@ export const SettingsModal = ({
     return (
         <>
             <Button
-                className={clsx(classes.button, classNames?.button)}
+                className={classNames?.button}
                 variant="default"
                 mt="auto"
                 value="settings"
+                fw="normal"
                 leftSection={
-                    <IconSettings className={clsx(classes.buttonIcon, classNames?.buttonIcon)} />
+                    <IconSettings
+                        className={clsx(classes.buttonIcon, classNames?.buttonIcon)}
+                        strokeWidth={1.5}
+                    />
                 }
                 styles={{
                     inner: {

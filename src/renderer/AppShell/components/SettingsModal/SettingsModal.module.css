@@ -1,9 +1,3 @@
-.button {
-    @media (min-width: $mantine-breakpoint-sm) {
-        margin-right: var(--mantine-spacing-sm);
-    }
-}
-
 .buttonIcon {
     width: rem(16);
     height: rem(16);

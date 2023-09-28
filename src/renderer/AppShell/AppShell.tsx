@@ -1,6 +1,6 @@
 import React from "react";
 import { useDisclosure } from "@mantine/hooks";
-import { AppShell as MantineAppShell } from "@mantine/core";
+import { AppShell as MantineAppShell, Overlay } from "@mantine/core";
 
 import { ThemeToggle } from "~/renderer/components";
 import { SettingsModal, Sidebar, Titlebar } from "./components";
@@ -9,7 +9,7 @@ import { IconMessageCircle, IconPhoto } from "@tabler/icons-react";
 import { libraryRoute, testRoute } from "~/renderer/appRenderer";
 
 export const AppShell = ({ children }: { children: React.ReactNode }) => {
-    const [opened, { toggle }] = useDisclosure();
+    const [opened, { toggle, close }] = useDisclosure();
     const links = [
         { to: libraryRoute.to, name: "Library", Icon: IconPhoto },
         { to: testRoute.to, name: "Messages", Icon: IconMessageCircle },
@@ -31,14 +31,17 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
                 <Titlebar opened={opened} toggle={toggle} />
             </MantineAppShell.Header>
             <MantineAppShell.Navbar>
-                <Sidebar links={links}>
+                <Sidebar links={links} close={close}>
                     <Sidebar.Bottom>
                         <SettingsModal />
                         <ThemeToggle />
                     </Sidebar.Bottom>
                 </Sidebar>
             </MantineAppShell.Navbar>
-            <MantineAppShell.Main>{children}</MantineAppShell.Main>
+            <MantineAppShell.Main className="test">
+                {opened && <Overlay onClick={close} backgroundOpacity={0.25} />}
+                {children}
+            </MantineAppShell.Main>
         </MantineAppShell>
     );
 };
