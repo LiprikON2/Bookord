@@ -1,0 +1,6 @@
+.root.root {
+    --modal-y-offset: 8dvh;
+}
+.content.content {
+    height: 100%;
+}

@@ -3,9 +3,9 @@ import { Stack, Tabs } from "@mantine/core";
 import { useNavigate, useRouter } from "@tanstack/react-router";
 
 import { useIsMobile } from "~/renderer/hooks/useIsMobile";
-import classes from "./Sidebar.module.css";
 import { Bottom } from "./components";
 import { useHistory } from "~/renderer/hooks";
+import classes from "./Sidebar.module.css";
 
 type Link = {
     to: string; // TODO change to the inferred type
@@ -36,14 +36,7 @@ const Sidebar = ({
 
     return (
         <Tabs
-            classNames={{
-                root: classes.root,
-                list: classes.list,
-                tab: classes.tab,
-            }}
-            variant="outline"
-            orientation="vertical"
-            radius="md"
+            classNames={{ root: classes.root }}
             defaultValue={currentPath}
             keepMounted={true}
             onChange={changeTab}

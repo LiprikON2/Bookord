@@ -2,6 +2,8 @@ import { createTheme } from "@mantine/core";
 
 import "./theme.css";
 import button from "./components/Button.module.css";
+import tabs from "./components/Tabs.module.css";
+import modal from "./components/Modal.module.css";
 
 export const baseTheme = createTheme({
     fontFamily:
@@ -27,15 +29,16 @@ export const baseTheme = createTheme({
     },
     colors: {
         dark: [
-            "#A6A7AB",
-            "#909296",
-            "#5C5F66",
-            "#2d2c2c",
-            "#292828",
-            "#242424",
-            "#202020",
-            "#1a1a1a",
-            "#191919",
+            "#A6A7AB", // --mantine-color-dark-0
+            "#909296", // --mantine-color-dark-1
+            "#5C5F66", // --mantine-color-dark-2
+            "#2d2c2c", // --mantine-color-dark-3
+            "#292828", // --mantine-color-dark-4
+            "#242424", // --mantine-color-dark-5
+            "#202020", // --mantine-color-dark-6
+            "#1a1a1a", // --mantine-color-dark-7
+            "#191919", // --mantine-color-dark-8
+            "#101113", // --mantine-color-dark-9
         ],
     },
 
@@ -68,6 +71,29 @@ export const baseTheme = createTheme({
         ActionIcon: {
             classNames: {
                 root: button.root,
+            },
+        },
+        Tabs: {
+            defaultProps: {
+                variant: "outline",
+                orientation: "vertical",
+                radius: "md",
+            },
+
+            classNames: {
+                root: tabs.root,
+                list: tabs.list,
+                tab: tabs.tab,
+                panel: tabs.panel,
+            },
+        },
+        Modal: {
+            classNames: {
+                root: modal.root,
+                content: modal.content,
+            },
+            defaultProps: {
+                size: "55rem",
             },
         },
     },

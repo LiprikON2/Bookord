@@ -1,45 +1,7 @@
-.root {
-    display: block;
-    height: 100%;
-
-    @media (min-width: $mantine-breakpoint-sm) {
-        position: relative;
-        left: rem(0.5px);
-    }
-}
-
-.list {
-    height: 100%;
-}
-
-.tab {
-    font-size: var(--mantine-font-size-md);
-
-    color: var(--mantine-color-gray-5);
-    @mixin light {
-        color: var(--mantine-color-dark-2);
-    }
-
-    &:hover,
-    &[data-active] {
-        color: var(--mantine-color-gray-1);
-
-        @mixin light {
-            color: var(--mantine-color-dark-5);
-        }
-    }
-
-    &[data-active] {
-        background-color: var(--mantine-color-dark-6);
-        border-right: none;
-
-        @mixin light {
-            background-color: var(--mantine-color-gray-1);
-        }
-    }
-}
-
 .icon {
     width: rem(16);
     height: rem(16);
+}
+.root {
+    display: block;
 }

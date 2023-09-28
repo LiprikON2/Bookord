@@ -1,12 +1,12 @@
 import React from "react";
-import { Button } from "@mantine/core";
+import { Button, Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSettings } from "@tabler/icons-react";
 import clsx from "clsx";
 
-import { Modal } from "~/components/Modal";
 import { Settings } from "~/renderer/scenes";
 import classes from "./SettingsModal.module.css";
+import { settings } from "./settings";
 
 export const SettingsModal = ({
     classNames,
@@ -38,8 +38,8 @@ export const SettingsModal = ({
             >
                 Settings
             </Button>
-            <Modal title="Settings" opened={opened} close={close}>
-                <Settings />
+            <Modal title="Settings" opened={opened} onClose={close}>
+                <Settings settingsMarkup={[]} />
             </Modal>
         </>
     );
