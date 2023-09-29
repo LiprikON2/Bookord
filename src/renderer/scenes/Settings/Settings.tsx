@@ -1,52 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     Container,
     Tabs,
     type TextInput,
-    type Switch,
+    Switch,
     type Autocomplete,
     type ColorInput,
 } from "@mantine/core";
 
-type NoInfer<T> = [T][T extends any ? 0 : 1];
-
-const asMyArray = <T extends readonly any[]>(
-    x: [...{ [K in keyof T]: { key1: T[K]; key2: NoInfer<T[K]> } }]
-) => x;
-
-// interface SettingInputMarkup {
-//     Input: InputTypes;
-//     defaultValue: React.ComponentProps<InputTypes>["value"];
-// }
-interface SettingTextInputMarkup {
-    Input: typeof TextInput;
-    defaultValue: React.ComponentProps<typeof TextInput>["value"];
-}
-interface SettingColorInputMarkup {
-    Input: typeof ColorInput;
-    defaultValue: React.ComponentProps<typeof ColorInput>["value"];
-}
-interface SettingSwitchMarkup {
-    Input: typeof Switch;
-    defaultValue: React.ComponentProps<typeof Switch>["value"];
-}
-interface SettingAutocompleteMarkup {
-    Input: typeof Autocomplete;
-    defaultValue: React.ComponentProps<typeof Autocomplete>["value"];
-}
-type SettingInputMarkup<T> = T extends typeof TextInput
-    ? SettingTextInputMarkup
-    : T extends typeof ColorInput
-    ? SettingColorInputMarkup
-    : T extends typeof Switch
-    ? SettingSwitchMarkup
-    : T extends typeof Autocomplete
-    ? SettingAutocompleteMarkup
-    : never;
-
 type InputTypes = typeof TextInput | typeof ColorInput | typeof Switch | typeof Autocomplete;
-// interface SettingDescriptionMarkup extends SettingInputMarkup {
-interface SettingDescriptionMarkup {
+interface SettingMarkup {
     name: string;
     description: string;
     hoverDescription: string;
@@ -54,21 +17,45 @@ interface SettingDescriptionMarkup {
     Icon: () => React.ReactNode;
 
     Input: InputTypes;
-    defaultValue: React.ComponentProps<InputTypes>["value"];
+    defaultValue?: React.ComponentProps<InputTypes>["defaultValue"];
+    defaultChecked?: React.ComponentProps<InputTypes>["defaultChecked"];
 }
-export interface SettingMarkup extends SettingDescriptionMarkup {
+
+interface RootSettingMarkup extends SettingMarkup {
     section: string;
     category: string;
-    subsettings?: SettingDescriptionMarkup[];
+    subsettings?: SettingMarkup[];
 }
 
-interface SettingsProps {
-    settingsMarkup: SettingMarkup[];
+export type SettingsMarkup = RootSettingMarkup[];
+
+interface SettingValue {
+    value?: React.ComponentProps<InputTypes>["value"];
+    checked?: React.ComponentProps<InputTypes>["checked"];
+    disabled?: boolean;
+    subsettings?: { [name: string]: SubsettingsState };
 }
 
-export const Settings = ({ settingsMarkup }: SettingsProps) => {
-    const markup = settingsMarkup[0];
+type SubsettingsState = Omit<SettingValue, "subsettings">;
+export interface SettingsState {
+    [name: string]: SettingValue;
+}
+
+const test: SettingsState = {
+    test: {
+        value: "yes",
+        subsettings: {
+            subtest: {
+                value: "yes",
+            },
+        },
+    },
+};
+
+export const Settings = ({ settingsMarkup }: { settingsMarkup: RootSettingMarkup[] }) => {
+    // const markup = settingsMarkup[0];
     // const setting = settings[markup.section][markup.name];
+    const [checked, setChecked] = useState(false);
     return (
         <Container p="xs">
             <Tabs variant="outline" orientation="vertical" defaultValue="gallery">
@@ -81,7 +68,13 @@ export const Settings = ({ settingsMarkup }: SettingsProps) => {
                 </Tabs.List>
 
                 <Tabs.Panel value="gallery">
-                    <Container p="xs">Gallery tab content </Container>
+                    <Container p="xs">
+                        Gallery tab content
+                        <Switch
+                            checked={checked}
+                            onChange={(event) => setChecked(event.currentTarget.checked)}
+                        />
+                    </Container>
                 </Tabs.Panel>
             </Tabs>
         </Container>

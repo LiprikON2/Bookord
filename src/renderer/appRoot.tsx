@@ -2,12 +2,12 @@ import React from "react";
 import { MantineProvider, ColorSchemeScript, ScrollArea, rem } from "@mantine/core";
 
 import { baseTheme } from "./theme";
-import "@mantine/core/styles.css";
-import "@mantine/dropzone/styles.css";
-import "@mantine/notifications/styles.css";
-import "@mantine/spotlight/styles.css";
+import "@mantine/core/styles.layer.css";
+import "@mantine/dropzone/styles.layer.css";
+import "@mantine/notifications/styles.layer.css";
+import "@mantine/spotlight/styles.layer.css";
 
-import { AppShell } from "./AppShell";
+import { AppShell } from "~/renderer/scenes";
 import { Outlet } from "@tanstack/react-router";
 
 console.log("[Renderer]: Execution started");
