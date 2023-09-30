@@ -1,5 +1,6 @@
 import React from "react";
 import { MantineProvider, ColorSchemeScript, ScrollArea, rem } from "@mantine/core";
+import { Outlet } from "@tanstack/react-router";
 
 import { baseTheme } from "./theme";
 import "@mantine/core/styles.layer.css";
@@ -8,7 +9,6 @@ import "@mantine/notifications/styles.layer.css";
 import "@mantine/spotlight/styles.layer.css";
 
 import { AppShell } from "~/renderer/scenes";
-import { Outlet } from "@tanstack/react-router";
 
 console.log("[Renderer]: Execution started");
 

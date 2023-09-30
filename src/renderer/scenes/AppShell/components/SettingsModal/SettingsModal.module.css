@@ -2,3 +2,8 @@
     width: rem(16);
     height: rem(16);
 }
+
+.modalIcon {
+    width: rem(20);
+    height: rem(20);
+}

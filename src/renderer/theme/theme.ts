@@ -89,11 +89,11 @@ export const baseTheme = createTheme({
         },
         Modal: {
             classNames: {
-                root: modal.root,
                 content: modal.content,
             },
             defaultProps: {
                 size: "55rem",
+                yOffset: "8dvh",
             },
         },
     },

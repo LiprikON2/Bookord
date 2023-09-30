@@ -1,2 +1,2 @@
-export * from "./settings";
+export * from "./settingsMarkup";
 export * from "./SettingsModal";

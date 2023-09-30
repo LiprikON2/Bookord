@@ -1,0 +1,12 @@
+.panel {
+    border-radius: var(--mantine-radius-lg);
+    border: rem(1px) var(--mantine-color-default-border) solid;
+}
+
+.tabHeading {
+    font-size: var(--mantine-font-size-sm);
+
+    padding-inline: var(--mantine-spacing-sm);
+    padding-top: var(--mantine-spacing-sm);
+    padding-bottom: rem(4px);
+}

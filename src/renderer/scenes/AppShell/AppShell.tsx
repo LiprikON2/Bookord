@@ -1,12 +1,12 @@
 import React from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { AppShell as MantineAppShell, Overlay } from "@mantine/core";
+import { IconMessageCircle, IconPhoto } from "@tabler/icons-react";
 
 import { ThemeToggle } from "~/renderer/components";
 import { SettingsModal, Sidebar, Titlebar } from "./components";
-import classes from "./AppShell.module.css";
-import { IconMessageCircle, IconPhoto } from "@tabler/icons-react";
 import { libraryRoute, testRoute } from "~/renderer/appRenderer";
+import classes from "./AppShell.module.css";
 
 export const AppShell = ({ children }: { children: React.ReactNode }) => {
     const [opened, { toggle, close }] = useDisclosure();
