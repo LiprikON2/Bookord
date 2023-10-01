@@ -2,7 +2,7 @@ import React from "react";
 import { Image, Burger, Group, TextInput, Text, rem, Pill } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 
-import { WindowControls } from "./components/WindowControls";
+import { WindowControls, SearchInput } from "./components";
 import { icons } from "~/components/Icons";
 import classes from "./Titlebar.module.css";
 
@@ -19,31 +19,7 @@ export const Titlebar = ({ opened, toggle }: { opened: boolean; toggle: () => vo
                 </Group>
             </Group>
             <Group className={classes.searchGroup}>
-                <TextInput
-                    size="xs"
-                    w="100%"
-                    placeholder="Search for books"
-                    radius="lg"
-                    leftSectionPointerEvents="none"
-                    leftSection={
-                        <IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
-                    }
-                    rightSection={
-                        <Pill
-                            style={{
-                                borderRadius: "var(--mantine-radius-default)",
-                            }}
-                        >
-                            Ctrl + K
-                        </Pill>
-                    }
-                    styles={{
-                        section: {
-                            width: "fit-content",
-                            padding: rem(4),
-                        },
-                    }}
-                />
+                <SearchInput />
             </Group>
             <Group className={classes.windowControlsGroup}>
                 <WindowControls platform="windows" tooltips={true} />

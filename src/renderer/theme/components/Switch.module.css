@@ -1,0 +1,9 @@
+.input:not(:checked) {
+    + .track {
+        background-color: var(--mantine-color-dark-3);
+
+        @mixin light {
+            background-color: var(--mantine-color-gray-2);
+        }
+    }
+}

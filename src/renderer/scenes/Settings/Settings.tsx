@@ -8,10 +8,13 @@ import {
     type Autocomplete,
     type ColorInput,
     Title,
+    Group,
 } from "@mantine/core";
+import type { Icon } from "@tabler/icons-react";
 
-import { useProcessMarkup } from "./hooks";
+import { useMapSettings } from "./hooks";
 import classes from "./Settings.module.css";
+import { SettingsInputs, SettingsPanels, SettingsSections, SettingsTabs } from "./components";
 
 type InputTypes = typeof TextInput | typeof ColorInput | typeof Switch | typeof Autocomplete;
 interface SettingMarkup {
@@ -19,7 +22,6 @@ interface SettingMarkup {
     description: string;
     hoverDescription: string;
     canBeDisabled: boolean;
-    Icon: () => React.ReactNode;
 
     Input: InputTypes;
     defaultValue?: React.ComponentProps<InputTypes>["defaultValue"];
@@ -30,6 +32,7 @@ interface RootSettingMarkup extends SettingMarkup {
     tabHeading: string;
     tab: string;
     section: string;
+    SectionIcon: Icon;
     subsettings?: SettingMarkup[];
 }
 
@@ -50,70 +53,29 @@ export interface SettingsState {
 export const Settings = ({ settingsMarkup }: { settingsMarkup: SettingsMarkup }) => {
     // const markup = settingsMarkup[0];
     // const setting = settings[markup.section][markup.name];
-    const [checked, setChecked] = useState(false);
 
-    const { mappedSettings, tabHeadings, tabs, sections, sorter } =
-        useProcessMarkup(settingsMarkup);
+    const { tabHeadings, tabs } = useMapSettings(settingsMarkup);
 
     return (
         <Container p="xs" h="100%">
             <Tabs variant="outline" orientation="vertical" defaultValue={tabHeadings[0] + tabs[0]}>
                 <Tabs.List my="md" h="unset" mr={-0.5}>
-                    {Object.entries(mappedSettings)
-                        .sort(sorter("tabHeading", tabHeadings))
-                        .map(([tabHeading, settings]) => (
-                            <React.Fragment key={tabHeading}>
-                                <Text className={classes.tabHeading} c="dimmed">
-                                    {tabHeading}
-                                </Text>
-                                {Object.entries(settings)
-                                    .sort(sorter("tab", tabs))
-                                    .map(([tab]) => (
-                                        <Tabs.Tab key={tabHeading + tab} value={tabHeading + tab}>
-                                            {tab}
-                                        </Tabs.Tab>
-                                    ))}
-                            </React.Fragment>
-                        ))}
+                    <SettingsTabs
+                        classNames={{ tabHeading: classes.tabHeading }}
+                        settingsMarkup={settingsMarkup}
+                    />
                 </Tabs.List>
 
-                {Object.entries(mappedSettings)
-                    .sort(sorter("tabHeading", tabHeadings))
-                    .map(([tabHeading, settings]) =>
-                        Object.entries(settings)
-                            .sort(sorter("tab", tabs))
-                            .map(([tab, settings]) => (
-                                <Tabs.Panel
-                                    className={classes.panel}
-                                    key={tabHeading + tab}
-                                    value={tabHeading + tab}
-                                >
-                                    <Container p="xs">
-                                        {Object.entries(settings)
-                                            .sort(sorter("section", sections))
-                                            .map(([section, settings]) => (
-                                                <React.Fragment key={tabHeading + tab + section}>
-                                                    <Title order={4}>{section}</Title>
-                                                    {settings.map(({ name }) => (
-                                                        <>{name}</>
-                                                    ))}
-                                                    here are settings, such as...
-                                                </React.Fragment>
-                                            ))}
-                                    </Container>
-                                </Tabs.Panel>
-                            ))
+                <SettingsPanels
+                    classNames={{ panel: classes.panel }}
+                    settingsMarkup={settingsMarkup}
+                >
+                    {(settings) => (
+                        <SettingsSections settingsMarkup={settingsMarkup} settings={settings}>
+                            {(settings) => <SettingsInputs settings={settings} />}
+                        </SettingsSections>
                     )}
-
-                {/* <Tabs.Panel value="gallery">
-                    <Container p="xs">
-                        Gallery tab content
-                        <Switch
-                            checked={checked}
-                            onChange={(event) => setChecked(event.currentTarget.checked)}
-                        />
-                    </Container>
-                </Tabs.Panel> */}
+                </SettingsPanels>
             </Tabs>
         </Container>
     );

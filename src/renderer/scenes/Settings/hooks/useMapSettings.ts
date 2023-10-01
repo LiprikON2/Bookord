@@ -1,6 +1,6 @@
 import { type SettingsMarkup } from "../Settings";
 
-interface MappedSettingsMarkup {
+export interface MappedSettingsMarkup {
     [k: string]: {
         [k: string]: {
             [k: string]: SettingsMarkup;
@@ -8,7 +8,7 @@ interface MappedSettingsMarkup {
     };
 }
 
-export const useProcessMarkup = (settingsMarkup: SettingsMarkup) => {
+export const useMapSettings = (settingsMarkup: SettingsMarkup) => {
     /**
      * All settings
      * https://i.imgur.com/wN9niG1.png

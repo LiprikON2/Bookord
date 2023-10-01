@@ -1,0 +1,17 @@
+.icon {
+    width: rem(16px);
+    height: rem(16px);
+}
+
+.input {
+    background-color: var(--mantine-color-dark-6);
+
+    @mixin light {
+        background-color: var(--mantine-color-gray-0);
+    }
+}
+
+.section {
+    width: fit-content;
+    padding: rem(4px);
+}

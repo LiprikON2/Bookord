@@ -4,6 +4,8 @@ import "./theme.css";
 import button from "./components/Button.module.css";
 import tabs from "./components/Tabs.module.css";
 import modal from "./components/Modal.module.css";
+import input from "./components/Input.module.css";
+import switchInput from "./components/Switch.module.css";
 
 export const baseTheme = createTheme({
     fontFamily:
@@ -58,11 +60,6 @@ export const baseTheme = createTheme({
                 gap: "xs",
             },
         },
-        Container: {
-            defaultProps: {
-                p: "xl",
-            },
-        },
         Button: {
             classNames: {
                 root: button.root,
@@ -91,9 +88,22 @@ export const baseTheme = createTheme({
             classNames: {
                 content: modal.content,
             },
+
             defaultProps: {
                 size: "55rem",
                 yOffset: "8dvh",
+            },
+        },
+
+        Input: {
+            classNames: {
+                input: input.input,
+            },
+        },
+        Switch: {
+            classNames: {
+                input: switchInput.input,
+                track: switchInput.track,
             },
         },
     },

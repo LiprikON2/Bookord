@@ -20,7 +20,7 @@ export const Test = () => {
     };
 
     return (
-        <Container>
+        <Container p="xl">
             <Center>
                 <Button onClick={() => toggleTheme()}>Toggle Theme</Button>
             </Center>

@@ -1,1 +1,1 @@
-export * from "./useProcessMarkup";
+export * from "./useMapSettings";

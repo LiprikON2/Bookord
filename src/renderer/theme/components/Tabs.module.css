@@ -41,4 +41,8 @@
 
 .panel {
     background-color: var(--mantine-color-dark-6);
+
+    @mixin light {
+        background-color: var(--mantine-color-gray-1);
+    }
 }
