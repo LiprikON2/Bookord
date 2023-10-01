@@ -94,6 +94,9 @@ export const Settings = ({ settingsMarkup }: { settingsMarkup: SettingsMarkup })
                                             .map(([section, settings]) => (
                                                 <React.Fragment key={tabHeading + tab + section}>
                                                     <Title order={4}>{section}</Title>
+                                                    {settings.map(({ name }) => (
+                                                        <>{name}</>
+                                                    ))}
                                                     here are settings, such as...
                                                 </React.Fragment>
                                             ))}

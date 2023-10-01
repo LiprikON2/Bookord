@@ -1,5 +1,5 @@
 import "~/main/mainPreload";
-import "./appIpc";
+import "~/renderer/scenes/AppShell/components/Titlebar/components/WindowControls/ipc/windowControlsPreload";
 console.log("[Preload]: Execution started");
 
 // Get versions
