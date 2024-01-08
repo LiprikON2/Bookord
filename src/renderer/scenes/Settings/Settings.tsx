@@ -18,14 +18,17 @@ import { SettingsInputs, SettingsPanels, SettingsSections, SettingsTabs } from "
 
 type InputTypes = typeof TextInput | typeof ColorInput | typeof Switch | typeof Autocomplete;
 interface SettingMarkup {
-    name: string;
+    label: string;
+    placeholder: string;
     description: string;
     hoverDescription: string;
     canBeDisabled: boolean;
 
     Input: InputTypes;
-    defaultValue?: React.ComponentProps<InputTypes>["defaultValue"];
-    defaultChecked?: React.ComponentProps<InputTypes>["defaultChecked"];
+    // defaultValue?: React.ComponentProps<InputTypes>["defaultValue"];
+    // defaultChecked?: React.ComponentProps<InputTypes>["defaultChecked"];
+    defaultValue?: string;
+    defaultChecked?: boolean;
 }
 
 interface RootSettingMarkup extends SettingMarkup {
@@ -38,28 +41,33 @@ interface RootSettingMarkup extends SettingMarkup {
 
 export type SettingsMarkup = RootSettingMarkup[];
 
-interface SettingValue {
-    value?: React.ComponentProps<InputTypes>["value"];
-    checked?: React.ComponentProps<InputTypes>["checked"];
+interface SettingState {
+    // value?: React.ComponentProps<InputTypes>["value"];
+    // checked?: React.ComponentProps<InputTypes>["checked"];
+    value?: string;
+    checked?: boolean;
     disabled?: boolean;
-    subsettings?: { [name: string]: SubsettingsState };
+    subsettings?: { [label: string]: SubsettingState };
 }
 
-type SubsettingsState = Omit<SettingValue, "subsettings">;
+type SubsettingState = Omit<SettingState, "subsettings">;
 export interface SettingsState {
-    [name: string]: SettingValue;
+    [tabHeading: string]: {
+        [tab: string]: {
+            [section: string]: {
+                [label: string]: SettingState;
+            };
+        };
+    };
 }
 
 export const Settings = ({ settingsMarkup }: { settingsMarkup: SettingsMarkup }) => {
-    // const markup = settingsMarkup[0];
-    // const setting = settings[markup.section][markup.name];
-
     const { tabHeadings, tabs } = useMapSettings(settingsMarkup);
 
     return (
         <Container p="xs" h="100%">
-            <Tabs variant="outline" orientation="vertical" defaultValue={tabHeadings[0] + tabs[0]}>
-                <Tabs.List my="md" h="unset" mr={-0.5}>
+            <Tabs defaultValue={tabHeadings[0] + tabs[0]}>
+                <Tabs.List my="md" h="unset" mr={-1}>
                     <SettingsTabs
                         classNames={{ tabHeading: classes.tabHeading }}
                         settingsMarkup={settingsMarkup}
@@ -72,7 +80,12 @@ export const Settings = ({ settingsMarkup }: { settingsMarkup: SettingsMarkup })
                 >
                     {(settings) => (
                         <SettingsSections settingsMarkup={settingsMarkup} settings={settings}>
-                            {(settings) => <SettingsInputs settings={settings} />}
+                            {(settings) => (
+                                <SettingsInputs
+                                    settingsMarkup={settingsMarkup}
+                                    settings={settings}
+                                />
+                            )}
                         </SettingsSections>
                     )}
                 </SettingsPanels>

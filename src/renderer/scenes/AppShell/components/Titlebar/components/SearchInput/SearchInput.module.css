@@ -9,6 +9,10 @@
     @mixin light {
         background-color: var(--mantine-color-gray-0);
     }
+
+    @media (max-width: $mantine-breakpoint-sm) {
+        padding-right: var(--mantine-spacing-xs);
+    }
 }
 
 .section {

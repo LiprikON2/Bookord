@@ -1,9 +1,9 @@
 import { type SettingsMarkup } from "../Settings";
 
 export interface MappedSettingsMarkup {
-    [k: string]: {
-        [k: string]: {
-            [k: string]: SettingsMarkup;
+    [tabHeading: string]: {
+        [tab: string]: {
+            [section: string]: SettingsMarkup;
         };
     };
 }

@@ -11,7 +11,7 @@ export const SettingsSections = ({
 }: {
     settingsMarkup: SettingsMarkup;
     children: (settings: SettingsMarkup) => React.ReactNode;
-    settings: { [k: string]: SettingsMarkup };
+    settings: { [section: string]: SettingsMarkup };
 }) => {
     const { sections, sorter } = useMapSettings(settingsMarkup);
 

@@ -13,7 +13,7 @@ export const SettingsPanels = ({
     classNames: {
         panel: string;
     };
-    children: (settings: { [k: string]: SettingsMarkup }) => React.ReactNode;
+    children: (settings: { [section: string]: SettingsMarkup }) => React.ReactNode;
 }) => {
     const { mappedSettings, tabHeadings, tabs, sorter } = useMapSettings(settingsMarkup);
 

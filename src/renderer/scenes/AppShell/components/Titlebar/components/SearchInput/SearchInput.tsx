@@ -18,6 +18,7 @@ export const SearchInput = () => {
                     style={{
                         borderRadius: "var(--mantine-radius-default)",
                     }}
+                    visibleFrom="sm"
                 >
                     Ctrl + K
                 </Pill>
