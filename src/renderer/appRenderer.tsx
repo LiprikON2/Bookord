@@ -53,6 +53,7 @@ const memoryHistory = createMemoryHistory({
     initialEntries: ["/test"],
 });
 
+// const router = new Router({ routeTree, history: hashHistory });
 const router = new Router({ routeTree, history: memoryHistory });
 
 createRoot(document.getElementById("app")).render(

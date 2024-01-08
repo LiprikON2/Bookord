@@ -1,8 +1,9 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 
-import { type SettingsMarkup } from "../Settings";
+import { type CheckedInputTypes, type SettingsMarkup } from "../Settings";
 import { useSettingsStore } from "../hooks";
+import { TextInput } from "@mantine/core";
 
 export const SettingsInputs = observer(
     ({
@@ -12,41 +13,58 @@ export const SettingsInputs = observer(
         settingsMarkup: SettingsMarkup;
         settings: SettingsMarkup;
     }) => {
-        const { settingsStore, setSettingChecked, isLoading } = useSettingsStore(settingsMarkup);
-        console.log("settingsStore", settingsStore);
+        const { setSetting, getSetting, isLoading } = useSettingsStore(settingsMarkup);
+
         if (isLoading) return <>Loading...</>;
+
         return settings.map(({ Input, ...setting }) => {
-            const key = [setting.tabHeading, setting.tab, setting.section, setting.label].join("");
+            const keyList = [setting.tabHeading, setting.tab, setting.section, setting.label];
 
             const inputMarkupProps = {
-                key: key,
+                key: keyList.join(""),
                 label: setting.label,
                 description: setting.description,
                 placeholder: setting.placeholder,
             };
-            const settingState =
-                settingsStore?.[setting.tabHeading]?.[setting.tab]?.[setting.section]?.[
-                    setting.label
-                ];
+
+            // TODO use type narrowing
             if ("defaultChecked" in setting) {
+                Input = Input as CheckedInputTypes;
                 return (
                     <Input
                         {...inputMarkupProps}
-                        checked={settingState?.checked}
                         defaultChecked={setting.defaultChecked}
-                        disabled={settingState?.disabled}
-                        onChange={(checked) => setSettingChecked(key, Boolean(checked))}
+                        checked={getSetting(keyList).checked}
+                        disabled={getSetting(keyList).disabled}
+                        onChange={(event) =>
+                            setSetting(keyList, "checked", event.currentTarget.checked)
+                        }
                     />
                 );
             } else if ("defaultValue" in setting) {
-                return (
-                    <Input
-                        {...inputMarkupProps}
-                        value={settingState?.value}
-                        defaultValue={setting.defaultValue}
-                        disabled={settingState?.disabled}
-                    />
-                );
+                if (Input.displayName === "@mantine/core/TextInput") {
+                    Input = Input as typeof TextInput;
+                    return (
+                        <Input
+                            {...inputMarkupProps}
+                            value={getSetting(keyList).value}
+                            disabled={getSetting(keyList).disabled}
+                            onChange={(event) =>
+                                setSetting(keyList, "value", event.currentTarget.value)
+                            }
+                        />
+                    );
+                } else {
+                    // TODO this is not DRY
+                    return (
+                        <Input
+                            {...inputMarkupProps}
+                            value={getSetting(keyList).value}
+                            disabled={getSetting(keyList).disabled}
+                            onChange={(value) => setSetting(keyList, "value", value)}
+                        />
+                    );
+                }
             }
         });
     }

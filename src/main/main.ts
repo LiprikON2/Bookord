@@ -56,6 +56,7 @@ app.on("web-contents-created", (event, contents) => {
         console.log("Attempted to open url:", url);
         return { action: "deny" };
     });
+
     /**
      * Webview creation
      * https://www.electronjs.org/docs/latest/tutorial/security#12-verify-webview-options-before-creation

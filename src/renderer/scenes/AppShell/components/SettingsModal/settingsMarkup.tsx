@@ -5,11 +5,11 @@ import { IconAdjustments } from "@tabler/icons-react";
 
 export const settingsMarkup: SettingsMarkup = [
     {
-        label: "Reopen last book on startup.",
+        label: "Reopen last book on startup",
         description: "",
         placeholder: "Huh",
         hoverDescription: "Whether or not app will open last read book on startup.",
-        tabHeading: "afsd",
+        tabHeading: "Main heading",
         tab: "App Settings",
         section: "Startup",
         Input: Switch,

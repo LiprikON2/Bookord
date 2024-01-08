@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { MantineProvider, ColorSchemeScript, ScrollArea, rem } from "@mantine/core";
 import { Outlet } from "@tanstack/react-router";
 

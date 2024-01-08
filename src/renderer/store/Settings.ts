@@ -1,11 +1,19 @@
-import { observable, set } from "mobx";
+import { action, has, observable, set, toJS } from "mobx";
 
 import { type SettingsState } from "~/renderer/scenes/Settings";
 
-// export const settings = observable<SettingsState>({});
-export const settingsStore = observable<{ data: SettingsState }>({ data: {} }).data;
+export const settingsStore = observable<SettingsState>({});
 
-export const setSettingsStore = (state: SettingsState) => set(settingsStore, "data", state);
-export const setSettingValue = (key: string, value: string) => set(settingsStore, key, value);
-export const setSettingChecked = (key: string, checked: boolean) =>
-    set(settingsStore, key, checked);
+export const setInitStore = action((state: SettingsState) => set(settingsStore, "data", state));
+
+export const setSetting = action((settingKeyList: string[], key: string, value: any) => {
+    const nestedValue = settingKeyList.reduce((obj: any, k: any) => obj[k], settingsStore.data);
+    nestedValue[key] = value;
+    // console.log("set", key, "to", toJS(value));
+});
+
+export const getSetting = action((settingKeyList: string[]) => {
+    const nestedValue = settingKeyList.reduce((obj: any, k: any) => obj[k], settingsStore.data);
+    // console.log("get", settingKeyList[settingKeyList.length - 1], "is", toJS(nestedValue));
+    return nestedValue;
+});

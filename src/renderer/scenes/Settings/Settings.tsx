@@ -1,14 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, ComponentProps } from "react";
 import {
     Container,
     Tabs,
-    Text,
     Switch,
     type TextInput,
     type Autocomplete,
     type ColorInput,
-    Title,
-    Group,
 } from "@mantine/core";
 import type { Icon } from "@tabler/icons-react";
 
@@ -16,7 +13,10 @@ import { useMapSettings } from "./hooks";
 import classes from "./Settings.module.css";
 import { SettingsInputs, SettingsPanels, SettingsSections, SettingsTabs } from "./components";
 
-type InputTypes = typeof TextInput | typeof ColorInput | typeof Switch | typeof Autocomplete;
+export type CheckedInputTypes = typeof Switch;
+export type ValueInputTypes = typeof TextInput | typeof ColorInput | typeof Autocomplete;
+type InputTypes = CheckedInputTypes | ValueInputTypes;
+
 interface SettingMarkup {
     label: string;
     placeholder: string;

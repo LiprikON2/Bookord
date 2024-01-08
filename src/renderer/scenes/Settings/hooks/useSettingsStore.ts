@@ -1,18 +1,21 @@
-import { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 
-import {
-    setSettingChecked,
-    setSettingValue,
-    setSettingsStore,
-    settingsStore,
-} from "~/renderer/store";
+import { getSetting, setSetting, setInitStore, settingsStore } from "~/renderer/store";
 import { useMapSettings } from ".";
 import { SettingsMarkup } from "../Settings";
+import { toJS } from "mobx";
 
 export const useSettingsStore = (settingsMarkup: SettingsMarkup) => {
     const { mappedSettings } = useMapSettings(settingsMarkup);
 
     const isLoading = !Object.values(settingsStore).length;
+
+    // TODO make it only for dev
+    useEffect(() => {
+        // @ts-ignore
+        window["store"] = toJS(settingsStore);
+        console.log("update");
+    }, [toJS(settingsStore)]);
 
     useLayoutEffect(() => {
         if (isLoading) {
@@ -39,10 +42,12 @@ export const useSettingsStore = (settingsMarkup: SettingsMarkup) => {
                                                 {
                                                     disabled: false,
                                                     ...("defaultValue" in setting && {
-                                                        value: undefined,
+                                                        // value: undefined,
+                                                        value: setting["defaultValue"],
                                                     }),
                                                     ...("defaultChecked" in setting && {
-                                                        checked: undefined,
+                                                        // checked: undefined,
+                                                        checked: setting["defaultChecked"],
                                                     }),
                                                 },
                                             ];
@@ -54,9 +59,9 @@ export const useSettingsStore = (settingsMarkup: SettingsMarkup) => {
                     ),
                 ])
             );
-            setSettingsStore(initSettings);
+            setInitStore(initSettings);
         }
     }, []);
 
-    return { settingsStore, setSettingsStore, setSettingChecked, setSettingValue, isLoading };
+    return { setSetting, getSetting, isLoading };
 };
