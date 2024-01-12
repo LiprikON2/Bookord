@@ -9,13 +9,13 @@ import {
 } from "@mantine/core";
 import type { Icon } from "@tabler/icons-react";
 
-import { useMapSettings } from "./hooks";
+import { useMapSettings, useSettingsStore } from "./hooks";
 import classes from "./Settings.module.css";
 import { SettingsInputs, SettingsPanels, SettingsSections, SettingsTabs } from "./components";
 
 export type CheckedInputTypes = typeof Switch;
 export type ValueInputTypes = typeof TextInput | typeof ColorInput | typeof Autocomplete;
-type InputTypes = CheckedInputTypes | ValueInputTypes;
+export type InputTypes = CheckedInputTypes | ValueInputTypes;
 
 interface SettingMarkup {
     label: string;
@@ -31,7 +31,7 @@ interface SettingMarkup {
     defaultChecked?: boolean;
 }
 
-interface RootSettingMarkup extends SettingMarkup {
+export interface RootSettingMarkup extends SettingMarkup {
     tabHeading: string;
     tab: string;
     section: string;
@@ -62,6 +62,7 @@ export interface SettingsState {
 }
 
 export const Settings = ({ settingsMarkup }: { settingsMarkup: SettingsMarkup }) => {
+    const { isLoading } = useSettingsStore(settingsMarkup);
     const { tabHeadings, tabs } = useMapSettings(settingsMarkup);
 
     return (
@@ -81,10 +82,7 @@ export const Settings = ({ settingsMarkup }: { settingsMarkup: SettingsMarkup })
                     {(settings) => (
                         <SettingsSections settingsMarkup={settingsMarkup} settings={settings}>
                             {(settings) => (
-                                <SettingsInputs
-                                    settingsMarkup={settingsMarkup}
-                                    settings={settings}
-                                />
+                                <SettingsInputs isLoading={isLoading} settings={settings} />
                             )}
                         </SettingsSections>
                     )}

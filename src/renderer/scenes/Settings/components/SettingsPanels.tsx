@@ -34,7 +34,9 @@ export const SettingsPanels = ({
                             offsetScrollbars
                             styles={{ scrollbar: { margin: "-1px", marginTop: rem(8) } }}
                         >
-                            <Container p="xs">{children(settings)}</Container>
+                            <Container p="lg" px="xl">
+                                {children(settings)}
+                            </Container>
                         </ScrollArea>
                     </Tabs.Panel>
                 ))
