@@ -54,7 +54,7 @@ export const SettingsModal = ({
                 onClose={close}
                 styles={{
                     body: {
-                        height: `calc(100% - ${rem(48)})`,
+                        height: `calc(100% - ${rem(64)})`,
                     },
                     header: {
                         padding: "var(--mantine-spacing-xs)",

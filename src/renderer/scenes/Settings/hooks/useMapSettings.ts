@@ -7,7 +7,7 @@ export interface MappedSettingsMarkup {
         };
     };
 }
-
+/* TODO use memoization */
 export const useMapSettings = (settingsMarkup: SettingsMarkup) => {
     /**
      * All settings

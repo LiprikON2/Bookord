@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Tabs } from "@mantine/core";
+import { Container, ScrollArea, Tabs, rem } from "@mantine/core";
 
 import { type SettingsMarkup } from "../Settings";
 import { useMapSettings } from "../hooks";
@@ -28,7 +28,14 @@ export const SettingsPanels = ({
                         key={tabHeading + tab}
                         value={tabHeading + tab}
                     >
-                        <Container p="xs">{children(settings)}</Container>
+                        <ScrollArea
+                            h="100%"
+                            type="auto"
+                            offsetScrollbars
+                            styles={{ scrollbar: { margin: "-1px", marginTop: rem(8) } }}
+                        >
+                            <Container p="xs">{children(settings)}</Container>
+                        </ScrollArea>
                     </Tabs.Panel>
                 ))
         );

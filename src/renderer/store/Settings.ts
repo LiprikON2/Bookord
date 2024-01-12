@@ -1,9 +1,9 @@
 import { action, observable, autorun, set, toJS } from "mobx";
 import _ from "lodash";
 
+import { isDev } from "~/common/helpers";
 import { type SettingsState } from "~/renderer/scenes/Settings";
 import { type MappedSettingsMarkup } from "../scenes/Settings/hooks";
-import { isDev } from "~/common/helpers";
 
 declare global {
     interface Window {
@@ -17,13 +17,11 @@ const settingsStoreKey = "settingsStore";
 
 export const getSetting = action((settingKeyList: string[]) => {
     const nestedValue = settingKeyList.reduce((obj: any, k: any) => obj[k], settingsStore.data);
-    // console.log("get", settingKeyList[settingKeyList.length - 1], "is", toJS(nestedValue));
     return nestedValue;
 });
 
 export const setSetting = action((settingKeyList: string[], key: string, value: any) => {
     const nestedValue = settingKeyList.reduce((obj: any, k: any) => obj[k], settingsStore.data);
-    // console.log("set", key, "to", toJS(value));
     nestedValue[key] = value;
 });
 
@@ -36,12 +34,15 @@ export const getSettingsStore = (mappedSettings: MappedSettingsMarkup) => {
         setSettingsStore(initSettings);
         isInitialized = true;
 
-        autorun(() => {
-            setStoredSettings(settingsStore);
+        autorun(
+            () => {
+                setStoredSettings(settingsStore);
 
-            console.log(settingsStoreKey, "updated");
-            if (isDev()) window["store"] = toJS(settingsStore);
-        });
+                console.log("[Update]:", settingsStoreKey);
+                if (isDev()) window["store"] = toJS(settingsStore);
+            },
+            { delay: 200 }
+        );
     }
 
     return settingsStore;

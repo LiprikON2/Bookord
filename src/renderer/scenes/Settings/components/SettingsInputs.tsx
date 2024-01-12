@@ -44,6 +44,7 @@ export const SettingsInputs = observer(
             } else if ("defaultValue" in setting) {
                 if (Input.displayName === "@mantine/core/TextInput") {
                     Input = Input as typeof TextInput;
+                    // TODO this is not DRY
                     return (
                         <Input
                             {...inputMarkupProps}
