@@ -1,17 +1,8 @@
 import { TextInput } from "@mantine/core";
-import { ComponentType } from "react";
-import {
-    ValueInputTypes,
-    type CheckedInputTypes,
-    type InputTypes,
-    type RootSettingMarkup,
-} from "~/renderer/scenes/Settings";
+import { type RootSettingMarkup } from "~/renderer/scenes/Settings";
 import { getSetting, setSetting } from "~/renderer/store";
 
-type ComponentProps<T> = T extends ComponentType<infer P> ? P : never;
-type MyComponentProps = ComponentProps<CheckedInputTypes>;
-
-const getKeyList = (setting: Omit<RootSettingMarkup, "Input">) => {
+export const getKeyList = (setting: Omit<RootSettingMarkup, "Input">) => {
     return [setting.tabHeading, setting.tab, setting.section, setting.label];
 };
 
@@ -37,7 +28,7 @@ export const getInputStateProps = ({ Input, ...setting }: RootSettingMarkup) => 
         // NarrowedInput = Input as CheckedInputTypes;
 
         inputStateProps = {
-            disabled: getSetting(keyList).disabled,
+            disabled: setting.canBeDisabled && getSetting(keyList).disabled,
             defaultChecked: setting.defaultChecked,
             checked: getSetting(keyList).checked,
             onChange: (event: React.ChangeEvent<HTMLInputElement>) =>
@@ -48,7 +39,7 @@ export const getInputStateProps = ({ Input, ...setting }: RootSettingMarkup) => 
             // NarrowedInput = Input as typeof TextInput;
 
             inputStateProps = {
-                disabled: getSetting(keyList).disabled,
+                disabled: setting.canBeDisabled && getSetting(keyList).disabled,
                 value: getSetting(keyList).value,
                 onChange: (event: React.ChangeEvent<HTMLInputElement>) =>
                     setSetting(keyList, "value", event.currentTarget.value),
@@ -57,7 +48,7 @@ export const getInputStateProps = ({ Input, ...setting }: RootSettingMarkup) => 
             // NarrowedInput = Input as ValueInputTypes;
 
             inputStateProps = {
-                disabled: getSetting(keyList).disabled,
+                disabled: setting.canBeDisabled && getSetting(keyList).disabled,
                 value: getSetting(keyList).value,
                 onChange: (value: any) => setSetting(keyList, "value", value),
             };
@@ -84,4 +75,16 @@ export const resetToDefaults = (setting: Omit<RootSettingMarkup, "Input">) => {
     } else if ("defaultValue" in setting) {
         setSetting(keyList, "value", setting.defaultValue);
     }
+};
+
+export const getInputDisableProps = (setting: Omit<RootSettingMarkup, "Input">) => {
+    const keyList = getKeyList(setting);
+
+    const inputDisableProps = {
+        checked: !getSetting(keyList).disabled,
+        onChange: (event: React.ChangeEvent<HTMLInputElement>) =>
+            setSetting(keyList, "disabled", !event.currentTarget.checked),
+    };
+
+    return inputDisableProps;
 };

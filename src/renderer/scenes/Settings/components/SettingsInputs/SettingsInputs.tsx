@@ -1,21 +1,46 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
+import { Checkbox, Flex, Text, Group, Stack } from "@mantine/core";
 
 import { type SettingsMarkup } from "../../Settings";
-import { getInputStateProps, isDefault, resetToDefaults } from ".";
+import {
+    getInputStateProps,
+    isDefault,
+    resetToDefaults,
+    getInputDisableProps,
+    getKeyList,
+} from "./inputStateHelper";
 import { ResetButton } from "./components";
-import { Flex } from "@mantine/core";
+// import classes from "./SettingsInput.module.css";
 
 export const SettingsInputs = observer(
     ({ isLoading, settings }: { isLoading: boolean; settings: SettingsMarkup }) => {
         if (isLoading) return <>Loading...</>;
 
         return settings.map(({ Input, ...setting }) => {
-            const keyList = [setting.tabHeading, setting.tab, setting.section, setting.label];
+            const inputDisableProps = getInputDisableProps(setting);
+            const isDisabled = setting.canBeDisabled && !inputDisableProps.checked;
 
             const inputMarkupProps = {
-                key: keyList.join("/"),
-                label: setting.label,
+                label: setting.canBeDisabled ? (
+                    <Group>
+                        <Checkbox size="md" variant="outline" {...inputDisableProps} />
+                        <span>
+                            {setting.canBeDisabled && <Text span>Override </Text>}
+                            <Text
+                                span
+                                {...(isDisabled && { c: "dimmed" })}
+                                style={{
+                                    textTransform: setting.canBeDisabled ? "lowercase" : "none",
+                                }}
+                            >
+                                {setting.label}
+                            </Text>
+                        </span>
+                    </Group>
+                ) : (
+                    setting.label
+                ),
                 ...(setting.description && {
                     description: setting.description,
                 }),
@@ -28,12 +53,21 @@ export const SettingsInputs = observer(
                 Input,
                 ...setting,
             });
-            const isResetHidden = isDefault(setting);
+
+            const isResetHidden = isDisabled || isDefault(setting);
 
             return (
-                <Flex align="center" gap="sm">
+                <Flex align="center" gap="sm" key={getKeyList(setting).join("/")}>
                     <ResetButton hidden={isResetHidden} onClick={() => resetToDefaults(setting)} />
-                    <NarrowedInput {...inputMarkupProps} {...inputStateProps} />
+                    <NarrowedInput
+                        // styles={{
+                        //     ...(isDisabled && {
+                        //         label: { color: "var(--mantine-color-dimmed)" },
+                        //     }),
+                        // }}
+                        {...inputMarkupProps}
+                        {...inputStateProps}
+                    />
                 </Flex>
             );
         });

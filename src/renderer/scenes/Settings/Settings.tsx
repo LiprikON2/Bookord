@@ -68,7 +68,7 @@ export const Settings = ({ settingsMarkup }: { settingsMarkup: SettingsMarkup })
 
     return (
         <Container p="xs" h="100%">
-            <Tabs defaultValue={tabHeadings[0] + tabs[0]}>
+            <Tabs defaultValue={tabHeadings[0] + tabs[0]} keepMounted={false}>
                 <Tabs.List my="md" h="unset" mr={-1}>
                     <SettingsTabs
                         classNames={{ tabHeading: classes.tabHeading }}

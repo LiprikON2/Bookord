@@ -1,0 +1,17 @@
+.root {
+    --checkbox-color: var(--mantine-primary-color-filled) !important;
+}
+
+.input {
+    --_checkbox-bg: var(--mantine-color-dark-3);
+    @mixin light {
+        --_checkbox-bg: var(--mantine-color-gray-2);
+    }
+
+    &:checked:not(:disabled) {
+        --_checkbox-bg: var(--mantine-color-dark-6);
+        @mixin light {
+            --_checkbox-bg: var(--mantine-color-gray-1);
+        }
+    }
+}

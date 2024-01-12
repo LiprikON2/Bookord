@@ -52,6 +52,9 @@ export const SettingsModal = ({
                 }
                 opened={opened}
                 onClose={close}
+                style={{
+                    userSelect: "none",
+                }}
                 styles={{
                     body: {
                         height: `calc(100% - ${rem(64)})`,

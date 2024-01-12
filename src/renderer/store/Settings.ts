@@ -80,7 +80,7 @@ const getDefaultSettings = (mappedSettings: MappedSettingsMarkup) => {
                                     return [
                                         setting.label,
                                         {
-                                            disabled: false,
+                                            disabled: true,
                                             ...("defaultValue" in setting && {
                                                 // value: undefined,
                                                 value: setting["defaultValue"],

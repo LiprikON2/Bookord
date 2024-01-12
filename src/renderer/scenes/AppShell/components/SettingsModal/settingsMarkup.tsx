@@ -97,7 +97,7 @@ export const settingsMarkup: SettingsMarkup = [
     },
     {
         label: "Accent color",
-        description: "TODO",
+        description: "This is a description",
         placeholder: "#ffffff",
         hoverDescription: "Whether or not app will open last read book on startup.",
         tabHeading: "Main heading",
@@ -106,7 +106,7 @@ export const settingsMarkup: SettingsMarkup = [
 
         Input: ColorInput,
         defaultValue: "#fff",
-        canBeDisabled: false,
+        canBeDisabled: true,
     },
     {
         label: "Accent color43",

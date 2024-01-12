@@ -6,6 +6,7 @@ import tabs from "./components/Tabs.module.css";
 import modal from "./components/Modal.module.css";
 import input from "./components/Input.module.css";
 import switchInput from "./components/Switch.module.css";
+import checkboxInput from "./components/Checkbox.module.css";
 
 export const baseTheme = createTheme({
     fontFamily:
@@ -104,6 +105,12 @@ export const baseTheme = createTheme({
             classNames: {
                 input: switchInput.input,
                 track: switchInput.track,
+            },
+        },
+        Checkbox: {
+            classNames: {
+                root: checkboxInput.root,
+                input: checkboxInput.input,
             },
         },
     },

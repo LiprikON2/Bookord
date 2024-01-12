@@ -1,0 +1,3 @@
+.inputDescription {
+    padding-left: calc(rem(20) + var(--mantine-spacing-xs));
+}
