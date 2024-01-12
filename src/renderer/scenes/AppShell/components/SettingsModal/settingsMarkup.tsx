@@ -1,7 +1,30 @@
 import React from "react";
 import { ColorInput, Switch, TextInput } from "@mantine/core";
 import { type SettingsMarkup } from "~/renderer/scenes/Settings";
-import { IconAdjustments } from "@tabler/icons-react";
+import {
+    IconAdjustments,
+    IconRocket,
+    IconTypography,
+    type TablerIconsProps,
+} from "@tabler/icons-react";
+
+import classes from "./SettingsModal.module.css";
+
+const sectionIconProps: TablerIconsProps = {
+    className: classes.sectionIcon,
+};
+const sectionMarkup = {
+    Startup: {
+        section: "Startup",
+        SectionIcon: () => <IconRocket {...sectionIconProps} />,
+        sectionDescription: "What happens at launch?",
+    },
+    Font: {
+        section: "Font",
+        SectionIcon: () => <IconTypography {...sectionIconProps} />,
+        sectionDescription: "Style the look and size of the text.",
+    },
+};
 
 export const settingsMarkup: SettingsMarkup = [
     {
@@ -11,11 +34,11 @@ export const settingsMarkup: SettingsMarkup = [
         hoverDescription: "Whether or not app will open last read book on startup.",
         tabHeading: "Main heading",
         tab: "App Settings",
-        section: "Startup",
+        ...sectionMarkup["Startup"],
+
         Input: Switch,
         defaultChecked: false,
         canBeDisabled: false,
-        SectionIcon: () => <span>t</span>,
     },
     {
         label: "Reopen last book on startup",
@@ -24,11 +47,53 @@ export const settingsMarkup: SettingsMarkup = [
         hoverDescription: "Whether or not app will open last read book on startup.",
         tabHeading: "Main heading",
         tab: "App Settings",
-        section: "Startup 2",
+        ...sectionMarkup["Font"],
+
         Input: Switch,
         defaultChecked: false,
         canBeDisabled: false,
-        SectionIcon: () => <span>t</span>,
+    },
+
+    {
+        label: "Reopen last book on startup123",
+        description: "",
+        placeholder: "Huh",
+        hoverDescription: "Whether or not app will open last read book on startup.",
+        tabHeading: "Main heading",
+        tab: "App Settings",
+        ...sectionMarkup["Font"],
+
+        Input: Switch,
+        defaultChecked: false,
+        canBeDisabled: false,
+    },
+
+    {
+        label: "Reopen last book on startup222",
+        description: "",
+        placeholder: "Huh",
+        hoverDescription: "Whether or not app will open last read book on startup.",
+        tabHeading: "Main heading",
+        tab: "App Settings",
+        ...sectionMarkup["Font"],
+
+        Input: Switch,
+        defaultChecked: false,
+        canBeDisabled: false,
+    },
+
+    {
+        label: "Reopen last book on startup22",
+        description: "",
+        placeholder: "Huh",
+        hoverDescription: "Whether or not app will open last read book on startup.",
+        tabHeading: "Main heading",
+        tab: "App Settings",
+        ...sectionMarkup["Font"],
+
+        Input: Switch,
+        defaultChecked: false,
+        canBeDisabled: false,
     },
     {
         label: "Accent color",
@@ -37,11 +102,11 @@ export const settingsMarkup: SettingsMarkup = [
         hoverDescription: "Whether or not app will open last read book on startup.",
         tabHeading: "Main heading",
         tab: "App Settings",
-        section: "Startup 2",
+        ...sectionMarkup["Font"],
+
         Input: ColorInput,
         defaultValue: "#fff",
         canBeDisabled: false,
-        SectionIcon: () => <span>t</span>,
     },
     {
         label: "Accent color43",
@@ -50,11 +115,11 @@ export const settingsMarkup: SettingsMarkup = [
         hoverDescription: "Whether or not app will open last read book on startup.",
         tabHeading: "Main heading",
         tab: "App Settings",
-        section: "Startup 2",
+        ...sectionMarkup["Font"],
+
         Input: ColorInput,
         defaultValue: "#fff",
         canBeDisabled: false,
-        SectionIcon: () => <span>t</span>,
     },
     {
         label: "Accent color34",
@@ -63,11 +128,11 @@ export const settingsMarkup: SettingsMarkup = [
         hoverDescription: "Whether or not app will open last read book on startup.",
         tabHeading: "Main heading",
         tab: "App Settings",
-        section: "Startup 2",
+        ...sectionMarkup["Font"],
+
         Input: ColorInput,
         defaultValue: "#fff",
         canBeDisabled: false,
-        SectionIcon: () => <span>t</span>,
     },
     {
         label: "Accent color s43",
@@ -76,11 +141,11 @@ export const settingsMarkup: SettingsMarkup = [
         hoverDescription: "Whether or not app will open last read book on startup.",
         tabHeading: "Main heading",
         tab: "App Settings",
-        section: "Startup 2",
+        ...sectionMarkup["Font"],
+
         Input: ColorInput,
         defaultValue: "#fff",
         canBeDisabled: false,
-        SectionIcon: () => <span>t</span>,
     },
     {
         label: "Accent color42",
@@ -89,11 +154,11 @@ export const settingsMarkup: SettingsMarkup = [
         hoverDescription: "Whether or not app will open last read book on startup.",
         tabHeading: "Main heading",
         tab: "App Settings",
-        section: "Startup 2",
+        ...sectionMarkup["Font"],
+
         Input: ColorInput,
         defaultValue: "#fff",
         canBeDisabled: false,
-        SectionIcon: () => <span>t</span>,
     },
     {
         label: "Accent color21212112",
@@ -102,11 +167,11 @@ export const settingsMarkup: SettingsMarkup = [
         hoverDescription: "Whether or not app will open last read book on startup.",
         tabHeading: "Main heading",
         tab: "App Settings",
-        section: "Startup 2",
+        ...sectionMarkup["Font"],
+
         Input: ColorInput,
         defaultValue: "#fff",
         canBeDisabled: false,
-        SectionIcon: () => <span>t</span>,
     },
     {
         label: "Accent color2112211221",
@@ -115,11 +180,11 @@ export const settingsMarkup: SettingsMarkup = [
         hoverDescription: "Whether or not app will open last read book on startup.",
         tabHeading: "Main heading",
         tab: "App Settings",
-        section: "Startup 2",
+        ...sectionMarkup["Font"],
+
         Input: ColorInput,
         defaultValue: "#fff",
         canBeDisabled: false,
-        SectionIcon: () => <span>t</span>,
     },
     {
         label: "Accent color211212",
@@ -128,11 +193,11 @@ export const settingsMarkup: SettingsMarkup = [
         hoverDescription: "Whether or not app will open last read book on startup.",
         tabHeading: "Main heading",
         tab: "App Settings",
-        section: "Startup 2",
+        ...sectionMarkup["Font"],
+
         Input: ColorInput,
         defaultValue: "#fff",
         canBeDisabled: false,
-        SectionIcon: () => <span>t</span>,
     },
     {
         label: "Accent color21122",
@@ -141,11 +206,11 @@ export const settingsMarkup: SettingsMarkup = [
         hoverDescription: "Whether or not app will open last read book on startup.",
         tabHeading: "Main heading",
         tab: "App Settings",
-        section: "Startup 2",
+        ...sectionMarkup["Font"],
+
         Input: ColorInput,
         defaultValue: "#fff",
         canBeDisabled: false,
-        SectionIcon: () => <span>t</span>,
     },
     {
         label: "Accent color21",
@@ -154,11 +219,11 @@ export const settingsMarkup: SettingsMarkup = [
         hoverDescription: "Whether or not app will open last read book on startup.",
         tabHeading: "Main heading",
         tab: "App Settings",
-        section: "Startup 2",
+        ...sectionMarkup["Font"],
+
         Input: ColorInput,
         defaultValue: "#fff",
         canBeDisabled: false,
-        SectionIcon: () => <span>t</span>,
     },
     {
         label: "Accent color1212",
@@ -167,11 +232,11 @@ export const settingsMarkup: SettingsMarkup = [
         hoverDescription: "Whether or not app will open last read book on startup.",
         tabHeading: "Main heading",
         tab: "App Settings",
-        section: "Startup 2",
+        ...sectionMarkup["Font"],
+
         Input: ColorInput,
         defaultValue: "#fff",
         canBeDisabled: false,
-        SectionIcon: () => <span>t</span>,
     },
     {
         label: "Accent color 22",
@@ -180,11 +245,11 @@ export const settingsMarkup: SettingsMarkup = [
         hoverDescription: "Whether or not app will open last read book on startup.",
         tabHeading: "Main heading",
         tab: "App Settings",
-        section: "Startup 2",
+        ...sectionMarkup["Font"],
+
         Input: ColorInput,
         defaultValue: "#fff",
         canBeDisabled: false,
-        SectionIcon: () => <span>t</span>,
     },
 
     {
@@ -199,11 +264,15 @@ export const settingsMarkup: SettingsMarkup = [
         tabHeading: "sd",
         tab: "asdf",
         section: "asdf",
+        sectionDescription: "What happens at launch?",
     },
+
     {
         tabHeading: "Options",
         tab: "Editor",
         section: "General",
+        sectionDescription: "What happens at launch?",
+
         SectionIcon: IconAdjustments,
         label: "ONE",
         placeholder: "COLOR",
@@ -217,6 +286,8 @@ export const settingsMarkup: SettingsMarkup = [
         tabHeading: "Options",
         tab: "Editor",
         section: "General",
+        sectionDescription: "What happens at launch?",
+
         SectionIcon: IconAdjustments,
         label: "TWO",
         placeholder: "Coflr",
@@ -230,6 +301,8 @@ export const settingsMarkup: SettingsMarkup = [
         tabHeading: "Options",
         tab: "Files & Links",
         section: "Unnamed",
+        sectionDescription: "What happens at launch?",
+
         SectionIcon: IconAdjustments,
         label: "THREE",
         placeholder: "colr",
@@ -244,6 +317,8 @@ export const settingsMarkup: SettingsMarkup = [
         tabHeading: "Core Plugins",
         tab: "Files & Links",
         section: "Unnamed",
+        sectionDescription: "What happens at launch?",
+
         SectionIcon: IconAdjustments,
         label: "FOUR",
         placeholder: "COLCOUR",

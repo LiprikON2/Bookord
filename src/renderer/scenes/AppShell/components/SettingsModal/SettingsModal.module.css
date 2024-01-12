@@ -1,3 +1,8 @@
+.sectionIcon {
+    width: rem(56);
+    height: rem(56);
+}
+
 .buttonIcon {
     width: rem(16);
     height: rem(16);

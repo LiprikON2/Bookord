@@ -1,4 +1,4 @@
-import React, { useState, ComponentProps } from "react";
+import React from "react";
 import {
     Container,
     Tabs,
@@ -35,6 +35,7 @@ export interface RootSettingMarkup extends SettingMarkup {
     tabHeading: string;
     tab: string;
     section: string;
+    sectionDescription: string;
     SectionIcon: Icon;
     subsettings?: SettingMarkup[];
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Group, Modal, Text, rem } from "@mantine/core";
+import { Button, Group, Modal, Title, rem } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSettings } from "@tabler/icons-react";
 import clsx from "clsx";
@@ -45,9 +45,9 @@ export const SettingsModal = ({
                             className={clsx(classes.modalIcon, classNames?.modalIcon)}
                             strokeWidth={2.5}
                         />
-                        <Text fs="lg" fw="bold">
+                        <Title order={1} size="h4" fw={600}>
                             Settings
-                        </Text>
+                        </Title>
                     </Group>
                 }
                 opened={opened}

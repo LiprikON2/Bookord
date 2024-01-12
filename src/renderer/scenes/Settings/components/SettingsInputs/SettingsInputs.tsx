@@ -2,7 +2,9 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 
 import { type SettingsMarkup } from "../../Settings";
-import { getInputStateProps } from "./utils";
+import { getInputStateProps, isDefault, resetToDefaults } from ".";
+import { ResetButton } from "./components";
+import { Flex } from "@mantine/core";
 
 export const SettingsInputs = observer(
     ({ isLoading, settings }: { isLoading: boolean; settings: SettingsMarkup }) => {
@@ -12,9 +14,12 @@ export const SettingsInputs = observer(
             const keyList = [setting.tabHeading, setting.tab, setting.section, setting.label];
 
             const inputMarkupProps = {
-                key: keyList.join(""),
+                key: keyList.join("/"),
                 label: setting.label,
-                description: setting.description,
+                ...(setting.description && {
+                    description: setting.description,
+                }),
+
                 placeholder: setting.placeholder,
                 maw: "18rem",
             };
@@ -23,8 +28,14 @@ export const SettingsInputs = observer(
                 Input,
                 ...setting,
             });
+            const isResetHidden = isDefault(setting);
 
-            return <NarrowedInput {...inputMarkupProps} {...inputStateProps} />;
+            return (
+                <Flex align="center" gap="sm">
+                    <ResetButton hidden={isResetHidden} onClick={() => resetToDefaults(setting)} />
+                    <NarrowedInput {...inputMarkupProps} {...inputStateProps} />
+                </Flex>
+            );
         });
     }
 );

@@ -1,0 +1,10 @@
+.actionIcon {
+    align-self: flex-end;
+
+    opacity: 0.3;
+
+    &:active,
+    &:hover {
+        opacity: 0.9;
+    }
+}

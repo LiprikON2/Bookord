@@ -1,6 +1,7 @@
 import { TextInput } from "@mantine/core";
 import { ComponentType } from "react";
 import {
+    ValueInputTypes,
     type CheckedInputTypes,
     type InputTypes,
     type RootSettingMarkup,
@@ -10,10 +11,14 @@ import { getSetting, setSetting } from "~/renderer/store";
 type ComponentProps<T> = T extends ComponentType<infer P> ? P : never;
 type MyComponentProps = ComponentProps<CheckedInputTypes>;
 
-export const getInputStateProps = ({ Input, ...setting }: RootSettingMarkup) => {
-    const keyList = [setting.tabHeading, setting.tab, setting.section, setting.label];
+const getKeyList = (setting: Omit<RootSettingMarkup, "Input">) => {
+    return [setting.tabHeading, setting.tab, setting.section, setting.label];
+};
 
-    let NarrowedInput: InputTypes | CheckedInputTypes | typeof TextInput;
+export const getInputStateProps = ({ Input, ...setting }: RootSettingMarkup) => {
+    const keyList = getKeyList(setting);
+
+    // let NarrowedInput: CheckedInputTypes | ValueInputTypes | typeof TextInput;
     let inputStateProps:
         | {
               disabled: boolean;
@@ -29,7 +34,7 @@ export const getInputStateProps = ({ Input, ...setting }: RootSettingMarkup) => 
 
     // TODO use type narrowing instead
     if ("defaultChecked" in setting) {
-        NarrowedInput = Input as CheckedInputTypes;
+        // NarrowedInput = Input as CheckedInputTypes;
 
         inputStateProps = {
             disabled: getSetting(keyList).disabled,
@@ -40,7 +45,7 @@ export const getInputStateProps = ({ Input, ...setting }: RootSettingMarkup) => 
         };
     } else if ("defaultValue" in setting) {
         if (Input.displayName === "@mantine/core/TextInput") {
-            NarrowedInput = Input as typeof TextInput;
+            // NarrowedInput = Input as typeof TextInput;
 
             inputStateProps = {
                 disabled: getSetting(keyList).disabled,
@@ -49,7 +54,7 @@ export const getInputStateProps = ({ Input, ...setting }: RootSettingMarkup) => 
                     setSetting(keyList, "value", event.currentTarget.value),
             };
         } else {
-            NarrowedInput = Input;
+            // NarrowedInput = Input as ValueInputTypes;
 
             inputStateProps = {
                 disabled: getSetting(keyList).disabled,
@@ -58,5 +63,25 @@ export const getInputStateProps = ({ Input, ...setting }: RootSettingMarkup) => 
             };
         }
     }
-    return [NarrowedInput, inputStateProps] as [typeof TextInput, typeof inputStateProps];
+    return [Input, inputStateProps] as [typeof TextInput, typeof inputStateProps];
+};
+
+export const isDefault = (setting: Omit<RootSettingMarkup, "Input">) => {
+    const keyList = getKeyList(setting);
+
+    if ("defaultChecked" in setting) {
+        return setting.defaultChecked === getSetting(keyList).checked;
+    } else if ("defaultValue" in setting) {
+        return setting.defaultValue === getSetting(keyList).value;
+    }
+};
+
+export const resetToDefaults = (setting: Omit<RootSettingMarkup, "Input">) => {
+    const keyList = getKeyList(setting);
+
+    if ("defaultChecked" in setting) {
+        setSetting(keyList, "checked", setting.defaultChecked);
+    } else if ("defaultValue" in setting) {
+        setSetting(keyList, "value", setting.defaultValue);
+    }
 };
