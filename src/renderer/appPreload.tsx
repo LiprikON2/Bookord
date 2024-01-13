@@ -1,5 +1,28 @@
+import { contextBridge } from "electron";
+
 import "~/main/mainPreload";
-import "~/renderer/scenes/AppShell/scenes/Titlebar/components/WindowControls/ipc/windowControlsPreload";
+import windowControlsContext, {
+    type WindowControlsContextApi,
+} from "./scenes/AppShell/scenes/Titlebar/components/WindowControls/ipc/windowControlsContext";
+import bookGridContext, {
+    type BookGridContextApi,
+} from "./scenes/Library/scenes/BookGrid/ipc/bookGridContext";
+
+declare global {
+    interface Window {
+        electron_window: {
+            windowControls: WindowControlsContextApi;
+            bookGrid: BookGridContextApi;
+        };
+    }
+}
+
+contextBridge.exposeInMainWorld("electron_window", {
+    bookGrid: bookGridContext,
+
+    windowControls: windowControlsContext,
+});
+
 console.log("[Preload]: Execution started");
 
 // Get versions

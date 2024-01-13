@@ -38,7 +38,7 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
                     </Sidebar.Bottom>
                 </Sidebar>
             </MantineAppShell.Navbar>
-            <MantineAppShell.Main className="test">
+            <MantineAppShell.Main>
                 {opened && <Overlay onClick={close} backgroundOpacity={0.25} />}
                 {children}
             </MantineAppShell.Main>

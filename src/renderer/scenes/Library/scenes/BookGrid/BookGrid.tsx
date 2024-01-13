@@ -1,11 +1,22 @@
 import React from "react";
 import { Box, SimpleGrid } from "@mantine/core";
+import type { FileWithPath } from "@mantine/dropzone";
 
 import { BookDropzone } from "./scenes";
 import { BookCard } from "./components";
+import context from "./ipc";
 
 export const BookGrid = () => {
-    const handleDrop = (files: object[]) => {
+    const handleDrop = (fileBlobs: FileWithPath[]) => {
+        const files = fileBlobs.map(({ path, size, name, lastModified }) => ({
+            path,
+            size,
+            name,
+            lastModified,
+        }));
+        context.uploadFiles(files);
+
+        console.log("files", files);
         // const mappedFiles = files.map((file) => {
         //     return {
         //         name: file.name,
@@ -21,14 +32,13 @@ export const BookGrid = () => {
     };
 
     const books = [1, 2, 3, 4, 5, 6, 7];
-    const hasBooks = true;
+    const hasBooks = !!books.length;
 
     return (
         <Box pt="md">
             <BookDropzone fullscreen={hasBooks} onDrop={handleDrop}></BookDropzone>
 
             <SimpleGrid
-                // spacing="xl"
                 spacing={{
                     base: "calc(var(--mantine-spacing-xl) * 1.5)",
                     xs: "calc(var(--mantine-spacing-xl) * 1.5)",
@@ -38,8 +48,6 @@ export const BookGrid = () => {
                     xl: "calc(var(--mantine-spacing-xl) * 1.5)",
                 }}
                 verticalSpacing="xl"
-                // spacing="calc(var(--mantine-spacing-xl) * 1.5)"
-                // verticalSpacing="calc(var(--mantine-spacing-xl) * 2)"
                 cols={{ base: 2, xs: 2, sm: 3, md: 3, lg: 4, xl: 4 }}
                 style={{ justifyItems: "center" }}
             >

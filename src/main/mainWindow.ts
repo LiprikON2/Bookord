@@ -4,7 +4,7 @@ import path from "path";
 
 import { isDev } from "~/common/helpers";
 import { registerMainIpc } from "~/main/mainIpc";
-import { registerWindowControlsIpc } from "~/renderer/appIpc";
+import { registerBookGridIpc, registerWindowControlsIpc } from "~/renderer/appIpc";
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -119,6 +119,7 @@ const registerAllIpc = () => {
      * Here you can assign IPC related codes for the application window
      * to Communicate asynchronously from the main process to renderer processes.
      */
-    registerWindowControlsIpc(mainWindow, validateSender);
     registerMainIpc(mainWindow, validateSender);
+    registerWindowControlsIpc(mainWindow, validateSender);
+    registerBookGridIpc(mainWindow, validateSender);
 };

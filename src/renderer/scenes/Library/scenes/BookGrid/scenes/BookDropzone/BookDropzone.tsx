@@ -19,7 +19,8 @@ export const BookDropzone = ({
     ...rest
 }: BookDropzoneProps) => {
     const dropzoneProps = {
-        onDrop: (files: FileWithPath[]) => console.log("accepted files", files),
+        // onDrop: (files: FileWithPath[]) => console.log("accepted files", files),
+        onDrop,
         onReject: (files: FileRejection[]) => console.log("rejected files", files),
         accept: ["application/epub+zip"],
     };
