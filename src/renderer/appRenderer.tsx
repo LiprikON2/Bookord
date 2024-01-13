@@ -50,7 +50,8 @@ const routeTree = rootRoute.addChildren([
 
 // const hashHistory = createHashHistory(); // Bugged
 const memoryHistory = createMemoryHistory({
-    initialEntries: ["/test"],
+    // initialEntries: ["/test"],
+    initialEntries: ["/"],
 });
 
 // const router = new Router({ routeTree, history: hashHistory });

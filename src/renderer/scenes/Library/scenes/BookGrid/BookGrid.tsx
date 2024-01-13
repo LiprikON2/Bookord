@@ -1,7 +1,8 @@
 import React from "react";
-import { Dropzone } from "@mantine/dropzone";
+import { Box, SimpleGrid } from "@mantine/core";
+
 import { BookDropzone } from "./scenes";
-import { Box } from "@mantine/core";
+import { BookCard } from "./components";
 
 export const BookGrid = () => {
     const handleDrop = (files: object[]) => {
@@ -19,29 +20,33 @@ export const BookGrid = () => {
         // });
     };
 
+    const books = [1, 2, 3, 4, 5, 6, 7];
     const hasBooks = true;
 
     return (
         <Box pt="md">
             <BookDropzone fullscreen={hasBooks} onDrop={handleDrop}></BookDropzone>
-            {/* <div className="library-container" id="uploader">
-                <Stack spacing="xs" align="stretch" className="card-group-list">
-                    {hasBooks ? (
-                        <LibraryListGroups
-                            files={files}
-                            grouping={grouping}
-                            groupingOrder={groupingOrder}
-                            skeletontFileCount={skeletontFileCount}
-                        />
-                    ) : (
-                        <Dropzone
-                            className="limit-width"
-                            onClick={handleUpload}
-                            onDrop={handleDrop}
-                        ></Dropzone>
-                    )}
-                </Stack>
-            </div> */}
+
+            <SimpleGrid
+                // spacing="xl"
+                spacing={{
+                    base: "calc(var(--mantine-spacing-xl) * 1.5)",
+                    xs: "calc(var(--mantine-spacing-xl) * 1.5)",
+                    sm: "xl",
+                    md: "calc(var(--mantine-spacing-xl) * 1.5)",
+                    lg: "calc(var(--mantine-spacing-xl) * 1.5)",
+                    xl: "calc(var(--mantine-spacing-xl) * 1.5)",
+                }}
+                verticalSpacing="xl"
+                // spacing="calc(var(--mantine-spacing-xl) * 1.5)"
+                // verticalSpacing="calc(var(--mantine-spacing-xl) * 2)"
+                cols={{ base: 2, xs: 2, sm: 3, md: 3, lg: 4, xl: 4 }}
+                style={{ justifyItems: "center" }}
+            >
+                {books.map((book) => (
+                    <BookCard key={book} />
+                ))}
+            </SimpleGrid>
         </Box>
     );
 };
