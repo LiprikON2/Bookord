@@ -1,8 +1,9 @@
 import React from "react";
-import { Stack, Title, Text, Flex } from "@mantine/core";
+import { Stack } from "@mantine/core";
 
 import { type SettingsMarkup } from "../Settings";
 import { useMapSettings } from "../hooks";
+import { DetailedTitle } from "~/renderer/components";
 
 export const SettingsSections = ({
     settingsMarkup,
@@ -21,21 +22,10 @@ export const SettingsSections = ({
             const { SectionIcon, sectionDescription, tabHeading, tab } = settings[0];
             return (
                 <React.Fragment key={tabHeading + tab + section}>
-                    <Flex justify="flex-start" align="center" gap="sm">
-                        <SectionIcon />
-                        <Stack justify="center" gap={0}>
-                            <Title order={2} size="h3" fw={700}>
-                                {section}
-                            </Title>
-                            <Text c="dimmed">{sectionDescription}</Text>
-                        </Stack>
-                    </Flex>
-                    <Stack
-                        pt="lg"
-                        pb="xl"
-                        // px="xs"
-                        gap="md"
-                    >
+                    <DetailedTitle size="lg" description={sectionDescription} Icon={SectionIcon}>
+                        {section}
+                    </DetailedTitle>
+                    <Stack pt="lg" pb="xl" gap="md">
                         {children(settings)}
                     </Stack>
                 </React.Fragment>

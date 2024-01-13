@@ -11,7 +11,8 @@ import type { Icon } from "@tabler/icons-react";
 
 import { useMapSettings, useSettingsStore } from "./hooks";
 import classes from "./Settings.module.css";
-import { SettingsInputs, SettingsPanels, SettingsSections, SettingsTabs } from "./components";
+import { SettingsPanels, SettingsSections, SettingsTabs } from "./components";
+import { SettingsInputs } from "./scenes";
 
 export type CheckedInputTypes = typeof Switch;
 export type ValueInputTypes = typeof TextInput | typeof ColorInput | typeof Autocomplete;

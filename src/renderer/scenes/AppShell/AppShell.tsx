@@ -4,7 +4,7 @@ import { AppShell as MantineAppShell, Overlay } from "@mantine/core";
 import { IconMessageCircle, IconPhoto } from "@tabler/icons-react";
 
 import { ThemeToggle } from "~/renderer/components";
-import { SettingsModal, Sidebar, Titlebar } from "./components";
+import { SettingsModal, Sidebar, Titlebar } from "./scenes";
 import { libraryRoute, testRoute } from "~/renderer/appRenderer";
 import classes from "./AppShell.module.css";
 
