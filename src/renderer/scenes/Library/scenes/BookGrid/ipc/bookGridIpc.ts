@@ -4,8 +4,6 @@ import path from "path";
 const parsingProccess = path.resolve(__dirname, "../forks/parsingProcess.mjs");
 
 console.log("parsingProccess", parsingProccess);
-console.log("__dirname", __dirname);
-console.log("join", path.join(__dirname, "../forks/parsingProcess.mjs"));
 
 const getResponse = (utilityProcess: Electron.UtilityProcess, toKillAfter = true) => {
     let promiseResolve: (value: unknown) => void;
