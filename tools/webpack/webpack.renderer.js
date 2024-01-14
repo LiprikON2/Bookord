@@ -7,7 +7,7 @@ module.exports = {
     },
     plugins: plugins,
     resolve: {
-        extensions: [".js", ".ts", ".jsx", ".tsx", ".css"],
+        extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".css"],
         alias: {
             // Custom Aliases
             ...require("./webpack.aliases"),

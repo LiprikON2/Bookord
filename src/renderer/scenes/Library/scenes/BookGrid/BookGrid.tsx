@@ -7,16 +7,16 @@ import { BookCard } from "./components";
 import context from "./ipc";
 
 export const BookGrid = () => {
-    const handleDrop = (fileBlobs: FileWithPath[]) => {
+    const handleDrop = async (fileBlobs: FileWithPath[]) => {
         const files = fileBlobs.map(({ path, size, name, lastModified }) => ({
             path,
             size,
             name,
             lastModified,
         }));
-        context.uploadFiles(files);
-
         console.log("files", files);
+        const parsedFiles = await context.uploadFiles(files);
+        console.log("parsedFiles", parsedFiles);
         // const mappedFiles = files.map((file) => {
         //     return {
         //         name: file.name,
