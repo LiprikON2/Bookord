@@ -21,6 +21,7 @@
     font-size: var(--mantine-h2-font-size);
     /* font-size: calc(var(--mantine-font-size-xl) * 1.25); */
     margin-top: var(--mantine-spacing-xs);
+    -webkit-text-stroke: 0.5px #000000;
 }
 
 .category {
@@ -28,4 +29,5 @@
     opacity: 0.7;
     font-weight: 700;
     text-transform: uppercase;
+    -webkit-text-stroke: 0.5px #000000b6;
 }

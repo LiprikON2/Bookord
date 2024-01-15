@@ -1,7 +1,7 @@
 import { BrowserWindow, MessageChannelMain, dialog, ipcMain, utilityProcess } from "electron";
 import path from "path";
 
-import io from "~/main/utils";
+import io, { getResponse } from "~/main/utils";
 import { appDir } from "~/main/mainWindow";
 const parsingProccess = path.resolve(__dirname, "../forks/parsingProcess.mjs");
 
@@ -53,5 +53,18 @@ export const registerBookGridIpc = (
 
             return io.addFiles(appDir, files);
         }
+    });
+
+    ipcMain.handle("get-metadata", (e, fileNames: string[]) => {
+        const { port1, port2 } = new MessageChannelMain();
+        const child = utilityProcess.fork(parsingProccess, [], {
+            serviceName: "Book parsing utility process",
+        });
+        const filePaths = io.namesToPaths(fileNames);
+
+        child.postMessage({ filePaths }, [port1]);
+        console.info("[main] request sent");
+
+        return getResponse(child);
     });
 };

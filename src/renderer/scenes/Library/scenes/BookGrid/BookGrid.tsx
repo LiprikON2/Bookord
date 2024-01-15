@@ -5,8 +5,11 @@ import type { FileWithPath } from "@mantine/dropzone";
 import { BookDropzone } from "./scenes";
 import { BookCard } from "./components";
 import context from "./ipc";
+import { useWatchBooks } from "./hooks";
 
 export const BookGrid = () => {
+    const [bookEntries, hasBooks] = useWatchBooks();
+
     const handleDrop = async (fileBlobs: FileWithPath[]) => {
         const files = fileBlobs.map(({ path, size, name, lastModified }) => ({
             path,
@@ -15,25 +18,11 @@ export const BookGrid = () => {
             lastModified,
         }));
         const distinctFilesCount = await context.uploadFiles(files);
-        // promise.then((fileCount) => {
-        //     setSkeletontFileCount(fileCount);
-        //     updateFiles();
-        // });
     };
 
     const handleDialogOpen = async () => {
         const distinctFilesCount = await context.openFileDialog();
     };
-
-    useEffect(() => {
-        return window.electron_window.events("watcher-add", () => {
-            //
-        });
-    }, []);
-
-    // const books = [1, 2, 3, 4, 5, 6, 7];
-    const books: any[] = [];
-    const hasBooks = !!books.length;
 
     return (
         <Box pt="md">
@@ -56,8 +45,13 @@ export const BookGrid = () => {
                 cols={{ base: 2, xs: 2, sm: 3, md: 3, lg: 4, xl: 4 }}
                 style={{ justifyItems: "center" }}
             >
-                {books.map((book) => (
-                    <BookCard key={book} />
+                {bookEntries.map(([filename, { metadata, state }]) => (
+                    <BookCard
+                        key={filename}
+                        filename={filename}
+                        metadata={metadata}
+                        skeleton={!state.isLoaded}
+                    />
                 ))}
             </SimpleGrid>
         </Box>

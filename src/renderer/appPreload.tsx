@@ -24,11 +24,17 @@ const eventsContext = (
     channel: string,
     callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
 ) => {
-    ipcRenderer.on(channel, callback);
-    console.info("[Preload]: callback added:", channel);
+    // Deliberately strip event as it includes `sender`
+
+    //@ts-ignore
+    const subscription = (event: Electron.IpcRendererEvent, ...args: any[]) => callback(...args);
+
+    ipcRenderer.on(channel, subscription);
+    console.info("[Preload]: subscription added:", channel);
+
     return () => {
-        console.info("[Preload]: callback removed:", channel);
-        ipcRenderer.removeListener(channel, callback);
+        console.info("[Preload]: subscription removed:", channel);
+        ipcRenderer.removeListener(channel, subscription);
     };
 };
 

@@ -94,7 +94,7 @@ export const createMainWindow = (): BrowserWindow => {
     // Register Inter Process Communication for main process
     registerAllIpc();
 
-    const watcher = io.initWatcher(mainWindow);
+    const watcher = io.initWatcher(mainWindow, validateSender);
 
     // Close all windows when main window is closed
     mainWindow.on("close", async () => {
