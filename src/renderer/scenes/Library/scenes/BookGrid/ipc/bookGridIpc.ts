@@ -1,22 +1,8 @@
 import { BrowserWindow, MessageChannelMain, ipcMain, utilityProcess } from "electron";
 import path from "path";
 
+import { getResponse } from "~/main/utils";
 const parsingProccess = path.resolve(__dirname, "../forks/parsingProcess.mjs");
-
-console.log("parsingProccess", parsingProccess);
-
-const getResponse = (utilityProcess: Electron.UtilityProcess, toKillAfter = true) => {
-    let promiseResolve: (value: unknown) => void;
-    const promise = new Promise((resolve, reject) => (promiseResolve = resolve));
-
-    utilityProcess.once("message", (res) => {
-        console.info("[main] response received");
-        promiseResolve(res);
-        if (toKillAfter) utilityProcess.kill();
-    });
-
-    return promise;
-};
 
 export const registerBookGridIpc = (
     mainWindow: BrowserWindow,
