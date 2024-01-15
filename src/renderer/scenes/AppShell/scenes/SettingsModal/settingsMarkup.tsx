@@ -1,8 +1,9 @@
 import React from "react";
-import { ColorInput, Switch, TextInput } from "@mantine/core";
+import { ColorInput, PasswordInput, Switch, TextInput } from "@mantine/core";
 import { type SettingsMarkup } from "~/renderer/scenes/Settings";
 import {
     IconAdjustments,
+    IconRobot,
     IconRocket,
     IconTypography,
     type TablerIconsProps,
@@ -24,6 +25,11 @@ const sectionMarkup = {
         SectionIcon: () => <IconTypography {...sectionIconProps} />,
         sectionDescription: "Style the look and size of the text.",
     },
+    AI: {
+        section: "AI",
+        SectionIcon: () => <IconRobot {...sectionIconProps} />,
+        sectionDescription: "API keys for AI-related external services.",
+    },
 };
 
 export const settingsMarkup: SettingsMarkup = [
@@ -32,7 +38,7 @@ export const settingsMarkup: SettingsMarkup = [
         description: "",
         placeholder: "Huh",
         hoverDescription: "Whether or not app will open last read book on startup.",
-        tabHeading: "Main heading",
+        tabHeading: "General",
         tab: "App Settings",
         ...sectionMarkup["Startup"],
 
@@ -41,16 +47,16 @@ export const settingsMarkup: SettingsMarkup = [
         canBeDisabled: false,
     },
     {
-        label: "Reopen last book on startup",
-        description: "",
-        placeholder: "Huh",
+        label: "YandexGPT API",
+        description: "IAM token for Yandex account",
+        placeholder: "t1.9euelZrInYuez5eckonHkJuZz5yZke...",
         hoverDescription: "Whether or not app will open last read book on startup.",
-        tabHeading: "Main heading",
-        tab: "App Settings",
-        ...sectionMarkup["Font"],
+        tabHeading: "General",
+        tab: "API",
+        ...sectionMarkup["AI"],
 
-        Input: Switch,
-        defaultChecked: false,
+        Input: PasswordInput,
+        defaultValue: "",
         canBeDisabled: false,
     },
 

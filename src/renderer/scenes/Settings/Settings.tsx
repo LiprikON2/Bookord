@@ -6,6 +6,7 @@ import {
     type TextInput,
     type Autocomplete,
     type ColorInput,
+    type PasswordInput,
 } from "@mantine/core";
 import type { Icon } from "@tabler/icons-react";
 
@@ -15,7 +16,11 @@ import { SettingsPanels, SettingsSections, SettingsTabs } from "./components";
 import { SettingsInputs } from "./scenes";
 
 export type CheckedInputTypes = typeof Switch;
-export type ValueInputTypes = typeof TextInput | typeof ColorInput | typeof Autocomplete;
+export type ValueInputTypes =
+    | typeof TextInput
+    | typeof PasswordInput
+    | typeof ColorInput
+    | typeof Autocomplete;
 export type InputTypes = CheckedInputTypes | ValueInputTypes;
 
 interface SettingMarkup {

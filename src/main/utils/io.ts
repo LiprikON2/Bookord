@@ -86,4 +86,13 @@ export const namesToPaths = (fileNames: string[]) => {
     return fileNames.map((fileName) => path.join(appDir, fileName));
 };
 
-export default { initWatcher, addFiles, namesToPaths };
+export const deleteFile = (fileName: string) => {
+    const filePath = path.resolve(appDir, fileName);
+
+    // Remove file from the appDir
+    if (fs.existsSync(filePath)) {
+        fs.removeSync(filePath);
+    }
+};
+
+export default { initWatcher, addFiles, namesToPaths, deleteFile };

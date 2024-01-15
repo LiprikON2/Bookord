@@ -46,7 +46,9 @@ export const SettingsInputs = observer(
                 }),
 
                 placeholder: setting.placeholder,
-                maw: "18rem",
+                // maw: "18rem",
+                maw: "20rem",
+                miw: "14.5rem",
             };
 
             const [NarrowedInput, inputStateProps] = getInputStateProps({

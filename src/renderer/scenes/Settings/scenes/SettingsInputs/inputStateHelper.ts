@@ -35,7 +35,10 @@ export const getInputStateProps = ({ Input, ...setting }: RootSettingMarkup) => 
                 setSetting(keyList, "checked", event.currentTarget.checked),
         };
     } else if ("defaultValue" in setting) {
-        if (Input.displayName === "@mantine/core/TextInput") {
+        if (
+            Input.displayName === "@mantine/core/TextInput" ||
+            Input.displayName === "@mantine/core/PasswordInput"
+        ) {
             // NarrowedInput = Input as typeof TextInput;
 
             inputStateProps = {

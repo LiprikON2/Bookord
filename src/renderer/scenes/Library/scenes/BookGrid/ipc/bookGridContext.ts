@@ -15,6 +15,10 @@ const bookGridContext = {
     watcherSendUpdate(): Promise<void> {
         return ipcRenderer.invoke("watcher-send-update");
     },
+
+    deleteFile(fileName: string): Promise<void> {
+        return ipcRenderer.invoke("delete-file", fileName);
+    },
 };
 
 export type BookGridContextApi = typeof bookGridContext;

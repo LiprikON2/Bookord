@@ -56,6 +56,8 @@ export const registerBookGridIpc = (
     });
 
     ipcMain.handle("get-metadata", (e, fileNames: string[]) => {
+        if (!validateSender(e)) return null;
+
         const { port1, port2 } = new MessageChannelMain();
         const child = utilityProcess.fork(parsingProccess, [], {
             serviceName: "Book parsing utility process",
@@ -66,5 +68,11 @@ export const registerBookGridIpc = (
         console.info("[main] request sent");
 
         return getResponse(child);
+    });
+
+    ipcMain.handle("delete-file", (e, fileName: string) => {
+        if (!validateSender(e)) return null;
+
+        return io.deleteFile(fileName);
     });
 };

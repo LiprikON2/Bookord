@@ -15,13 +15,20 @@
 
 .title {
     font-family: var(--mantine-font-family);
-    font-weight: 800;
-    color: var(--mantine-color-white);
+    font-weight: 500;
     line-height: 1.2;
-    font-size: var(--mantine-h2-font-size);
-    /* font-size: calc(var(--mantine-font-size-xl) * 1.25); */
-    margin-top: var(--mantine-spacing-xs);
-    -webkit-text-stroke: 0.5px #000000;
+    font-size: var(--mantine-font-size-sm);
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: clip;
+    word-break: break-word;
+
+    @mixin dark {
+        color: var(--mantine-color-white);
+    }
 }
 
 .category {
