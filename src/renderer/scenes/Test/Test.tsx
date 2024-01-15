@@ -1,14 +1,8 @@
 import React, { useEffect } from "react";
 import { Button, Center, Container, Skeleton, Space } from "@mantine/core";
 
-import context from "~/main/mainContextApi";
 import { useColorScheme } from "~/renderer/hooks";
 import { About } from "./About";
-
-const getTest = async () => {
-    const res = await context.test();
-    return res;
-};
 
 export const Test = () => {
     const { dark, setColorScheme } = useColorScheme();

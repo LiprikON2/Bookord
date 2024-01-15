@@ -1,10 +1,6 @@
-import React, { useState } from "react";
-import { Dropzone, DropzoneProps, type FileRejection, type FileWithPath } from "@mantine/dropzone";
+import React from "react";
+import { Dropzone, DropzoneProps, type FileRejection } from "@mantine/dropzone";
 import { BookDropzoneStates } from "./components";
-
-// export declare const EBOOK_MIME_TYPE: ("application/epub+zip" | "application/fb2" | "application/xhtml+xml" | "application/xml" | "application/x-mobipocket-ebook" | "application/vnd.amazon.ebook" | "application/pdf")[]
-// export declare const EBOOK_MIME_TYPE: ("application/epub+zip" | "application/fb2" | "application/x-mobipocket-ebook" | "application/vnd.amazon.ebook")[]
-// export declare const EBOOK_MIME_TYPE: ("application/epub+zip" | "application/fb2")[];
 
 interface BookDropzoneProps extends Partial<DropzoneProps> {
     fullscreen?: boolean;
@@ -12,6 +8,8 @@ interface BookDropzoneProps extends Partial<DropzoneProps> {
 
 export const BookDropzone = ({
     fullscreen = false,
+    activateOnClick,
+    onFileDialogOpen,
     onDrop,
     onReject,
     children,
@@ -26,7 +24,16 @@ export const BookDropzone = ({
     };
 
     if (!fullscreen) {
-        return <Dropzone children={<BookDropzoneStates />} {...dropzoneProps} {...rest} />;
+        return (
+            <Dropzone
+                data-activate-on-click
+                activateOnClick={false}
+                onClick={onFileDialogOpen}
+                children={<BookDropzoneStates />}
+                {...dropzoneProps}
+                {...rest}
+            />
+        );
     } else {
         return (
             <Dropzone.FullScreen

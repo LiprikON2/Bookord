@@ -7,7 +7,7 @@ declare module "*.avif";
 
 declare type FileObj = {
     path: string;
-    size: number;
     name: string;
-    lastModified: number;
+    size?: number;
+    lastModified?: number;
 };

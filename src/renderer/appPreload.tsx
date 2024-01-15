@@ -1,4 +1,4 @@
-import { contextBridge } from "electron";
+import { contextBridge, ipcRenderer } from "electron";
 
 import "~/main/mainPreload";
 import windowControlsContext, {
@@ -8,22 +8,35 @@ import bookGridContext, {
     type BookGridContextApi,
 } from "./scenes/Library/scenes/BookGrid/ipc/bookGridContext";
 
+console.log("[Preload]: Execution started");
+
 declare global {
     interface Window {
         electron_window: {
             windowControls: WindowControlsContextApi;
             bookGrid: BookGridContextApi;
+            events: typeof eventsContext;
         };
     }
 }
 
+const eventsContext = (
+    channel: string,
+    callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
+) => {
+    ipcRenderer.on(channel, callback);
+    console.info("[Preload]: callback added:", channel);
+    return () => {
+        console.info("[Preload]: callback removed:", channel);
+        ipcRenderer.removeListener(channel, callback);
+    };
+};
+
 contextBridge.exposeInMainWorld("electron_window", {
     bookGrid: bookGridContext,
-
     windowControls: windowControlsContext,
+    events: eventsContext,
 });
-
-console.log("[Preload]: Execution started");
 
 // Get versions
 window.addEventListener("DOMContentLoaded", () => {

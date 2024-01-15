@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, SimpleGrid } from "@mantine/core";
 import type { FileWithPath } from "@mantine/dropzone";
 
@@ -14,29 +14,34 @@ export const BookGrid = () => {
             name,
             lastModified,
         }));
-        console.log("files", files);
-        const parsedFiles = await context.uploadFiles(files);
-        console.log("parsedFiles", parsedFiles);
-        // const mappedFiles = files.map((file) => {
-        //     return {
-        //         name: file.name,
-        //         path: file.path,
-        //     };
-        // });
-        // // send file(s) add event to the `main` process
-        // const promise = window.api.invoke("app:on-file-add", mappedFiles);
+        const distinctFilesCount = await context.uploadFiles(files);
         // promise.then((fileCount) => {
         //     setSkeletontFileCount(fileCount);
         //     updateFiles();
         // });
     };
 
-    const books = [1, 2, 3, 4, 5, 6, 7];
+    const handleDialogOpen = async () => {
+        const distinctFilesCount = await context.openFileDialog();
+    };
+
+    useEffect(() => {
+        return window.electron_window.events("watcher-add", () => {
+            //
+        });
+    }, []);
+
+    // const books = [1, 2, 3, 4, 5, 6, 7];
+    const books: any[] = [];
     const hasBooks = !!books.length;
 
     return (
         <Box pt="md">
-            <BookDropzone fullscreen={hasBooks} onDrop={handleDrop}></BookDropzone>
+            <BookDropzone
+                fullscreen={hasBooks}
+                onDrop={handleDrop}
+                onFileDialogOpen={handleDialogOpen}
+            ></BookDropzone>
 
             <SimpleGrid
                 spacing={{

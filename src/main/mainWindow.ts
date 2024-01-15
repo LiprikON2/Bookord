@@ -5,6 +5,11 @@ import path from "path";
 import { isDev } from "~/common/helpers";
 import { registerMainIpc } from "~/main/mainIpc";
 import { registerBookGridIpc, registerWindowControlsIpc } from "~/renderer/appIpc";
+import context from "./mainContextApi";
+import io from "./utils";
+
+export const appDir = path.resolve(app.getPath("userData"), "Books");
+console.log("[watcher]: appDir", appDir);
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -89,10 +94,16 @@ export const createMainWindow = (): BrowserWindow => {
     // Register Inter Process Communication for main process
     registerAllIpc();
 
+    const watcher = io.initWatcher(mainWindow);
+
     // Close all windows when main window is closed
-    mainWindow.on("close", () => {
-        mainWindow = null;
-        app.quit();
+    mainWindow.on("close", async () => {
+        (await watcher).close().then(() => {
+            console.info("[watcher]: closed");
+
+            mainWindow = null;
+            app.quit();
+        });
     });
 
     return mainWindow;
