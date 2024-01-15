@@ -19,6 +19,10 @@ const bookGridContext = {
     deleteFile(fileName: string): Promise<void> {
         return ipcRenderer.invoke("delete-file", fileName);
     },
+
+    apiYandexgpt(prompt: string): Promise<any> {
+        return ipcRenderer.invoke("api-yandexgpt", prompt);
+    },
 };
 
 export type BookGridContextApi = typeof bookGridContext;
