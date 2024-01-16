@@ -20,8 +20,8 @@ const bookGridContext = {
         return ipcRenderer.invoke("delete-file", fileName);
     },
 
-    apiYandexgpt(prompt: string): Promise<any> {
-        return ipcRenderer.invoke("api-yandexgpt", prompt);
+    apiYandexgpt(prompt: string, yandexIamToken: string, yandexFolderId: string): Promise<string> {
+        return ipcRenderer.invoke("api-yandexgpt", prompt, yandexIamToken, yandexFolderId);
     },
 };
 

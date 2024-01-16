@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import type { Icon } from "@tabler/icons-react";
 
-import { useMapSettings, useSettingsStore } from "./hooks";
+import { useMapSettings } from "./hooks";
 import classes from "./Settings.module.css";
 import { SettingsPanels, SettingsSections, SettingsTabs } from "./components";
 import { SettingsInputs } from "./scenes";
@@ -68,8 +68,13 @@ export interface SettingsState {
     };
 }
 
-export const Settings = ({ settingsMarkup }: { settingsMarkup: SettingsMarkup }) => {
-    const { isLoading } = useSettingsStore(settingsMarkup);
+export const Settings = ({
+    isLoading,
+    settingsMarkup,
+}: {
+    isLoading: boolean;
+    settingsMarkup: SettingsMarkup;
+}) => {
     const { tabHeadings, tabs } = useMapSettings(settingsMarkup);
 
     return (

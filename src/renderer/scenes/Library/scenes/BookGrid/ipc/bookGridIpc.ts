@@ -77,32 +77,36 @@ export const registerBookGridIpc = (
         return io.deleteFile(fileName);
     });
 
-    ipcMain.handle("api-yandexgpt", (e, prompt: string) => {
-        return axios
-            .post(
-                "https://llm.api.cloud.yandex.net/foundationModels/v1/completion",
-                {
-                    modelUri: "gpt://b1ggvd02ucrri8md8ddo/yandexgpt-lite",
-                    completionOptions: {
-                        stream: false,
-                        temperature: 0.6,
-                        maxTokens: "2000",
-                    },
-                    messages: [
-                        {
-                            role: "system",
-                            text: prompt,
+    ipcMain.handle(
+        "api-yandexgpt",
+        (e, prompt: string, yandexIamToken: string, yandexFolderId: string) => {
+            if (!validateSender(e)) return null;
+
+            return axios
+                .post(
+                    "https://llm.api.cloud.yandex.net/foundationModels/v1/completion",
+                    {
+                        modelUri: `gpt://${yandexFolderId}/yandexgpt-lite`,
+                        completionOptions: {
+                            stream: false,
+                            temperature: 0.6,
+                            maxTokens: "2000",
                         },
-                    ],
-                },
-                {
-                    headers: {
-                        Authorization:
-                            "Bearer t1.9euelZrInYuez5eckonHkJuZz5yZke3rnpWajJCemM-VyMfPjpSSnYqLysnl9PcBYmlS-e9bQzm_3fT3QRBnUvnvW0M5v83n9euelZrMzIvOlpOMncfOysmKj5KWzu_8xeuelZrMzIvOlpOMncfOysmKj5KWzg.NsCkGiYF1_0bvk24jrpyhoDx93i5pFlnMaN7EfPCH5aRIqxE0tTr4O34ngJibw1kzCGyKgYvnPR8EjhNitQ8Dg",
-                        "x-folder-id": "b1ggvd02ucrri8md8ddo",
+                        messages: [
+                            {
+                                role: "system",
+                                text: prompt,
+                            },
+                        ],
                     },
-                }
-            )
-            .then((res) => res.data.result.alternatives[0].message.text);
-    });
+                    {
+                        headers: {
+                            Authorization: `Bearer ${yandexIamToken}`,
+                            "x-folder-id": "yandexFolderId",
+                        },
+                    }
+                )
+                .then((res) => res.data.result.alternatives[0].message.text);
+        }
+    );
 };

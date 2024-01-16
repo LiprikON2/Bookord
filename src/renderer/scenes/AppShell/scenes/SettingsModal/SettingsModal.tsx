@@ -7,6 +7,8 @@ import clsx from "clsx";
 import { Settings } from "~/renderer/scenes";
 import classes from "./SettingsModal.module.css";
 import { settingsMarkup } from "./settingsMarkup";
+// TODO move it
+import { useSettingsStore } from "~/renderer/scenes/Settings/hooks";
 
 export const SettingsModal = ({
     classNames,
@@ -14,6 +16,7 @@ export const SettingsModal = ({
     classNames?: { button?: string; buttonIcon?: string; modalIcon?: string };
 }) => {
     const [opened, { open, close }] = useDisclosure(false);
+    const { isLoading } = useSettingsStore(settingsMarkup);
 
     return (
         <>
@@ -67,7 +70,7 @@ export const SettingsModal = ({
                     },
                 }}
             >
-                <Settings settingsMarkup={settingsMarkup} />
+                <Settings settingsMarkup={settingsMarkup} isLoading={isLoading} />
             </Modal>
         </>
     );

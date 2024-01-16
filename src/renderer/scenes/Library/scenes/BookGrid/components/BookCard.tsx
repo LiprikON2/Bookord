@@ -14,39 +14,62 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { IconMenu2, IconRobot, IconTrash } from "@tabler/icons-react";
 
-import sampleCover from "~/assets/images/sampleBookCover.avif";
+import sampleCover from "~/assets/images/sampleBookCover.webp";
 import classes from "./BookCard.module.css";
 import type { Metadata } from "../hooks";
 import context from "../ipc";
 import { LanguagePicker } from "~/components/LanguagePicker";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { getSetting } from "~/renderer/store";
 
-const provideFallbackCover = (cover: string) => {
+const provideFallbackCover = (cover: string): string => {
     if (!cover || cover === "unkown") return sampleCover;
     return cover;
 };
 
-const provideFallbackTitle = (title: any, filename: string) => {
+const provideFallbackTitle = (title: any, filename: string): string => {
     if (typeof title === "object" && "_" in title) return title?._ ?? filename;
     if (typeof title === "string" && title) return title;
     return filename;
 };
 
-const provideFallbackAuthors = (authors: any) => {
+const provideFallbackAuthors = (authors: any): string => {
     if (typeof authors === "object" && "_" in authors) return authors?._ ?? "Unknown";
     if (typeof authors === "string" && authors) return authors;
     return "Unknown";
 };
 
-const makePrompt = (title: string, authors: string, language: "English" | "Russian") => {
+type Language = "English" | "Russian";
+type TextLength = "Long" | "Short";
+
+const makePrompt = (title: string, authors: string, language: Language, length: TextLength) => {
     if (language === "English") {
-        return `Make a short summary in English of a book called "${title}" by "${authors}". Use new lines and correct punctuation. Summary must be around 150 words.`;
-    }
-    if (language === "Russian") {
-        return "";
+        let lengthPrompt;
+        if (length === "Long") {
+            lengthPrompt = "Summary must be around 150 words or 2 paragraphs.";
+        } else if (length === "Short") {
+            lengthPrompt = "Summary must be around 50 words or 3-4 paragraphs.";
+        } else {
+            throw Error(`Length ${length} is not recognized`);
+        }
+        return `Make a short summary in English of a book called "${title}" by "${authors}". Use new lines, denoted by "\n". ${lengthPrompt}`;
+    } else if (language === "Russian") {
+        let lengthPrompt;
+        if (length === "Long") {
+            lengthPrompt = "Краткое содержание должно быть около 150 слов или 2 абзаца.";
+        } else if (length === "Short") {
+            lengthPrompt = "Краткое содержание должно быть около 50 слов или 3-4 абзаца.";
+        } else {
+            throw Error(`Length ${length} is not recognized`);
+        }
+        return `Сделай краткое содержание для книги "${title}" от "${authors}". Испольуй переходы на новые строки обозначаемые "\n". ${lengthPrompt}`;
+    } else {
+        throw Error(`Language ${language} is not recognized`);
     }
 };
+
+const yandexIamTokenSettingKeyList = ["General", "API", "AI", "YandexGPT API IAM token"];
+const yandexFolderIdSettingKeyList = ["General", "API", "AI", "YandexGPT API folder ID"];
 
 // TODO refactor into several components
 // TODO persist summaries https://tanstack.com/query/v4/docs/react/plugins/persistQueryClient
@@ -67,18 +90,31 @@ export const BookCard = ({
         { label: "English", image: "" },
         { label: "Russian", image: "" },
     ];
+    const selectLengthData = [
+        { label: "Short", image: "" },
+        { label: "Long", image: "" },
+    ];
     const handleDelete = () => {
         context.deleteFile(filename);
     };
 
     const [openedModal, { open: openModal, close: closeModal }] = useDisclosure(false);
-    const [selected, setSelected] = useState(selectLanguageData[0]);
+    const [selectedLang, setSelectedLang] = useState(selectLanguageData[0]);
+    const [selectedLen, setSelectedLen] = useState(selectLengthData[0]);
 
     const { isPending, error, data, isFetching, isSuccess, refetch } = useQuery({
-        queryKey: ["yandexGpt", selected.label, title, authors],
-        queryFn: ({ queryKey: [_, language, title, authors] }) => {
-            const prompt = makePrompt(title, authors, language);
-            return context.apiYandexgpt(prompt);
+        queryKey: ["yandexGpt", selectedLang.label, selectedLen.label, title, authors] as [
+            "yandexGpt",
+            Language,
+            TextLength,
+            string,
+            string
+        ],
+        queryFn: ({ queryKey: [_, language, length, title, authors] }) => {
+            const prompt = makePrompt(title, authors, language, length);
+            const yandexIamToken = getSetting(yandexIamTokenSettingKeyList).value;
+            const yandexFolderId = getSetting(yandexFolderIdSettingKeyList).value;
+            return context.apiYandexgpt(prompt, yandexIamToken, yandexFolderId);
         },
         enabled: false,
         refetchOnMount: false,
@@ -171,14 +207,21 @@ export const BookCard = ({
                         </Button>
                         <LanguagePicker
                             data={selectLanguageData}
-                            selected={selected}
-                            setSelected={setSelected}
+                            selected={selectedLang}
+                            setSelected={setSelectedLang}
+                        />
+                        <LanguagePicker
+                            data={selectLengthData}
+                            selected={selectedLen}
+                            setSelected={setSelectedLen}
                         />
                     </Group>
                     <Paper py="xl" px="md" classNames={{ root: classes.modalPaper }}>
                         {isPending &&
                             !isFetching &&
-                            `Press 'generate' to generate a summary for the book ${title}.`}
+                            `Press 'generate' to generate a ${selectedLen.label.toLowerCase()} summary in ${
+                                selectedLang.label
+                            } for the "${title}".`}
                         {isFetching && "Generating..."}
                         {error && <Text c="red">{"An error has occurred: " + error.message}</Text>}
                         {isSuccess && <Text>{data}</Text>}
