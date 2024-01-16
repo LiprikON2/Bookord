@@ -224,7 +224,7 @@ export const BookCard = ({
                             } for the "${title}".`}
                         {isFetching && "Generating..."}
                         {error && <Text c="red">{"An error has occurred: " + error.message}</Text>}
-                        {isSuccess && <Text>{data}</Text>}
+                        {isSuccess && !isFetching && <Text>{data}</Text>}
                     </Paper>
                 </Container>
             </Modal>
