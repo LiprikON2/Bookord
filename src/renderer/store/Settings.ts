@@ -7,7 +7,7 @@ import { type MappedSettingsMarkup } from "../scenes/Settings/hooks";
 
 declare global {
     interface Window {
-        store: typeof settingsStore;
+        store?: typeof settingsStore;
     }
 }
 

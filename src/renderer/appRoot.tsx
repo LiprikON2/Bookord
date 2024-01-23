@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { MantineProvider, ColorSchemeScript, ScrollArea, rem } from "@mantine/core";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Outlet } from "@tanstack/react-router";

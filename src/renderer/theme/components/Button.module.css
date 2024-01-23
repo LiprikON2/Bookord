@@ -1,5 +1,59 @@
-.root[data-variant="default"] {
-    @mixin light {
-        background-color: var(--mantine-color-gray-1);
+.root {
+    &[data-variant="default"] {
+        @mixin dark {
+            --button-bg: var(--mantine-color-dark-6);
+
+            --ai-bg: var(--button-bg);
+        }
+        @mixin light {
+            --button-bg: var(--mantine-color-gray-1) !important;
+
+            --ai-bg: var(--button-bg) !important;
+        }
+    }
+
+    &[data-variant="default-alt"] {
+        --button-bg: var(--mantine-color-default);
+        --button-hover: var(--mantine-color-default-hover);
+        --button-color: var(--mantine-color-default-color);
+        --button-bd: solid rem(1) var(--mantine-color-default-border);
+
+        --ai-bg: var(--button-bg);
+        --ai-hover: var(--button-hover);
+        --ai-color: var(--button-color);
+        --ai-bd: var(--button-bd);
+
+        @mixin dark {
+            --button-hover: var(--mantine-color-dark-6);
+            --button-bg: var(--mantine-color-dark-7);
+
+            --ai-hover: var(--button-hover);
+            --ai-bg: var(--button-bg);
+        }
+        @mixin light {
+            --button-hover: var(--mantine-color-gray-1);
+            --button-bg: var(--mantine-color-gray-0);
+
+            --ai-hover: var(--button-hover);
+            --ai-bg: var(--button-bg);
+        }
+    }
+
+    &[data-variant="default-subtle"] {
+        --button-bg: transparent;
+        --button-hover: var(--mantine-color-default-hover);
+        --button-color: var(--mantine-color-default-color);
+        --button-bd: transparent;
+
+        --ai-bg: var(--button-bg);
+        --ai-hover: var(--button-hover);
+        --ai-color: var(--button-color);
+        --ai-bd: var(--button-bd);
+
+        @mixin dark {
+            --button-hover: var(--mantine-color-dark-4);
+
+            --ai-hover: var(--button-hover);
+        }
     }
 }

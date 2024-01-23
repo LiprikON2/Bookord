@@ -14,12 +14,7 @@ export const SearchInput = () => {
             leftSectionPointerEvents="none"
             leftSection={<IconSearch className={classes.icon} stroke={1.5} />}
             rightSection={
-                <Pill
-                    style={{
-                        borderRadius: "var(--mantine-radius-default)",
-                    }}
-                    visibleFrom="sm"
-                >
+                <Pill className={classes.pill} visibleFrom="sm" radius="lg">
                     Ctrl + K
                 </Pill>
             }

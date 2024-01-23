@@ -4,10 +4,10 @@
 }
 
 .input {
-    background-color: var(--mantine-color-dark-6);
+    background-color: var(--mantine-color-dark-6) !important;
 
     @mixin light {
-        background-color: var(--mantine-color-gray-0);
+        background-color: var(--mantine-color-gray-1) !important;
     }
 
     @media (max-width: $mantine-breakpoint-sm) {
@@ -18,4 +18,13 @@
 .section {
     width: fit-content;
     padding: rem(4px);
+}
+
+.pill {
+    @mixin light {
+        background-color: var(--mantine-color-white);
+    }
+    @mixin dark {
+        background-color: var(--mantine-color-dark-7);
+    }
 }

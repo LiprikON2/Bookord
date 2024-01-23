@@ -3,6 +3,7 @@ import { ColorInput, PasswordInput, Switch, TextInput } from "@mantine/core";
 import { type SettingsMarkup } from "~/renderer/scenes/Settings";
 import {
     IconAdjustments,
+    IconPalette,
     IconRobot,
     IconRocket,
     IconTypography,
@@ -23,6 +24,11 @@ const sectionMarkup = {
     Font: {
         section: "Font",
         SectionIcon: () => <IconTypography {...sectionIconProps} />,
+        sectionDescription: "Style the look and size of the text.",
+    },
+    "Main app colors": {
+        section: "Main app colors",
+        SectionIcon: () => <IconPalette {...sectionIconProps} />,
         sectionDescription: "Style the look and size of the text.",
     },
     AI: {
@@ -50,7 +56,7 @@ export const settingsMarkup: SettingsMarkup = [
         label: "YandexGPT API IAM token",
         description: "IAM token for Yandex account",
         placeholder: "t1.9euelZrInYuez5eckonHkJuZz5yZke...",
-        hoverDescription: "Whether or not app will open last read book on startup.",
+        hoverDescription: "",
         tabHeading: "General",
         tab: "API",
         ...sectionMarkup["AI"],
@@ -64,7 +70,7 @@ export const settingsMarkup: SettingsMarkup = [
         description:
             "ID of the folder for which your account has the ai.languageModels.user or higher role",
         placeholder: "b1ggvd02ucrri...",
-        hoverDescription: "Whether or not app will open last read book on startup.",
+        hoverDescription: "",
         tabHeading: "General",
         tab: "API",
         ...sectionMarkup["AI"],
@@ -76,12 +82,12 @@ export const settingsMarkup: SettingsMarkup = [
 
     {
         label: "Accent color",
-        description: "This is a description",
+        description: "The color of accented elements.",
         placeholder: "#ffffff",
-        hoverDescription: "Whether or not app will open last read book on startup.",
-        tabHeading: "Main heading",
-        tab: "App Settings",
-        ...sectionMarkup["Font"],
+        hoverDescription: "",
+        tabHeading: "Appearance",
+        tab: "App colors",
+        ...sectionMarkup["Main app colors"],
 
         Input: ColorInput,
         defaultValue: "#fff",

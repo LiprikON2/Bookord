@@ -5,7 +5,6 @@ import path from "path";
 import { isDev } from "~/common/helpers";
 import { registerMainIpc } from "~/main/mainIpc";
 import { registerBookGridIpc, registerWindowControlsIpc } from "~/renderer/appIpc";
-import context from "./mainContextApi";
 import io from "./utils";
 
 export const appDir = path.resolve(app.getPath("userData"), "Books");

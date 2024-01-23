@@ -102,7 +102,7 @@ export const BookCard = ({
     const [selectedLang, setSelectedLang] = useState(selectLanguageData[0]);
     const [selectedLen, setSelectedLen] = useState(selectLengthData[0]);
 
-    const { isPending, error, data, isFetching, isSuccess, refetch } = useQuery({
+    const { data, isPending, error, isFetching, isSuccess, refetch } = useQuery({
         queryKey: ["yandexGpt", selectedLang.label, selectedLen.label, title, authors] as [
             "yandexGpt",
             Language,
@@ -217,11 +217,7 @@ export const BookCard = ({
                         />
                     </Group>
                     <Paper py="xl" px="md" classNames={{ root: classes.modalPaper }}>
-                        {isPending &&
-                            !isFetching &&
-                            `Press 'generate' to generate a ${selectedLen.label.toLowerCase()} summary in ${
-                                selectedLang.label
-                            } for the "${title}".`}
+                        {isPending && !isFetching && `Press 'generate' to generate a ${selectedLen.label.toLowerCase()} summary in ${selectedLang.label} for the "${title}".`}
                         {isFetching && "Generating..."}
                         {error && <Text c="red">{"An error has occurred: " + error.message}</Text>}
                         {isSuccess && !isFetching && <Text>{data}</Text>}

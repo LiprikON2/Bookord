@@ -1,7 +1,7 @@
 import React from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { AppShell as MantineAppShell, Overlay } from "@mantine/core";
-import { IconMessageCircle, IconPhoto } from "@tabler/icons-react";
+import { IconInfoCircle, IconLibrary, IconMessageCircle, IconPhoto } from "@tabler/icons-react";
 
 import { ThemeToggle } from "~/renderer/components";
 import { SettingsModal, Sidebar, Titlebar } from "./scenes";
@@ -11,8 +11,8 @@ import classes from "./AppShell.module.css";
 export const AppShell = ({ children }: { children: React.ReactNode }) => {
     const [opened, { toggle, close }] = useDisclosure();
     const links = [
-        { to: libraryRoute.to, name: "Library", Icon: IconPhoto },
-        { to: testRoute.to, name: "Messages", Icon: IconMessageCircle },
+        { to: libraryRoute.to, name: "Library", Icon: IconLibrary },
+        { to: testRoute.to, name: "About", Icon: IconInfoCircle },
     ];
 
     return (

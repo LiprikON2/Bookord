@@ -4,10 +4,10 @@ import {
     Route,
     Router,
     createHashHistory,
+    RouterProvider,
     createMemoryHistory,
 } from "@tanstack/react-router";
 import { createRoot } from "react-dom/client";
-import { RouterProvider } from "@tanstack/react-router";
 
 import { Root } from "./appRoot";
 import { Library, Test } from "~/renderer/scenes";

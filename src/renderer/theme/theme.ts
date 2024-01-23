@@ -8,6 +8,7 @@ import input from "./components/Input.module.css";
 import switchInput from "./components/Switch.module.css";
 import checkboxInput from "./components/Checkbox.module.css";
 import passwordInput from "./components/PasswordInput.module.css";
+import scrollArea from "./components/ScrollArea.module.css";
 
 export const baseTheme = createTheme({
     fontFamily:
@@ -84,6 +85,17 @@ export const baseTheme = createTheme({
                 list: tabs.list,
                 tab: tabs.tab,
                 panel: tabs.panel,
+            },
+        },
+        Container: {
+            defaultProps: {
+                p: "lg",
+                h: "100%",
+            },
+        },
+        ScrollArea: {
+            classNames: {
+                viewport: scrollArea.viewport,
             },
         },
         Modal: {
