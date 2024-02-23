@@ -7,7 +7,7 @@ import { BookGrid } from "./scenes";
 
 export const Library = () => {
     return (
-        <Container px={0} h="100%">
+        <Box p="md" h="100%">
             <Group>
                 <Button variant="default-alt">First</Button>
                 <Button variant="default-alt">Second</Button>
@@ -28,10 +28,10 @@ export const Library = () => {
                     offAction={() => console.log("its off")}
                 />
             </Group>
-            <Box py="lg">
+            <Container py="lg" h="100%">
                 <DetailedTitle size="lg">All books (10)</DetailedTitle>
                 <BookGrid />
-            </Box>
-        </Container>
+            </Container>
+        </Box>
     );
 };

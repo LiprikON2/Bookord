@@ -7,7 +7,7 @@ import { type MappedSettingsMarkup } from "../scenes/Settings/hooks";
 
 declare global {
     interface Window {
-        store?: typeof settingsStore;
+        settingsStore?: typeof settingsStore;
     }
 }
 
@@ -39,7 +39,7 @@ export const getSettingsStore = (mappedSettings: MappedSettingsMarkup) => {
                 setStoredSettings(settingsStore);
 
                 console.log("[Update]:", settingsStoreKey);
-                if (isDev()) window["store"] = toJS(settingsStore);
+                if (isDev()) window["settingsStore"] = toJS(settingsStore);
             },
             { delay: 200 }
         );

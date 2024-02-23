@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import context from "../ipc";
 import { useSetState } from "@mantine/hooks";
 import _ from "lodash";
+
+import context from "../ipc";
+import { getBooksStore } from "../../../store";
 
 const baseMetadata = {
     title: "",
@@ -24,6 +26,7 @@ export type Metadata = typeof baseMetadata;
 
 /* TODO make it so this hook can be used multiple times without creating multiple event listeners */
 export const useWatchBooks = () => {
+    const books2 = getBooksStore();
     const [books, setBooks] = useSetState<{
         [key: string]: { metadata: Metadata; state: { isLoaded: boolean } };
     }>({});
@@ -51,15 +54,19 @@ export const useWatchBooks = () => {
                         [addedBook]: { metadata: baseMetadata, state: { isLoaded: false } },
                     })
                 );
-                const metadataEntries: [string, Metadata][] = await context.getMetadata(addedBooks);
-
-                metadataEntries.forEach(([addedBook, metadata]) =>
-                    setBooks({ [addedBook]: { metadata, state: { isLoaded: true } } })
-                );
+                updateMetadata(addedBooks);
             }
             if (deletedBooks.length) {
                 deletedBooks.forEach((deletedBook) => setBooks({ [deletedBook]: undefined }));
             }
+        };
+
+        const updateMetadata = async (addedBooks: any) => {
+            const metadataEntries: [string, Metadata][] = await context.getMetadata(addedBooks);
+
+            metadataEntries.forEach(([addedBook, metadata]) =>
+                setBooks({ [addedBook]: { metadata, state: { isLoaded: true } } })
+            );
         };
 
         // TODO move in a separate context file; add types
