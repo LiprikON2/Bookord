@@ -1,14 +1,15 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Box, SimpleGrid } from "@mantine/core";
 import type { FileWithPath } from "@mantine/dropzone";
 
 import { BookDropzone } from "./scenes";
 import { BookCard } from "./components";
+import { useBooks } from "~/renderer/hooks";
 import context from "./ipc";
-import { useWatchBooks } from "./hooks";
+import { observer } from "mobx-react-lite";
 
-export const BookGrid = () => {
-    const [bookEntries, hasBooks] = useWatchBooks();
+export const BookGrid = observer(() => {
+    const { bookEntries, hasBooks } = useBooks();
 
     const handleDrop = async (fileBlobs: FileWithPath[]) => {
         const files = fileBlobs.map(({ path, size, name, lastModified }) => ({
@@ -17,11 +18,11 @@ export const BookGrid = () => {
             name,
             lastModified,
         }));
-        const distinctFilesCount = await context.uploadFiles(files);
+        const distinctFileCount = await context.uploadFiles(files);
     };
 
     const handleDialogOpen = async () => {
-        const distinctFilesCount = await context.openFileDialog();
+        const distinctFileCount = await context.openFileDialog();
     };
 
     return (
@@ -56,4 +57,4 @@ export const BookGrid = () => {
             </SimpleGrid>
         </Box>
     );
-};
+});

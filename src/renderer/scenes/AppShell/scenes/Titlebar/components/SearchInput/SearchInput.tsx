@@ -1,13 +1,17 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDebouncedValue, useWindowEvent } from "@mantine/hooks";
 import { Pill, TextInput, rem } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 
+import { useBooks } from "~/renderer/hooks";
 import classes from "./SearchInput.module.css";
 
 export const SearchInput = () => {
-    const [searchTerm, setSearchTerm] = useState("");
-    const [debouncedSearchTerm] = useDebouncedValue(searchTerm, 200, { leading: true });
+    const [searchTermValue, setSearchTermValue] = useState("");
+    const [debouncedSearchTerm] = useDebouncedValue(searchTermValue, 50, { leading: true });
+
+    const { setSearchTerm } = useBooks();
+    useEffect(() => setSearchTerm(debouncedSearchTerm), [debouncedSearchTerm]);
 
     const inputRef = useRef<HTMLInputElement>();
 
@@ -20,8 +24,8 @@ export const SearchInput = () => {
     return (
         <TextInput
             ref={inputRef}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.currentTarget.value)}
+            value={searchTermValue}
+            onChange={(e) => setSearchTermValue(e.currentTarget.value)}
             size="xs"
             w="100%"
             placeholder="Search for books"

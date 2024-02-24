@@ -16,7 +16,7 @@ import { IconMenu2, IconRobot, IconTrash } from "@tabler/icons-react";
 
 import sampleCover from "~/assets/images/sampleBookCover.webp";
 import classes from "./BookCard.module.css";
-import type { Metadata } from "../hooks";
+import type { Metadata } from "../../../hooks";
 import context from "../ipc";
 import { LanguagePicker } from "~/components/LanguagePicker";
 import { useQuery } from "@tanstack/react-query";
@@ -217,7 +217,11 @@ export const BookCard = ({
                         />
                     </Group>
                     <Paper py="xl" px="md" classNames={{ root: classes.modalPaper }}>
-                        {isPending && !isFetching && `Press 'generate' to generate a ${selectedLen.label.toLowerCase()} summary in ${selectedLang.label} for the "${title}".`}
+                        {isPending &&
+                            !isFetching &&
+                            `Press 'generate' to generate a ${selectedLen.label.toLowerCase()} summary in ${
+                                selectedLang.label
+                            } for the "${title}".`}
                         {isFetching && "Generating..."}
                         {error && <Text c="red">{"An error has occurred: " + error.message}</Text>}
                         {isSuccess && !isFetching && <Text>{data}</Text>}

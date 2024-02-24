@@ -71,7 +71,7 @@ export const initWatcher = (
         const watcherEvent = {
             list: watcher.getWatched()[appDir],
             update: {
-                action: "delete",
+                action: "remove",
                 fileName,
             },
         };
