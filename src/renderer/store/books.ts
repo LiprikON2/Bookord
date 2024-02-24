@@ -13,19 +13,19 @@ declare global {
 
 const initBookMetadata = {
     title: "",
-    indentifiers: "",
-    languages: "",
-    relations: "",
-    subjects: "",
-    publishers: "",
-    contributors: "",
-    coverages: "",
-    rights: "",
-    sources: "",
     description: "",
     date: "",
     cover: "",
     author: "",
+    indentifiers: [] as string[],
+    languages: [] as string[],
+    relations: [] as string[],
+    subjects: [] as string[],
+    publishers: [] as string[],
+    contributors: [] as string[],
+    coverages: [] as string[],
+    rights: [] as string[],
+    sources: [] as string[],
 };
 
 export type Metadata = typeof initBookMetadata;
@@ -50,7 +50,16 @@ const ensureBookInit = (initBooks: Books = {}) => {
         autorun(
             () => {
                 console.log("[Update]: booksStore");
-                if (isDev()) window["booksStore"] = toJS(booksStore);
+                if (isDev()) {
+                    const store = toJS(booksStore);
+                    const booksWithoutCover: Books = Object.fromEntries(
+                        Object.entries(toJS(store.data)).map(([key, value]) => [
+                            key,
+                            { ...value, metadata: { ...value.metadata, cover: "" } },
+                        ])
+                    );
+                    window["booksStore"] = { ...store, data: booksWithoutCover };
+                }
             },
             { delay: 200 }
         );
@@ -80,6 +89,40 @@ export const getBooks = (searchTerm: string = booksStore.searchTerm) => {
     return Object.fromEntries(fuse.search(searchTerm).map((result) => result.item));
 };
 
+export const getTags = () => {
+    const books = getBooks(null);
+
+    const subjectsSet = new Set<string>([
+        "This is a very long string about long things",
+        "bunch",
+        "of",
+        "values",
+        "here",
+        "like",
+        "alot",
+        "them",
+        "yes",
+        "no",
+    ]);
+    Object.values(books).forEach((bookValue) => {
+        bookValue.metadata.subjects.forEach((subject: string) => {
+            subjectsSet.add(subject);
+        });
+    });
+
+    const yearSet = new Set<string>();
+    Object.values(books).forEach((bookValue) => {
+        const year = new Date(bookValue.metadata.date).getFullYear();
+        const yearString = Number.isNaN(year) ? "Unknown" : year.toString();
+        yearSet.add(yearString);
+    });
+
+    return {
+        subjects: [...subjectsSet],
+        year: [...yearSet],
+    };
+};
+
 export const setBooks = action((books: Books) => set(booksStore, "data", books));
 
 export const addBooks = action((bookKeys: string[]) => {
@@ -97,7 +140,7 @@ export const addBooks = action((bookKeys: string[]) => {
 const processInitBooks = async (initBookKeys: string[]) => {
     const metadataEntries: [string, Metadata][] = await context.getMetadata(initBookKeys);
 
-    const addedBooks: any = metadataEntries.map(([bookKey, metadata]) => [
+    const addedBooks: Entries<Books> = metadataEntries.map(([bookKey, metadata]) => [
         bookKey,
         { metadata, state: { isLoaded: true } },
     ]);

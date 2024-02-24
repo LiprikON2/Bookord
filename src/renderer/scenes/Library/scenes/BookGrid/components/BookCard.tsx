@@ -16,11 +16,10 @@ import { IconMenu2, IconRobot, IconTrash } from "@tabler/icons-react";
 
 import sampleCover from "~/assets/images/sampleBookCover.webp";
 import classes from "./BookCard.module.css";
-import type { Metadata } from "../../../hooks";
 import context from "../ipc";
 import { LanguagePicker } from "~/components/LanguagePicker";
 import { useQuery } from "@tanstack/react-query";
-import { getSetting } from "~/renderer/store";
+import { type Metadata, getSetting } from "~/renderer/store";
 
 const provideFallbackCover = (cover: string): string => {
     if (!cover || cover === "unkown") return sampleCover;

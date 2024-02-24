@@ -8,7 +8,7 @@ import classes from "./SearchInput.module.css";
 
 export const SearchInput = () => {
     const [searchTermValue, setSearchTermValue] = useState("");
-    const [debouncedSearchTerm] = useDebouncedValue(searchTermValue, 50, { leading: true });
+    const [debouncedSearchTerm] = useDebouncedValue(searchTermValue, 100, { leading: true });
 
     const { setSearchTerm } = useBooks();
     useEffect(() => setSearchTerm(debouncedSearchTerm), [debouncedSearchTerm]);
@@ -38,7 +38,7 @@ export const SearchInput = () => {
             leftSection={<IconSearch className={classes.icon} stroke={1.5} />}
             rightSection={
                 <Pill className={classes.pill} visibleFrom="sm" radius="lg">
-                    Ctrl + K
+                    Ctrl + P
                 </Pill>
             }
         />

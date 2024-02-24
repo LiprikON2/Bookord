@@ -1,43 +1,63 @@
-import React from "react";
+import React, { forwardRef, useEffect } from "react";
 import { ActionIcon, rem } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { type Icon } from "@tabler/icons-react";
 
-export const ToggleActionIcon = ({
-    OnIcon,
-    OffIcon,
-    onAction,
-    offAction,
-    ariaLabel,
-}: {
+type ToggleActionIconProps = {
     OnIcon: Icon;
     OffIcon: Icon;
+    on?: boolean;
+    onClick?: () => void;
     onAction?: () => void;
     offAction?: () => void;
     ariaLabel?: string;
-}) => {
-    const [toggled, { toggle }] = useDisclosure(false);
-
-    const handleToggle = () => {
-        toggled ? offAction() : onAction();
-        toggle();
-    };
-
-    const iconProps = { style: { width: "65%", height: "65%" }, stroke: 1.5 };
-
-    return (
-        <ActionIcon
-            onClick={handleToggle}
-            size={rem(36)}
-            aria-label={ariaLabel}
-            /* 
-            variant={toggled ? "default-alt" : "default-subtle"}
-            style={{ border: "none" }}
-            /*/
-            variant="default-subtle"
-            //*/
-        >
-            {toggled ? <OnIcon {...iconProps} /> : <OffIcon {...iconProps} />}
-        </ActionIcon>
-    );
+    iconStyle?: object;
 };
+
+export const ToggleActionIcon = forwardRef<HTMLButtonElement, ToggleActionIconProps>(
+    (
+        {
+            OnIcon,
+            OffIcon,
+            on,
+            onClick,
+            onAction,
+            offAction,
+            ariaLabel,
+            iconStyle,
+        }: ToggleActionIconProps,
+        ref
+    ) => {
+        const [toggled, { toggle, open, close }] = useDisclosure(false);
+
+        const handleToggle = () => {
+            if (offAction && toggled) offAction();
+            if (onAction && !toggled) onAction();
+            toggle();
+        };
+
+        useEffect(() => {
+            if (on === undefined) return;
+
+            if (on) open();
+            else close();
+        }, [on]);
+
+        const iconProps = {
+            style: { width: "65%", height: "65%", ...iconStyle },
+            stroke: 1.5,
+        };
+
+        return (
+            <ActionIcon
+                ref={ref}
+                onClick={onClick ? onClick : handleToggle}
+                size={rem(36)}
+                aria-label={ariaLabel}
+                variant="default-subtle"
+            >
+                {toggled ? <OnIcon {...iconProps} /> : <OffIcon {...iconProps} />}
+            </ActionIcon>
+        );
+    }
+);

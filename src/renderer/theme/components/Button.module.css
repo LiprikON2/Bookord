@@ -43,7 +43,7 @@
         --button-bg: transparent;
         --button-hover: var(--mantine-color-default-hover);
         --button-color: var(--mantine-color-default-color);
-        --button-bd: transparent;
+        --button-bd: solid rem(1) transparent;
 
         --ai-bg: var(--button-bg);
         --ai-hover: var(--button-hover);
