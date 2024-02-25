@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import { useDisclosure } from "@mantine/hooks";
 import { IconFilter, IconFilterFilled } from "@tabler/icons-react";
 
 import { FilterGroup } from "./components";
 import { ToggleActionIcon } from "~/components/ToggleActionIcon";
-import { Button, Flex, Group, Menu, Modal, rem } from "@mantine/core";
+import { Flex, Menu } from "@mantine/core";
 import { useBooks } from "~/renderer/hooks";
 import classes from "./FilterMenu.modules.css";
 
 export const FilterMenu = () => {
-    const { tags } = useBooks();
+    const { tags, setTag } = useBooks();
     const [opened, setOpened] = useState(false);
 
+    // TODO
     const filtersActive = false;
 
     return (
@@ -19,10 +19,7 @@ export const FilterMenu = () => {
             opened={opened}
             trigger="click"
             closeOnItemClick={false}
-            onChange={(value) => {
-                console.log("value?");
-                setOpened(value);
-            }}
+            onChange={setOpened}
             withArrow
             styles={{
                 dropdown: { backgroundColor: "var(--mantine-color-dark-7)" },
@@ -56,8 +53,14 @@ export const FilterMenu = () => {
                         className={classes.filterGroup}
                         label="Genres"
                         items={tags.subjects}
+                        setItem={setTag}
                     />
-                    <FilterGroup className={classes.filterGroup} label="Year" items={tags.year} />
+                    <FilterGroup
+                        className={classes.filterGroup}
+                        label="Year"
+                        items={tags.year}
+                        setItem={setTag}
+                    />
                 </Flex>
             </Menu.Dropdown>
         </Menu>

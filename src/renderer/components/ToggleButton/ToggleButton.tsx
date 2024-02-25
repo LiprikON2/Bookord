@@ -24,8 +24,8 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
                 styles={{ inner: { maxWidth: "100%" } }}
                 ref={ref}
                 onClick={() => {
+                    onClick(!toggled);
                     handleToggle();
-                    onClick(toggled);
                 }}
                 variant={toggled ? "default-alt" : "default-subtle"}
                 {...rest}

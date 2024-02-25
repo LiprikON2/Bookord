@@ -1,4 +1,4 @@
-import { action, observable, autorun, set, toJS } from "mobx";
+import { action, observable, autorun, set, toJS, computed, runInAction } from "mobx";
 import _ from "lodash";
 
 import { isDev } from "~/common/helpers";
@@ -30,46 +30,47 @@ const initBookMetadata = {
 
 export type Metadata = typeof initBookMetadata;
 
-type Books = {
+export type Books = {
     [key: string]: { metadata: Metadata; state: { isLoaded: boolean } };
 };
 
-let booksStore = observable<{ data: Books; searchTerm: "" }>({ data: {}, searchTerm: "" });
-let isInitialized = false;
-
-export const getSearchTerm = () => booksStore.searchTerm;
-export const setSearchTerm = action((searchTerm: string) =>
-    set(booksStore, "searchTerm", searchTerm)
-);
-
-const ensureBookInit = (initBooks: Books = {}) => {
-    if (!isInitialized) {
-        setBooks(initBooks);
-        isInitialized = true;
-
-        autorun(
-            () => {
-                console.log("[Update]: booksStore");
-                if (isDev()) {
-                    const store = toJS(booksStore);
-                    const booksWithoutCover: Books = Object.fromEntries(
-                        Object.entries(toJS(store.data)).map(([key, value]) => [
-                            key,
-                            { ...value, metadata: { ...value.metadata, cover: "" } },
-                        ])
-                    );
-                    window["booksStore"] = { ...store, data: booksWithoutCover };
-                }
-            },
-            { delay: 200 }
-        );
-    }
+type TagsFilter = {
+    [tagCategory: string]: {
+        [tagKey: string]: boolean;
+    };
 };
 
-export const getBooks = (searchTerm: string = booksStore.searchTerm) => {
-    ensureBookInit();
+type BookTags = {
+    [tagCategory: string]: string[];
+};
 
-    if (!searchTerm) return booksStore.data;
+export type BooksStore = { books: Books; searchTerm: string; tagsFilter: TagsFilter };
+
+const initBooksStore = (initStore: BooksStore = { books: {}, searchTerm: "", tagsFilter: {} }) => {
+    const bookStore = observable<BooksStore>(initStore);
+    autorun(
+        () => {
+            console.log("[Update]: booksStore");
+            if (isDev()) {
+                const store = toJS(booksStore);
+                const booksWithoutCover: Books = Object.fromEntries(
+                    Object.entries(toJS(store.books)).map(([key, value]) => [
+                        key,
+                        { ...value, metadata: { ...value.metadata, cover: "" } },
+                    ])
+                );
+                window["booksStore"] = { ...store, books: booksWithoutCover };
+            }
+        },
+        { delay: 200 }
+    );
+    return bookStore;
+};
+
+export let booksStore = initBooksStore();
+
+export const filteredBooksCompute = computed(() => {
+    if (!booksStore.searchTerm) return booksStore.books;
 
     const options = {
         keys: [
@@ -84,14 +85,49 @@ export const getBooks = (searchTerm: string = booksStore.searchTerm) => {
         ],
     };
 
-    const fuse = new Fuse(Object.entries(booksStore.data), options);
+    const fuse = new Fuse(Object.entries(booksStore.books), options);
 
-    return Object.fromEntries(fuse.search(searchTerm).map((result) => result.item));
-};
+    const activeFilterTags = activeFilterTagsCompute.get();
 
-export const getTags = () => {
-    const books = getBooks(null);
+    const searchFilteredBooks = Object.fromEntries(
+        fuse
+            .search(booksStore.searchTerm)
+            .map((result) => result.item)
+            .filter(([bookKey, bookValue]) =>
+                Object.entries(activeFilterTags).every(([tagCategory, tags]) => {
+                    const tagKeys = Object.keys(tags);
+                    if (tagCategory === "subjects") {
+                        const bookSubjects = bookValue.metadata.subjects;
+                        return _.every(bookSubjects, (item) => _.includes(tagKeys, item));
+                    }
+                })
+            )
+    );
 
+    return searchFilteredBooks;
+});
+
+export const setSearchTerm = action((searchTerm: string) =>
+    set(booksStore, "searchTerm", searchTerm)
+);
+
+export const activeFilterTagsCompute = computed(() => {
+    const activeTags = Object.fromEntries(
+        Object.entries(booksStore.tagsFilter).map(([tagCategory, tags]) => [
+            tagCategory,
+            Object.fromEntries(Object.entries(tags).filter(([tagKey, isActive]) => isActive)),
+        ])
+    );
+
+    return activeTags;
+});
+
+export const setTag = action((tagCategory: string, tagKey: string, value: boolean) => {
+    if (!(tagCategory in booksStore.tagsFilter)) booksStore.tagsFilter[tagCategory] = {};
+    booksStore.tagsFilter[tagCategory][tagKey] = value;
+});
+
+export const tagsCompute = computed<BookTags>((books: Books = booksStore.books) => {
     const subjectsSet = new Set<string>([
         "This is a very long string about long things",
         "bunch",
@@ -121,9 +157,7 @@ export const getTags = () => {
         subjects: [...subjectsSet],
         year: [...yearSet],
     };
-};
-
-export const setBooks = action((books: Books) => set(booksStore, "data", books));
+});
 
 export const addBooks = action((bookKeys: string[]) => {
     const addedInitBooks = bookKeys.map((bookKey) => [
@@ -131,9 +165,12 @@ export const addBooks = action((bookKeys: string[]) => {
         { metadata: initBookMetadata, state: { isLoaded: false } },
     ]);
 
-    const updatedBooks = Object.fromEntries([...Object.entries(getBooks(null)), ...addedInitBooks]);
-    set(booksStore, "data", updatedBooks);
+    const updatedBooks = Object.fromEntries([
+        ...Object.entries(booksStore.books),
+        ...addedInitBooks,
+    ]);
 
+    set(booksStore, "books", updatedBooks);
     processInitBooks(bookKeys);
 });
 
@@ -145,10 +182,13 @@ const processInitBooks = async (initBookKeys: string[]) => {
         { metadata, state: { isLoaded: true } },
     ]);
 
-    const updatedBooks = Object.fromEntries([...Object.entries(getBooks(null)), ...addedBooks]);
-    set(booksStore, "data", updatedBooks);
+    const updatedBooks = Object.fromEntries([...Object.entries(booksStore.books), ...addedBooks]);
+    // https://stackoverflow.com/a/64771774/10744339
+    runInAction(() => {
+        set(booksStore, "books", updatedBooks);
+    });
 };
 
 export const removeBooks = action((bookKeys: string[]) =>
-    set(booksStore, "data", _.omit(getBooks(null), bookKeys))
+    set(booksStore, "books", _.omit(booksStore.books, bookKeys))
 );

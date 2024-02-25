@@ -6,10 +6,9 @@ import { BookDropzone } from "./scenes";
 import { BookCard } from "./components";
 import { useBooks } from "~/renderer/hooks";
 import context from "./ipc";
-import { observer } from "mobx-react-lite";
 
-export const BookGrid = observer(() => {
-    const { bookEntries, hasBooks } = useBooks();
+export const BookGrid = () => {
+    const { filteredBookEntries, bookEntries, hasBooks } = useBooks();
 
     const handleDrop = async (fileBlobs: FileWithPath[]) => {
         const files = fileBlobs.map(({ path, size, name, lastModified }) => ({
@@ -46,7 +45,7 @@ export const BookGrid = observer(() => {
                 cols={{ base: 2, xs: 2, sm: 3, md: 3, lg: 4, xl: 4 }}
                 style={{ justifyItems: "center" }}
             >
-                {bookEntries.map(([filename, { metadata, state }]) => (
+                {filteredBookEntries.map(([filename, { metadata, state }]) => (
                     <BookCard
                         key={filename}
                         filename={filename}
@@ -57,4 +56,4 @@ export const BookGrid = observer(() => {
             </SimpleGrid>
         </Box>
     );
-});
+};
