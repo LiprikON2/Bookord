@@ -3,65 +3,99 @@ import { IconFilter, IconFilterFilled } from "@tabler/icons-react";
 
 import { FilterGroup } from "./components";
 import { ToggleActionIcon } from "~/components/ToggleActionIcon";
-import { Flex, Menu } from "@mantine/core";
+import { Button, Flex, Grid, Group, Menu, rem } from "@mantine/core";
 import { useBooks } from "~/renderer/hooks";
 import classes from "./FilterMenu.modules.css";
 
 export const FilterMenu = () => {
-    const { tags, setTag } = useBooks();
+    const { tags, setFilterTag, resetFilterTags, activeFilterTags, areMainFiltersActive } =
+        useBooks();
     const [opened, setOpened] = useState(false);
 
-    // TODO
-    const filtersActive = false;
+    const handleMenuToggle = (opened: boolean) => {
+        setOpened(opened);
+        if (opened) setFilterTag("Custom", "Recent", false);
+    };
 
     return (
         <Menu
             opened={opened}
             trigger="click"
             closeOnItemClick={false}
-            onChange={setOpened}
+            onChange={handleMenuToggle}
             withArrow
-            styles={{
-                dropdown: { backgroundColor: "var(--mantine-color-dark-7)" },
-                itemLabel: { maxWidth: "100%" },
-            }}
+            classNames={{ dropdown: classes.dropdown, itemLabel: classes.itemLabel }}
         >
             <Menu.Target>
                 <ToggleActionIcon
                     aria-label="Filter"
                     OnIcon={IconFilterFilled}
                     OffIcon={IconFilter}
-                    on={opened || filtersActive}
-                    iconStyle={{ color: "var(--mantine-color-dark-0)" }}
+                    on={opened || areMainFiltersActive}
+                    classNames={{ icon: classes.icon }}
                 />
             </Menu.Target>
-            <Menu.Dropdown
-            // mah={`max(${rem(192)}, 1vh)`} maw={`max(${rem(384)}, 50vw)`}
-            >
-                <Flex
-                    p="xs"
-                    h="100%"
-                    w="100%"
-                    // bg="rgba(0, 0, 0, .3)"
-                    gap="0"
+            <Menu.Dropdown p={rem(8)} /* w="40vw" */ h="40vh">
+                <div className={classes.filterGrid}>
+                    {/* <Flex
+                    gap={rem(4)}
+                    maw="100%"
                     justify="flex-start"
                     align="flex-start"
                     direction="row"
                     wrap="wrap"
-                >
+                > */}
+                    {/* <Group wrap="nowrap" p="xs"> */}
+                    {/* <Grid grow gutter={rem(4)} maw="100%"> */}
                     <FilterGroup
                         className={classes.filterGroup}
                         label="Genres"
                         items={tags.subjects}
-                        setItem={setTag}
+                        itemsState={activeFilterTags.Genres}
+                        setItem={setFilterTag}
                     />
                     <FilterGroup
                         className={classes.filterGroup}
                         label="Year"
                         items={tags.year}
-                        setItem={setTag}
+                        itemsState={activeFilterTags.Year}
+                        setItem={setFilterTag}
                     />
-                </Flex>
+                    <FilterGroup
+                        className={classes.filterGroup}
+                        label="Year"
+                        items={tags.year}
+                        itemsState={activeFilterTags.Year}
+                        setItem={setFilterTag}
+                    />
+                    <FilterGroup
+                        className={classes.filterGroup}
+                        label="Year"
+                        items={tags.year}
+                        itemsState={activeFilterTags.Year}
+                        setItem={setFilterTag}
+                    />
+                    <FilterGroup
+                        className={classes.filterGroup}
+                        label="Year"
+                        items={tags.year}
+                        itemsState={activeFilterTags.Year}
+                        setItem={setFilterTag}
+                    />
+                    <Button
+                        variant="default-alt-2"
+                        value="settings"
+                        fw="normal"
+                        mt="auto"
+                        style={{ alignSelf: "flex-end" }}
+                        onClick={resetFilterTags}
+                    >
+                        Reset Filters
+                    </Button>
+                    {/* </Grid> */}
+                    {/* </Group> */}
+                    {/* </Flex> */}
+                </div>
             </Menu.Dropdown>
         </Menu>
     );

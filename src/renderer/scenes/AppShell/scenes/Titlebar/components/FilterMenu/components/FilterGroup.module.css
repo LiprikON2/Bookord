@@ -1,0 +1,27 @@
+.root {
+    & {
+        background-color: var(--button-bg) !important;
+    }
+
+    &:hover {
+        background-color: var(--button-hover) !important;
+    }
+}
+
+.inner {
+    width: 100%;
+}
+
+.viewport {
+    & > div {
+        display: block !important;
+    }
+}
+
+.thumb {
+    opacity: 0.75;
+}
+.icon {
+    width: rem(16);
+    height: rem(16);
+}

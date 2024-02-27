@@ -18,3 +18,7 @@
     align-self: flex-start;
     padding: 0;
 }
+
+.icon {
+    color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0));
+}

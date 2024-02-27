@@ -11,7 +11,9 @@ type ToggleActionIconProps = {
     onAction?: () => void;
     offAction?: () => void;
     ariaLabel?: string;
-    iconStyle?: object;
+    classNames?: {
+        icon?: string;
+    };
 };
 
 export const ToggleActionIcon = forwardRef<HTMLButtonElement, ToggleActionIconProps>(
@@ -24,13 +26,13 @@ export const ToggleActionIcon = forwardRef<HTMLButtonElement, ToggleActionIconPr
             onAction,
             offAction,
             ariaLabel,
-            iconStyle,
+            classNames,
         }: ToggleActionIconProps,
         ref
     ) => {
-        const [toggled, { toggle, open, close }] = useDisclosure(false);
+        const [toggled, { toggle, open, close }] = useDisclosure(on ?? false);
 
-        const handleToggle = () => {
+        const handleActionIconToggle = () => {
             if (offAction && toggled) offAction();
             if (onAction && !toggled) onAction();
             toggle();
@@ -44,14 +46,15 @@ export const ToggleActionIcon = forwardRef<HTMLButtonElement, ToggleActionIconPr
         }, [on]);
 
         const iconProps = {
-            style: { width: "65%", height: "65%", ...iconStyle },
+            className: classNames?.icon,
+            style: { width: "65%", height: "65%" },
             stroke: 1.5,
         };
 
         return (
             <ActionIcon
                 ref={ref}
-                onClick={onClick ? onClick : handleToggle}
+                onClick={onClick ? onClick : handleActionIconToggle}
                 size={rem(36)}
                 aria-label={ariaLabel}
                 variant="default-subtle"

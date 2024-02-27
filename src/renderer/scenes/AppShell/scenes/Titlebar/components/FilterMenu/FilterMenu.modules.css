@@ -1,3 +1,35 @@
 .filterGroup {
     max-width: rem(160);
 }
+
+.dropdown {
+    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-7));
+}
+
+.itemLabel {
+    max-width: 100%;
+}
+
+.icon {
+    color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0));
+}
+
+.filterGrid {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+
+    gap: rem(4) 0;
+
+    & > * {
+        max-width: 12rem;
+        max-height: 100%;
+        /* flex-grow: 1; */
+
+        /* flex-shrink: 0;
+        flex-basis: 30%; */
+        /* max-height: 30%; */
+    }
+}

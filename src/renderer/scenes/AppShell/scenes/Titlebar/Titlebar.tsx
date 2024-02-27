@@ -6,8 +6,18 @@ import { WindowControls, SearchInput, FilterMenu } from "./components";
 import { icons } from "~/components/Icons";
 import classes from "./Titlebar.module.css";
 import { ToggleActionIcon } from "~/components/ToggleActionIcon";
+import { useBooks } from "~/renderer/hooks";
 
 export const Titlebar = ({ opened, toggle }: { opened: boolean; toggle: () => void }) => {
+    const { setFilterTag, activeFilterTags } = useBooks();
+
+    const handleRecentFilterOn = () => {
+        setFilterTag("Custom", "Recent", true);
+    };
+    const handleRecentFilterOff = () => {
+        setFilterTag("Custom", "Recent", false);
+    };
+
     return (
         <Group
             className={classes.titlebarGroup}
@@ -33,9 +43,10 @@ export const Titlebar = ({ opened, toggle }: { opened: boolean; toggle: () => vo
                         aria-label="Recent"
                         OnIcon={IconClockFilled}
                         OffIcon={IconClock}
-                        onAction={() => console.log("its on")}
-                        offAction={() => console.log("its off")}
-                        iconStyle={{ color: "var(--mantine-color-dark-0)" }}
+                        onAction={handleRecentFilterOn}
+                        offAction={handleRecentFilterOff}
+                        on={activeFilterTags.Custom?.Recent ?? false}
+                        classNames={{ icon: classes.icon }}
                     />
                 </Group>
             </Group>

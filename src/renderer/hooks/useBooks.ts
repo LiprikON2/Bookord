@@ -9,22 +9,24 @@ import {
     filteredBooksCompute,
     addBooks,
     removeBooks,
-    // getTags,
     setSearchTerm,
-    tagsCompute,
-    setTag,
+    bookTagsCompute,
+    setFilterTag,
+    activeFilterTagsCompute,
+    resetFilterTags,
 } from "../store";
 import { reaction, toJS } from "mobx";
+import { useDidUpdate } from "@mantine/hooks";
 
 export const useBooks = () => {
-    // const tags = getTags();
-
     // https://github.com/mobxjs/mobx/discussions/3737#discussioncomment-6548377
     const [booksValue, setBooksValue] = useState<Books>(() => booksStore.books);
     const [filteredBooksValue, setFilteredBooksValue] = useState<Books>(filteredBooksCompute.get());
     const [searchTermValue, setSearchTermValue] = useState<string>(() => booksStore.searchTerm);
-    const [tagsValue, setTagsValue] = useState(() => tagsCompute.get());
-    // TODO filteredTagsValue
+    const [bookTagsValue, setBookTagsValue] = useState(() => bookTagsCompute.get());
+    const [activeFilterTagsValue, setActiveFilterTagsValue] = useState(() =>
+        activeFilterTagsCompute.get()
+    );
 
     useEffect(() => {
         const unsub1 = reaction(
@@ -40,8 +42,12 @@ export const useBooks = () => {
             (filteredBooks) => setFilteredBooksValue(filteredBooks)
         );
         const unsub4 = reaction(
-            () => tagsCompute.get(),
-            (tags) => setTagsValue(tags)
+            () => bookTagsCompute.get(),
+            (tags) => setBookTagsValue(tags)
+        );
+        const unsub5 = reaction(
+            () => activeFilterTagsCompute.get(),
+            (activeFilterTags) => setActiveFilterTagsValue(activeFilterTags)
         );
 
         return () => {
@@ -49,6 +55,7 @@ export const useBooks = () => {
             unsub2();
             unsub3();
             unsub4();
+            unsub5();
         };
     }, []);
 
@@ -80,6 +87,10 @@ export const useBooks = () => {
     const filteredBookCount = filteredBookEntries.length;
     const hasFilteredBooks = !!filteredBookCount;
 
+    const areMainFiltersActive = !!Object.keys(activeFilterTagsValue).filter(
+        (activeFilterTag) => activeFilterTag !== "Custom"
+    ).length;
+
     return {
         bookEntries,
         hasBooks,
@@ -91,8 +102,11 @@ export const useBooks = () => {
 
         searchTerm: searchTermValue,
         setSearchTerm,
-        tags: tagsValue,
 
-        setTag,
+        tags: bookTagsValue,
+        setFilterTag,
+        resetFilterTags,
+        activeFilterTags: activeFilterTagsValue,
+        areMainFiltersActive,
     };
 };

@@ -28,6 +28,13 @@ const initBookMetadata = {
     sources: [] as string[],
 };
 
+const getMetadataYear = (metadata: Metadata) => {
+    const year = new Date(metadata.date).getFullYear();
+    const yearString = Number.isNaN(year) ? "Unknown" : year.toString();
+
+    return yearString;
+};
+
 export type Metadata = typeof initBookMetadata;
 
 export type Books = {
@@ -38,10 +45,14 @@ type TagsFilter = {
     [tagCategory: string]: {
         [tagKey: string]: boolean;
     };
+
+    Custom?: {
+        Recent?: boolean;
+    };
 };
 
 type BookTags = {
-    [tagCategory: string]: string[];
+    [tagCategory: string]: { [tag: string]: number };
 };
 
 export type BooksStore = { books: Books; searchTerm: string; tagsFilter: TagsFilter };
@@ -70,92 +81,144 @@ const initBooksStore = (initStore: BooksStore = { books: {}, searchTerm: "", tag
 export let booksStore = initBooksStore();
 
 export const filteredBooksCompute = computed(() => {
-    if (!booksStore.searchTerm) return booksStore.books;
-
-    const options = {
-        keys: [
-            {
-                name: "title",
-                getFn: (bookEntry: ArrayElement<Entries<Books>>) => bookEntry[1].metadata.title,
-            },
-            {
-                name: "author",
-                getFn: (bookEntry: ArrayElement<Entries<Books>>) => bookEntry[1].metadata.author,
-            },
-        ],
-    };
-
-    const fuse = new Fuse(Object.entries(booksStore.books), options);
-
     const activeFilterTags = activeFilterTagsCompute.get();
+    const hasActiveFilterTags = !!Object.keys(activeFilterTags).length;
 
-    const searchFilteredBooks = Object.fromEntries(
-        fuse
+    if (!booksStore.searchTerm && !hasActiveFilterTags) return booksStore.books;
+
+    let bookEntries = Object.entries(booksStore.books);
+
+    if (booksStore.searchTerm) {
+        const options = {
+            keys: [
+                {
+                    name: "title",
+                    getFn: (bookEntry: ArrayElement<Entries<Books>>) => bookEntry[1].metadata.title,
+                },
+                {
+                    name: "author",
+                    getFn: (bookEntry: ArrayElement<Entries<Books>>) =>
+                        bookEntry[1].metadata.author,
+                },
+            ],
+        };
+        const fuse = new Fuse(bookEntries, options);
+
+        const searchFilteredBookEntries = fuse
             .search(booksStore.searchTerm)
-            .map((result) => result.item)
-            .filter(([bookKey, bookValue]) =>
-                Object.entries(activeFilterTags).every(([tagCategory, tags]) => {
-                    const tagKeys = Object.keys(tags);
-                    if (tagCategory === "subjects") {
-                        const bookSubjects = bookValue.metadata.subjects;
-                        return _.every(bookSubjects, (item) => _.includes(tagKeys, item));
-                    }
-                })
-            )
-    );
+            .map((result) => result.item);
 
-    return searchFilteredBooks;
+        bookEntries = searchFilteredBookEntries;
+    }
+
+    if (hasActiveFilterTags) {
+        bookEntries = bookEntries.filter(([bookKey, bookValue]) =>
+            Object.entries(activeFilterTags).every(([tagCategory, tags]) => {
+                const tagKeys = Object.keys(tags);
+
+                if (tagCategory === "Genres") {
+                    const bookSubjects = bookValue.metadata.subjects;
+                    return _.every(bookSubjects, (item) => _.includes(tagKeys, item));
+                } else if (tagCategory === "Year") {
+                    const bookYear = getMetadataYear(bookValue.metadata);
+                    return tagKeys.includes(bookYear);
+                }
+                return new Array(Object.keys(activeFilterTags).length).fill(true);
+            })
+        );
+    }
+
+    return Object.fromEntries(bookEntries);
 });
 
 export const setSearchTerm = action((searchTerm: string) =>
     set(booksStore, "searchTerm", searchTerm)
 );
 
-export const activeFilterTagsCompute = computed(() => {
+export const activeFilterTagsCompute = computed<TagsFilter>(() => {
     const activeTags = Object.fromEntries(
-        Object.entries(booksStore.tagsFilter).map(([tagCategory, tags]) => [
-            tagCategory,
-            Object.fromEntries(Object.entries(tags).filter(([tagKey, isActive]) => isActive)),
-        ])
+        Object.entries(booksStore.tagsFilter)
+            .map(([tagCategory, tags]) => [
+                tagCategory,
+                Object.fromEntries(Object.entries(tags).filter(([tagKey, isActive]) => isActive)),
+            ])
+            .filter(([tagCategory, tags]) => Object.keys(tags).length)
     );
 
     return activeTags;
 });
 
-export const setTag = action((tagCategory: string, tagKey: string, value: boolean) => {
-    if (!(tagCategory in booksStore.tagsFilter)) booksStore.tagsFilter[tagCategory] = {};
-    booksStore.tagsFilter[tagCategory][tagKey] = value;
+export const setFilterTag = action((tagCategory: string, tagKey: string, value: boolean) => {
+    let tagsFilter = { ...booksStore.tagsFilter };
+
+    if (!(tagCategory in booksStore.tagsFilter)) tagsFilter[tagCategory] = {};
+    if (tagCategory === "Custom" && tagKey === "Recent" && value)
+        tagsFilter = { Custom: booksStore.tagsFilter.Custom ?? {} };
+
+    tagsFilter[tagCategory][tagKey] = value;
+
+    set(booksStore, "tagsFilter", tagsFilter);
 });
 
-export const tagsCompute = computed<BookTags>((books: Books = booksStore.books) => {
-    const subjectsSet = new Set<string>([
-        "This is a very long string about long things",
-        "bunch",
-        "of",
-        "values",
-        "here",
-        "like",
-        "alot",
-        "them",
-        "yes",
-        "no",
-    ]);
+export const resetFilterTags = action(() => {
+    set(booksStore, "tagsFilter", {});
+});
+
+const tagCategoryCounter = (
+    tagsGetter: (metadata: Metadata) => string[],
+    books: Books = booksStore.books
+) => {
+    const tagsObj: { [key: string]: number } = {};
+
     Object.values(books).forEach((bookValue) => {
-        bookValue.metadata.subjects.forEach((subject: string) => {
-            subjectsSet.add(subject);
+        const tags = tagsGetter(bookValue.metadata);
+
+        tags.forEach((tag: string) => {
+            if (!(tag in tagsObj)) tagsObj[tag] = 1;
+            else tagsObj[tag] += 1;
         });
     });
 
-    const yearSet = new Set<string>();
-    Object.values(books).forEach((bookValue) => {
-        const year = new Date(bookValue.metadata.date).getFullYear();
-        const yearString = Number.isNaN(year) ? "Unknown" : year.toString();
-        yearSet.add(yearString);
-    });
+    return tagsObj;
+};
+
+export const bookTagsCompute = computed<BookTags>((books: Books = booksStore.books) => {
+    // const subjectsSet = new Set<string>([
+    //     "This is a very long string about long things",
+    //     "bunch",
+    //     "of",
+    //     "values",
+    //     "here",
+    //     "like",
+    //     "alot",
+    //     "them",
+    //     "yes",
+    //     "no",
+    // ]);
+
+    // Object.values(books).forEach((bookValue) => {
+    //     bookValue.metadata.subjects.forEach((subject: string) => {
+    //         subjectsSet.add(subject);
+    //     });
+    // });
+
+    const subjects = tagCategoryCounter((m) => m.subjects);
+
+    // const yearSet = new Set<string>();
+    // Object.values(books).forEach((bookValue) => {
+    //     yearSet.add(getMetadataYear(bookValue.metadata));
+    // });
+
+    const year = tagCategoryCounter((m) => [getMetadataYear(m)]);
+
+    // return {
+    //     subjects: [...subjectsSet],
+    //     year: [...yearSet],
+    // };
 
     return {
-        subjects: [...subjectsSet],
-        year: [...yearSet],
+        subjects,
+        year,
     };
 });
 
