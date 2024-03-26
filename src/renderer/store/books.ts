@@ -183,38 +183,8 @@ const tagCategoryCounter = (
 };
 
 export const bookTagsCompute = computed<BookTags>((books: Books = booksStore.books) => {
-    // const subjectsSet = new Set<string>([
-    //     "This is a very long string about long things",
-    //     "bunch",
-    //     "of",
-    //     "values",
-    //     "here",
-    //     "like",
-    //     "alot",
-    //     "them",
-    //     "yes",
-    //     "no",
-    // ]);
-
-    // Object.values(books).forEach((bookValue) => {
-    //     bookValue.metadata.subjects.forEach((subject: string) => {
-    //         subjectsSet.add(subject);
-    //     });
-    // });
-
     const subjects = tagCategoryCounter((m) => m.subjects);
-
-    // const yearSet = new Set<string>();
-    // Object.values(books).forEach((bookValue) => {
-    //     yearSet.add(getMetadataYear(bookValue.metadata));
-    // });
-
     const year = tagCategoryCounter((m) => [getMetadataYear(m)]);
-
-    // return {
-    //     subjects: [...subjectsSet],
-    //     year: [...yearSet],
-    // };
 
     return {
         subjects,

@@ -1,4 +1,37 @@
 .input {
+    &[data-variant="subtle"] {
+        color: var(--mantine-color-placeholder);
+        border-radius: 0;
+        padding-left: 0;
+
+        &:not(:disabled),
+        &:disabled {
+            @mixin light {
+                background-color: transparent;
+            }
+            @mixin dark {
+                background-color: transparent;
+            }
+        }
+
+        &:not(:placeholder-shown),
+        &:focus {
+            border-bottom: rem(1px) solid;
+        }
+
+        @mixin light {
+            border-color: var(--mantine-color-light-1);
+        }
+
+        @mixin dark {
+            border-color: var(--mantine-color-dark-3);
+        }
+
+        &:focus {
+            border-color: var(--mantine-primary-color-filled);
+        }
+    }
+
     &:not(:disabled) {
         background-color: var(--mantine-color-dark-3);
 

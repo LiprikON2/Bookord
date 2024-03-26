@@ -3,7 +3,7 @@ import { IconFilter, IconFilterFilled } from "@tabler/icons-react";
 
 import { FilterGroup } from "./components";
 import { ToggleActionIcon } from "~/components/ToggleActionIcon";
-import { Button, Flex, Grid, Group, Menu, rem } from "@mantine/core";
+import { Button, Menu, rem } from "@mantine/core";
 import { useBooks } from "~/renderer/hooks";
 import classes from "./FilterMenu.modules.css";
 
@@ -35,22 +35,26 @@ export const FilterMenu = () => {
                     classNames={{ icon: classes.icon }}
                 />
             </Menu.Target>
-            <Menu.Dropdown p={rem(8)} /* w="40vw" */ h="40vh">
+            <Menu.Dropdown p={rem(8)} h="40vh">
                 <div className={classes.filterGrid}>
-                    {/* <Flex
-                    gap={rem(4)}
-                    maw="100%"
-                    justify="flex-start"
-                    align="flex-start"
-                    direction="row"
-                    wrap="wrap"
-                > */}
-                    {/* <Group wrap="nowrap" p="xs"> */}
-                    {/* <Grid grow gutter={rem(4)} maw="100%"> */}
                     <FilterGroup
                         className={classes.filterGroup}
                         label="Genres"
-                        items={tags.subjects}
+                        items={{
+                            ...tags.subjects,
+                            // test: 99,
+                            // no: 2,
+                            // ds: 2,
+                            // fsd: 12,
+                            // "this is quite a long string": 12,
+
+                            // svdfasd: 12,
+
+                            // sfsad: 12,
+                            // dsasd: 23,
+                            // fdsafsd: 23,
+                            // asdfasdf: 2,
+                        }}
                         itemsState={activeFilterTags.Genres}
                         setItem={setFilterTag}
                     />
@@ -92,9 +96,6 @@ export const FilterMenu = () => {
                     >
                         Reset Filters
                     </Button>
-                    {/* </Grid> */}
-                    {/* </Group> */}
-                    {/* </Flex> */}
                 </div>
             </Menu.Dropdown>
         </Menu>

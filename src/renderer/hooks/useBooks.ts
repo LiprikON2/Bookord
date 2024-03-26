@@ -16,7 +16,6 @@ import {
     resetFilterTags,
 } from "../store";
 import { reaction, toJS } from "mobx";
-import { useDidUpdate } from "@mantine/hooks";
 
 export const useBooks = () => {
     // https://github.com/mobxjs/mobx/discussions/3737#discussioncomment-6548377

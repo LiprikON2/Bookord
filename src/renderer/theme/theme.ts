@@ -116,6 +116,7 @@ export const baseTheme = createTheme({
         Input: {
             classNames: {
                 input: input.input,
+                wrapper: input.wrapper,
             },
         },
         Switch: {
