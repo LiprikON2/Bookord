@@ -23,7 +23,19 @@
     font-size: var(--mantine-font-size-sm);
 }
 
+.leftIconBig {
+    width: rem(22);
+    height: rem(22);
+}
+.leftIconSmall {
+    width: rem(18);
+    height: rem(18);
+}
+
 .icon {
+    /* width: rem(24);
+    height: rem(24); */
+
     transition: transform 150ms ease;
     transform: rotate(0deg);
 

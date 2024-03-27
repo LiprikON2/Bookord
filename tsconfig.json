@@ -26,5 +26,5 @@
         // Mobx
         "useDefineForClassFields": true
     },
-    "include": ["src/**/*", "tools/**/*"]
+    "include": ["src/**/*", "tools/**/*", "assets/**/*"]
 }

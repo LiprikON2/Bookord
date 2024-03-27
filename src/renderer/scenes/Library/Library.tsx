@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Container, Group, rem } from "@mantine/core";
+import { Box, Container } from "@mantine/core";
 
 import { DetailedTitle } from "~/renderer/components";
 import { BookGrid } from "./scenes";
@@ -10,11 +10,6 @@ export const Library = () => {
 
     return (
         <Box p="md" h="100%">
-            {/* <Group>
-                <Button variant="default-alt">First</Button>
-                <Button variant="default-alt">Second</Button>
-                <Button variant="default-subtle">Third</Button>
-            </Group> */}
             <Container p="lg" pt={0} h="100%">
                 <DetailedTitle size="lg">
                     {searchTerm

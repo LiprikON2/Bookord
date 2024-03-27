@@ -36,12 +36,3 @@
     text-transform: uppercase;
     -webkit-text-stroke: 0.5px #000000b6;
 }
-
-.modalPaper {
-    white-space: pre-line;
-    background-color: var(--mantine-color-dark-6);
-
-    @mixin light {
-        background-color: var(--mantine-color-gray-1);
-    }
-}

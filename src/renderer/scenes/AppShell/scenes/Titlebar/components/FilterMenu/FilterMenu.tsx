@@ -1,10 +1,10 @@
 import React, { useState } from "react";
+import { Button, Menu, rem } from "@mantine/core";
 import { IconFilter, IconFilterFilled } from "@tabler/icons-react";
 
+import { useBooks } from "~/renderer/hooks";
 import { FilterGroup } from "./components";
 import { ToggleActionIcon } from "~/components/ToggleActionIcon";
-import { Button, Menu, rem } from "@mantine/core";
-import { useBooks } from "~/renderer/hooks";
 import classes from "./FilterMenu.modules.css";
 
 export const FilterMenu = () => {
@@ -40,21 +40,7 @@ export const FilterMenu = () => {
                     <FilterGroup
                         className={classes.filterGroup}
                         label="Genres"
-                        items={{
-                            ...tags.subjects,
-                            // test: 99,
-                            // no: 2,
-                            // ds: 2,
-                            // fsd: 12,
-                            // "this is quite a long string": 12,
-
-                            // svdfasd: 12,
-
-                            // sfsad: 12,
-                            // dsasd: 23,
-                            // fdsafsd: 23,
-                            // asdfasdf: 2,
-                        }}
+                        items={tags.subjects}
                         itemsState={activeFilterTags.Genres}
                         setItem={setFilterTag}
                     />

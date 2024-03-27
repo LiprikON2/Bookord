@@ -1,9 +1,23 @@
 import React, { useState } from "react";
 import { UnstyledButton, Menu, Image, Group } from "@mantine/core";
-import { IconChevronDown } from "@tabler/icons-react";
+import { type Icon, IconChevronDown } from "@tabler/icons-react";
 import classes from "./LanguagePicker.module.css";
+import { useDisclosure } from "@mantine/hooks";
 
-type Selection = { label: string; image: string };
+type Selection = { label: string; image: string; Icon?: Icon };
+
+const ImageOrIcon = ({
+    Icon,
+    image,
+    className,
+}: {
+    image: Selection["image"];
+    Icon: Selection["Icon"] | undefined;
+    className?: string;
+}) => {
+    if (Icon) return <Icon className={className} />;
+    else return <Image className={className} src={image} />;
+};
 export const LanguagePicker = ({
     data,
     selected,
@@ -13,10 +27,17 @@ export const LanguagePicker = ({
     selected: Selection;
     setSelected: (...args: any[]) => void;
 }) => {
-    const [opened, setOpened] = useState(false);
+    const [opened, { open, close }] = useDisclosure(false);
+
     const items = data.map((item) => (
         <Menu.Item
-            leftSection={item.image && <Image src={item.image} width={18} height={18} />}
+            leftSection={
+                <ImageOrIcon
+                    Icon={item.Icon}
+                    image={item.image}
+                    className={classes.leftIconSmall}
+                />
+            }
             onClick={() => setSelected(item)}
             key={item.label}
         >
@@ -25,20 +46,19 @@ export const LanguagePicker = ({
     ));
 
     return (
-        <Menu
-            onOpen={() => setOpened(true)}
-            onClose={() => setOpened(false)}
-            radius="md"
-            width="target"
-            withinPortal
-        >
+        <Menu onOpen={open} onClose={close} radius="md" width="target" withinPortal>
             <Menu.Target>
                 <UnstyledButton className={classes.control} data-expanded={opened || undefined}>
                     <Group gap="xs">
-                        <Image src={selected.image} width={22} height={22} />
+                        <ImageOrIcon
+                            Icon={selected.Icon}
+                            image={selected.image}
+                            className={classes.leftIconBig}
+                        />
+
                         <span className={classes.label}>{selected.label}</span>
                     </Group>
-                    <IconChevronDown size="1rem" className={classes.icon} stroke={1.5} />
+                    <IconChevronDown className={classes.icon} stroke={1.5} />
                 </UnstyledButton>
             </Menu.Target>
             <Menu.Dropdown>{items}</Menu.Dropdown>
