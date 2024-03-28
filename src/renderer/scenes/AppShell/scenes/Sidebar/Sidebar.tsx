@@ -1,14 +1,14 @@
 import React from "react";
 import { Stack, Tabs } from "@mantine/core";
-import { useNavigate, useRouter } from "@tanstack/react-router";
+import { type ToOptions, useNavigate } from "@tanstack/react-router";
 
 import { useIsMobile } from "~/renderer/hooks/useIsMobile";
 import { Bottom } from "./components";
 import { useHistory } from "~/renderer/hooks";
 import classes from "./Sidebar.module.css";
 
-type Link = {
-    to: string; // TODO change to the inferred type
+export type TabLink = {
+    to: ToOptions["to"];
     name: string;
     Icon: ({ className }: { className: string }) => React.JSX.Element;
 };
@@ -21,7 +21,7 @@ const Sidebar = ({
     close,
     children,
 }: {
-    links: Link[];
+    links: TabLink[];
     close: () => void;
     children: React.ReactNode;
 }) => {

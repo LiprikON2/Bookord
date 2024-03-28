@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, Burger, Group, Text } from "@mantine/core";
+import { Image, Burger, Group, Text, rem } from "@mantine/core";
 import { IconClock, IconClockFilled } from "@tabler/icons-react";
 
 import { WindowControls, SearchInput, FilterMenu } from "./components";
@@ -8,7 +8,13 @@ import classes from "./Titlebar.module.css";
 import { ToggleActionIcon } from "~/components/ToggleActionIcon";
 import { useBooks } from "~/renderer/hooks";
 
-export const Titlebar = ({ opened, toggle }: { opened: boolean; toggle: () => void }) => {
+export const Titlebar = ({
+    showBurger,
+    toggleBurger,
+}: {
+    showBurger: boolean;
+    toggleBurger: () => void;
+}) => {
     const { setFilterTag, activeFilterTags } = useBooks();
 
     const handleRecentFilterOn = () => {
@@ -26,9 +32,9 @@ export const Titlebar = ({ opened, toggle }: { opened: boolean; toggle: () => vo
             justify="space-between"
             wrap="nowrap"
         >
-            <Group p={0}>
-                <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-                <Group>
+            <Group p={0} wrap="nowrap">
+                <Burger opened={showBurger} onClick={toggleBurger} hiddenFrom="sm" size="sm" />
+                <Group wrap="nowrap">
                     <Image m={4} h={24} w={24} src={icons.bookord} />
                     <Text size="xl" c="unset">
                         Bookord

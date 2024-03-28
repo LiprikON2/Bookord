@@ -53,7 +53,6 @@ export const BookCard = ({
             params={{
                 bookKey: filename,
             }}
-            key={filename}
         >
             <Paper
                 shadow="md"

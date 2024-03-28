@@ -7,8 +7,8 @@
     --app-shell-edge-offset: var(--mantine-spacing-xs);
 
     padding-left: var(--app-shell-navbar-offset);
+    padding-right: var(--app-shell-aside-offset);
     padding-top: var(--app-shell-header-height);
-    padding-right: var(--app-shell-edge-offset);
     padding-bottom: var(--app-shell-edge-offset);
 
     position: relative;
@@ -17,6 +17,7 @@
 
     @media (max-width: $mantine-breakpoint-sm) {
         padding-left: var(--app-shell-edge-offset);
+        padding-right: var(--app-shell-edge-offset);
     }
 
     &::before {
@@ -29,12 +30,13 @@
 
         top: var(--app-shell-header-height);
         left: var(--app-shell-navbar-offset);
-        right: var(--app-shell-edge-offset);
+        right: var(--app-shell-aside-offset);
         height: calc(100% - var(--app-shell-header-height) - var(--app-shell-edge-offset));
         z-index: -1;
 
         @media (max-width: $mantine-breakpoint-sm) {
             left: var(--app-shell-edge-offset);
+            right: var(--app-shell-edge-offset);
         }
         @mixin light {
             background-color: var(--mantine-color-gray-1);
@@ -42,7 +44,9 @@
     }
 }
 
-.header {
+.header,
+.navbar,
+.aside {
     border: none;
 }
 
@@ -50,7 +54,6 @@
     --app-shell-navbar-width: rem(200px);
     padding-inline: var(--mantine-spacing-sm);
     padding-block: var(--mantine-spacing-md);
-    border: none;
 
     @media (min-width: $mantine-breakpoint-sm) {
         padding-right: 0;

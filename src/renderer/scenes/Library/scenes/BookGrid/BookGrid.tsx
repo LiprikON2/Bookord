@@ -46,7 +46,12 @@ export const BookGrid = () => {
                 style={{ justifyItems: "center" }}
             >
                 {filteredBookEntries.map(([filename, { metadata, state }]) => (
-                    <BookCard filename={filename} metadata={metadata} skeleton={!state.isLoaded} />
+                    <BookCard
+                        key={filename}
+                        filename={filename}
+                        metadata={metadata}
+                        skeleton={!state.isLoaded}
+                    />
                 ))}
             </SimpleGrid>
         </Box>

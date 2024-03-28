@@ -5,12 +5,14 @@ import {
     createRouter,
     createRootRoute,
     createRoute,
+    redirect,
 } from "@tanstack/react-router";
 import { createRoot } from "react-dom/client";
 
 import { Library, Reading, Test } from "~/renderer/scenes";
 import { isDev } from "~/common/helpers";
 import { Root } from "./appRoot";
+import { LayoutLibrary, LayoutReading } from "./layouts";
 
 // Only importing and using Devtools in Development
 const TanStackRouterDevtools = isDev()
@@ -26,14 +28,42 @@ export const rootRoute = createRootRoute({
     component: Root,
 });
 
-export const libraryRoute = createRoute({
+// Since initial url is always `http://localhost:3000/app_window#/` there is a need
+// to redirect to the home view `http://localhost:3000/app_window#/library-layout/library`
+export const redirectRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/",
+    loader: () => {
+        redirect({
+            to: libraryRoute.to,
+            throw: true,
+        });
+    },
+});
+
+export const layoutRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    id: "layout",
+});
+export const layoutLibraryRoute = createRoute({
+    getParentRoute: () => layoutRoute,
+    component: LayoutLibrary,
+    path: "layout-library",
+});
+export const layoutReadingRoute = createRoute({
+    getParentRoute: () => layoutRoute,
+    component: LayoutReading,
+    path: "layout-reading",
+});
+
+export const libraryRoute = createRoute({
+    getParentRoute: () => layoutLibraryRoute,
+    path: "/library",
     component: Library,
 });
 
 export const aboutRoute = createRoute({
-    getParentRoute: () => rootRoute,
+    getParentRoute: () => layoutLibraryRoute,
     path: "about",
 });
 
@@ -44,7 +74,7 @@ export const aboutIndexRoute = createRoute({
 });
 
 export const readingRoute = createRoute({
-    getParentRoute: () => rootRoute,
+    getParentRoute: () => layoutReadingRoute,
     path: "reading",
 });
 
@@ -56,9 +86,16 @@ export const bookKeyRoute = createRoute({
 
 /* prettier-ignore */
 const routeTree = rootRoute.addChildren([
-    libraryRoute,
-    aboutRoute.addChildren([aboutIndexRoute]),
-    readingRoute.addChildren([bookKeyRoute]),
+    redirectRoute,
+    layoutRoute.addChildren([
+        layoutLibraryRoute.addChildren([
+            libraryRoute,
+            aboutRoute.addChildren([aboutIndexRoute]),
+        ]),
+        layoutReadingRoute.addChildren([
+            readingRoute.addChildren([bookKeyRoute]),
+        ])
+    ])
 ]);
 /* prettier-ignore-end */
 
