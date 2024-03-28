@@ -1,35 +1,17 @@
 import React, { useState } from "react";
+import { Paper, Text, Title, Button, Group, rem, Modal, Container } from "@mantine/core";
 import {
-    Paper,
-    Text,
-    Title,
-    Button,
-    Group,
-    Menu,
-    rem,
-    ActionIcon,
-    Modal,
-    Container,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import {
-    IconBaselineDensityLarge,
     IconBaselineDensityMedium,
     IconBaselineDensitySmall,
-    IconMenu2,
     IconRobot,
-    IconTrash,
 } from "@tabler/icons-react";
-
-import sampleCover from "~/assets/images/sampleBookCover.webp";
-import classes from "./SummaryModal.module.css";
-import context from "../../../ipc";
-import { LanguagePicker } from "~/components/LanguagePicker";
 import { useQuery } from "@tanstack/react-query";
-import { type Metadata, getSetting } from "~/renderer/store";
-import flags from "~/assets/images/flags/language";
 
-console.log("flags.en", flags.en);
+import { LanguagePicker } from "~/components/LanguagePicker";
+import { getSetting } from "~/renderer/store";
+import flags from "~/assets/images/flags/language";
+import context from "../../../ipc";
+import classes from "./SummaryModal.module.css";
 
 const selectLanguageData = [
     { label: "English", image: flags.en },
@@ -78,6 +60,9 @@ interface SummaryModalProps {
     opened: boolean;
     onClose?: () => void;
 }
+
+// TODO persist summaries https://tanstack.com/query/v4/docs/react/plugins/persistQueryClient
+
 export const SummaryModal = ({ opened = false, title, authors, onClose }: SummaryModalProps) => {
     const [selectedLang, setSelectedLang] = useState(selectLanguageData[0]);
     const [selectedLen, setSelectedLen] = useState(selectLengthData[0]);

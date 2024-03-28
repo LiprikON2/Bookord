@@ -1,17 +1,16 @@
 import React from "react";
 import {
-    RootRoute,
-    Route,
-    Router,
     createHashHistory,
     RouterProvider,
-    createMemoryHistory,
+    createRouter,
+    createRootRoute,
+    createRoute,
 } from "@tanstack/react-router";
 import { createRoot } from "react-dom/client";
 
-import { Root } from "./appRoot";
-import { Library, Test } from "~/renderer/scenes";
+import { Library, Reading, Test } from "~/renderer/scenes";
 import { isDev } from "~/common/helpers";
+import { Root } from "./appRoot";
 
 // Only importing and using Devtools in Development
 const TanStackRouterDevtools = isDev()
@@ -23,50 +22,64 @@ const TanStackRouterDevtools = isDev()
       )
     : (): any => null; // Render nothing in production
 
-export const rootRoute = new RootRoute({
+export const rootRoute = createRootRoute({
     component: Root,
 });
 
-export const libraryRoute = new Route({
+export const libraryRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/",
     component: Library,
 });
 
-export const testRoute = new Route({
+export const aboutRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: "test",
+    path: "about",
 });
 
-export const testIndexRoute = new Route({
-    getParentRoute: () => testRoute,
+export const aboutIndexRoute = createRoute({
+    getParentRoute: () => aboutRoute,
     path: "/",
     component: Test,
 });
 
-const routeTree = rootRoute.addChildren([
-    libraryRoute.addChildren([testRoute.addChildren([testIndexRoute])]),
-]);
-
-// const hashHistory = createHashHistory(); // Bugged
-const memoryHistory = createMemoryHistory({
-    // initialEntries: ["/test"],
-    initialEntries: ["/"],
+export const readingRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "reading",
 });
 
-// const router = new Router({ routeTree, history: hashHistory });
-const router = new Router({ routeTree, history: memoryHistory });
+export const bookKeyRoute = createRoute({
+    getParentRoute: () => readingRoute,
+    path: "$bookKey",
+    component: Reading,
+});
 
-createRoot(document.getElementById("app")).render(
-    <>
-        <TanStackRouterDevtools router={router} position="bottom-right" />
-        <RouterProvider router={router} />
-    </>
-);
+/* prettier-ignore */
+const routeTree = rootRoute.addChildren([
+    libraryRoute,
+    aboutRoute.addChildren([aboutIndexRoute]),
+    readingRoute.addChildren([bookKeyRoute]),
+]);
+/* prettier-ignore-end */
+
+const hashHistory = createHashHistory();
+
+const router = createRouter({ routeTree, history: hashHistory });
 
 declare module "@tanstack/react-router" {
     interface Register {
         // This infers the type of our router and registers it across your entire project
         router: typeof router;
     }
+}
+
+const rootElement = document.getElementById("app")!;
+if (!rootElement.innerHTML) {
+    const root = createRoot(rootElement);
+    root.render(
+        <React.StrictMode>
+            <TanStackRouterDevtools router={router} position="bottom-right" />
+            <RouterProvider router={router} />
+        </React.StrictMode>
+    );
 }

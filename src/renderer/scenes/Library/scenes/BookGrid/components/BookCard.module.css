@@ -36,3 +36,7 @@
     text-transform: uppercase;
     -webkit-text-stroke: 0.5px #000000b6;
 }
+
+.link {
+    text-decoration: none;
+}

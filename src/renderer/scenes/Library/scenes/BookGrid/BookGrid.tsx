@@ -2,9 +2,9 @@ import React from "react";
 import { Box, SimpleGrid } from "@mantine/core";
 import type { FileWithPath } from "@mantine/dropzone";
 
+import { useBooks } from "~/renderer/hooks";
 import { BookDropzone } from "./scenes";
 import { BookCard } from "./components";
-import { useBooks } from "~/renderer/hooks";
 import context from "./ipc";
 
 export const BookGrid = () => {
@@ -46,12 +46,7 @@ export const BookGrid = () => {
                 style={{ justifyItems: "center" }}
             >
                 {filteredBookEntries.map(([filename, { metadata, state }]) => (
-                    <BookCard
-                        key={filename}
-                        filename={filename}
-                        metadata={metadata}
-                        skeleton={!state.isLoaded}
-                    />
+                    <BookCard filename={filename} metadata={metadata} skeleton={!state.isLoaded} />
                 ))}
             </SimpleGrid>
         </Box>

@@ -5,14 +5,14 @@ import { IconInfoCircle, IconLibrary, IconMessageCircle, IconPhoto } from "@tabl
 
 import { ThemeToggle } from "~/renderer/components";
 import { SettingsModal, Sidebar, Titlebar } from "./scenes";
-import { libraryRoute, testRoute } from "~/renderer/appRenderer";
+import { libraryRoute, aboutRoute } from "~/renderer/appRenderer";
 import classes from "./AppShell.module.css";
 
 export const AppShell = ({ children }: { children: React.ReactNode }) => {
     const [opened, { toggle, close }] = useDisclosure();
     const links = [
         { to: libraryRoute.to, name: "Library", Icon: IconLibrary },
-        { to: testRoute.to, name: "About", Icon: IconInfoCircle },
+        { to: aboutRoute.to, name: "About", Icon: IconInfoCircle },
     ];
 
     return (

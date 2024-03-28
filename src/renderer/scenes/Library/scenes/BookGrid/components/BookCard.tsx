@@ -1,7 +1,9 @@
 import React from "react";
 import { Paper, Text, Title, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { Link } from "@tanstack/react-router";
 
+import { bookKeyRoute } from "~/renderer/appRenderer";
 import sampleCover from "~/assets/images/sampleBookCover.webp";
 import { type Metadata } from "~/renderer/store";
 import context from "../ipc";
@@ -25,7 +27,6 @@ const provideFallbackAuthors = (authors: any): string => {
     return "Unknown";
 };
 
-// TODO persist summaries https://tanstack.com/query/v4/docs/react/plugins/persistQueryClient
 export const BookCard = ({
     filename,
     metadata,
@@ -46,7 +47,14 @@ export const BookCard = ({
     const authors = provideFallbackAuthors(metadata.author);
 
     return (
-        <>
+        <Link
+            className={classes.link}
+            to={bookKeyRoute.to}
+            params={{
+                bookKey: filename,
+            }}
+            key={filename}
+        >
             <Paper
                 shadow="md"
                 p="md"
@@ -59,7 +67,13 @@ export const BookCard = ({
                         {metadata.author}
                     </Text>
                 </div>
-                <Group justify="space-between" w="100%" wrap="nowrap" h="3rem">
+                <Group
+                    justify="space-between"
+                    w="100%"
+                    wrap="nowrap"
+                    h="3rem"
+                    onClick={(e) => e.preventDefault()}
+                >
                     <Paper
                         color="cyan.3"
                         style={{ flexGrow: 1 }}
@@ -80,6 +94,6 @@ export const BookCard = ({
                 opened={openedModal}
                 onClose={closeModal}
             />
-        </>
+        </Link>
     );
 };

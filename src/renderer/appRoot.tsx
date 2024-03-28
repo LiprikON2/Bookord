@@ -20,17 +20,15 @@ export const Root = () => {
             <ColorSchemeScript defaultColorScheme="dark" />
             <MantineProvider defaultColorScheme="dark" theme={baseTheme}>
                 <QueryClientProvider client={queryClient}>
-                    <React.StrictMode>
-                        <AppShell>
-                            <ScrollArea
-                                h="100%"
-                                type="auto"
-                                styles={{ scrollbar: { margin: "-1px", marginTop: rem(8) } }}
-                            >
-                                <Outlet />
-                            </ScrollArea>
-                        </AppShell>
-                    </React.StrictMode>
+                    <AppShell>
+                        <ScrollArea
+                            h="100%"
+                            type="auto"
+                            styles={{ scrollbar: { margin: "-1px", marginTop: rem(8) } }}
+                        >
+                            <Outlet />
+                        </ScrollArea>
+                    </AppShell>
                 </QueryClientProvider>
             </MantineProvider>
         </>
