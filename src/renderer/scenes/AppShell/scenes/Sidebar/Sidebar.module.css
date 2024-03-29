@@ -26,6 +26,10 @@
     padding: var(--mantine-spacing-xs);
 }
 
+.list {
+    margin-right: 0.5px;
+}
+
 .outerPanel {
     background-color: transparent !important;
 }

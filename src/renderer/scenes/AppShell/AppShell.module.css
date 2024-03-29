@@ -34,6 +34,9 @@
         height: calc(100% - var(--app-shell-header-height) - var(--app-shell-edge-offset));
         z-index: -1;
 
+        /* TODO properly handle padding on disabled aside in desktop */
+        right: var(--app-shell-edge-offset);
+
         @media (max-width: $mantine-breakpoint-sm) {
             left: var(--app-shell-edge-offset);
             right: var(--app-shell-edge-offset);

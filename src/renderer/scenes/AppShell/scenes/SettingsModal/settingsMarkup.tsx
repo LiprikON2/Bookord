@@ -15,6 +15,8 @@ import classes from "./SettingsModal.module.css";
 const sectionIconProps: TablerIconsProps = {
     className: classes.sectionIcon,
 };
+
+// TODO refactor it in style of LayoutLibrary.tsx, since objects do not ensure key order
 const sectionMarkup = {
     Startup: {
         section: "Startup",
@@ -82,6 +84,97 @@ export const settingsMarkup: SettingsMarkup = [
 
     {
         label: "Accent color",
+        description: "The color of accented elements.",
+        placeholder: "#ffffff",
+        hoverDescription: "",
+        tabHeading: "Appearance",
+        tab: "App colors",
+        ...sectionMarkup["Main app colors"],
+
+        Input: ColorInput,
+        defaultValue: "#fff",
+        canBeDisabled: true,
+    },
+    {
+        label: "Accent color1",
+        description: "The color of accented elements.",
+        placeholder: "#ffffff",
+        hoverDescription: "",
+        tabHeading: "Appearance",
+        tab: "App colors",
+        ...sectionMarkup["Main app colors"],
+
+        Input: ColorInput,
+        defaultValue: "#fff",
+        canBeDisabled: true,
+    },
+    {
+        label: "Accent color2",
+        description: "The color of accented elements.",
+        placeholder: "#ffffff",
+        hoverDescription: "",
+        tabHeading: "Appearance",
+        tab: "App colors",
+        ...sectionMarkup["Main app colors"],
+
+        Input: ColorInput,
+        defaultValue: "#fff",
+        canBeDisabled: true,
+    },
+    {
+        label: "Accent color3",
+        description: "The color of accented elements.",
+        placeholder: "#ffffff",
+        hoverDescription: "",
+        tabHeading: "Appearance",
+        tab: "App colors",
+        ...sectionMarkup["Main app colors"],
+
+        Input: ColorInput,
+        defaultValue: "#fff",
+        canBeDisabled: true,
+    },
+    {
+        label: "Accent color4",
+        description: "The color of accented elements.",
+        placeholder: "#ffffff",
+        hoverDescription: "",
+        tabHeading: "Appearance",
+        tab: "App colors",
+        ...sectionMarkup["Main app colors"],
+
+        Input: ColorInput,
+        defaultValue: "#fff",
+        canBeDisabled: true,
+    },
+    {
+        label: "Accent color5",
+        description: "The color of accented elements.",
+        placeholder: "#ffffff",
+        hoverDescription: "",
+        tabHeading: "Appearance",
+        tab: "App colors",
+        ...sectionMarkup["Main app colors"],
+
+        Input: ColorInput,
+        defaultValue: "#fff",
+        canBeDisabled: true,
+    },
+    {
+        label: "Accent color6",
+        description: "The color of accented elements.",
+        placeholder: "#ffffff",
+        hoverDescription: "",
+        tabHeading: "Appearance",
+        tab: "App colors",
+        ...sectionMarkup["Main app colors"],
+
+        Input: ColorInput,
+        defaultValue: "#fff",
+        canBeDisabled: true,
+    },
+    {
+        label: "Accent color7",
         description: "The color of accented elements.",
         placeholder: "#ffffff",
         hoverDescription: "",

@@ -1,12 +1,12 @@
 import React from "react";
 import { Stack, Tabs, Text } from "@mantine/core";
 import { type ToOptions, useNavigate } from "@tanstack/react-router";
-import { type Icon, IconHome, IconPhoto } from "@tabler/icons-react";
+import { type Icon } from "@tabler/icons-react";
 
 import { useIsMobile } from "~/renderer/hooks/useIsMobile";
-import { Bottom } from "./components";
 import { useHistory } from "~/renderer/hooks";
 import classes from "./Sidebar.module.css";
+import { Bottom, SegmentedTabList } from "./components";
 
 export type SidebarMarkup = {
     name: string;
@@ -24,12 +24,12 @@ export type SidebarMarkup = {
 const desktopProps = { variant: "outline" };
 const mobileProps = { variant: "pills" };
 
-const Sidebar = ({ sidebarMarkup, close }: { sidebarMarkup: SidebarMarkup; close: () => void }) => {
+const Sidebar = ({ markup, close }: { markup: SidebarMarkup; close: () => void }) => {
     const isMobile = useIsMobile();
     const navigate = useNavigate();
     const { currentPath } = useHistory();
 
-    const changeTab = (to: any) => {
+    const changeTab = (to: ToOptions["to"]) => {
         navigate({ to });
         close();
     };
@@ -42,25 +42,31 @@ const Sidebar = ({ sidebarMarkup, close }: { sidebarMarkup: SidebarMarkup; close
                 panel: classes.outerPanel,
             }}
             orientation="horizontal"
-            defaultValue={sidebarMarkup[0].name}
+            defaultValue={markup[0]?.name}
         >
-            <Tabs.List>
-                {sidebarMarkup.map((outerTab) => (
+            {/* {markup.length > 1 && <SegmentedTabList markup={markup} />} */}
+            {
+                <SegmentedTabList
+                    markup={markup}
+                    style={{ visibility: markup.length > 1 ? "visible" : "hidden" }}
+                />
+            }
+            {/* <Tabs.List>
+                {markup.map((outerTab) => (
                     <Tabs.Tab
                         key={outerTab.name}
                         value={outerTab.name}
                         leftSection={<outerTab.Icon className={classes.icon} />}
-                        // children={outerTab.name}
                     />
                 ))}
-            </Tabs.List>
+            </Tabs.List> */}
 
-            {sidebarMarkup.map((outerTab) => (
+            {markup.map((outerTab) => (
                 <Tabs.Panel key={outerTab.name} value={outerTab.name}>
                     {outerTab.innerTabs.map((innerTab) => (
                         <Tabs
                             key={innerTab.tabHeading}
-                            classNames={{ root: classes.root }}
+                            classNames={{ root: classes.root, list: classes.list }}
                             defaultValue={currentPath}
                             keepMounted={true}
                             onChange={changeTab}

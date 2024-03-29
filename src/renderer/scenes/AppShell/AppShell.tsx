@@ -4,6 +4,8 @@ import {
     AppShell as MantineAppShell,
     AppShellProps as MantineAppShellProps,
     Overlay,
+    ScrollArea,
+    rem,
 } from "@mantine/core";
 import { IconHome, IconInfoCircle, IconLibrary } from "@tabler/icons-react";
 
@@ -12,49 +14,19 @@ import { SettingsModal, Sidebar, type SidebarMarkup, Titlebar } from "./scenes";
 import classes from "./AppShell.module.css";
 
 interface AppShellProps {
-    variant?: "library" | "reading";
+    layoutMarkup: LayoutMarkup;
     children?: React.ReactNode;
 }
 
-type VariantsConfig = {
-    [key in AppShellProps["variant"]]: {
-        MantineAppShellProps: MantineAppShellProps;
-    };
+export type LayoutMarkup = {
+    getAppShellProps: (openedNavbar: boolean, openedAside: boolean) => MantineAppShellProps;
+    navbarMarkup: SidebarMarkup;
+    asideMarkup: SidebarMarkup;
 };
 
-const sidebarMarkup: SidebarMarkup = [
-    {
-        name: "Home",
-        Icon: IconHome,
-        innerTabs: [
-            {
-                tabHeading: "General",
-                tabs: [
-                    { name: "Library", Icon: IconLibrary, to: "/layout-library/library" },
-                    { name: "About", Icon: IconInfoCircle, to: "/layout-library/about" },
-                ],
-            },
-        ],
-    },
-];
-
-export const AppShell = ({ variant = "library", children }: AppShellProps) => {
-    const [opened, { toggle, close }] = useDisclosure();
-
-    const variantsConfig: VariantsConfig = {
-        library: {
-            MantineAppShellProps: {
-                navbar: { width: 200, breakpoint: "sm", collapsed: { mobile: !opened } },
-                aside: { width: 200, breakpoint: "sm", collapsed: { mobile: true } },
-            },
-        },
-        reading: {
-            MantineAppShellProps: {
-                navbar: { width: 200, breakpoint: "sm", collapsed: { mobile: !opened } },
-                aside: { width: 200, breakpoint: "sm", collapsed: { mobile: true } },
-            },
-        },
-    };
+export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
+    const [openedNavbar, { toggle: toggleNavbar, close: closeNavbar }] = useDisclosure();
+    const [openedAside, { toggle: toggleAside, close: closeAside }] = useDisclosure();
 
     return (
         <MantineAppShell
@@ -67,13 +39,13 @@ export const AppShell = ({ variant = "library", children }: AppShellProps) => {
             }}
             padding="md"
             header={{ height: 48 }}
-            {...variantsConfig[variant].MantineAppShellProps}
+            {...layoutMarkup.getAppShellProps(openedNavbar, openedAside)}
         >
             <MantineAppShell.Header>
-                <Titlebar showBurger={opened} toggleBurger={toggle} />
+                <Titlebar showBurger={openedNavbar} toggleBurger={toggleNavbar} />
             </MantineAppShell.Header>
             <MantineAppShell.Navbar>
-                <Sidebar sidebarMarkup={sidebarMarkup} close={close}></Sidebar>
+                <Sidebar markup={layoutMarkup.navbarMarkup} close={closeNavbar}></Sidebar>
                 <Sidebar.Bottom>
                     <SettingsModal />
                     <ThemeToggle />
@@ -81,9 +53,16 @@ export const AppShell = ({ variant = "library", children }: AppShellProps) => {
             </MantineAppShell.Navbar>
             <MantineAppShell.Aside>Aside</MantineAppShell.Aside>
             <MantineAppShell.Main>
-                {opened && <Overlay onClick={close} backgroundOpacity={0.25} />}
+                {openedNavbar && <Overlay onClick={closeNavbar} backgroundOpacity={0.25} />}
 
-                {children}
+                {/* TODO scroll area isn't showing anymore */}
+                <ScrollArea
+                    h="100%"
+                    type="auto"
+                    styles={{ scrollbar: { margin: "-1px", marginTop: rem(8) } }}
+                >
+                    {children}
+                </ScrollArea>
             </MantineAppShell.Main>
         </MantineAppShell>
     );
