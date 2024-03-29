@@ -9,7 +9,9 @@
 }
 
 .list {
-    height: 100%;
+    &[data-orientation="vertical"] {
+        height: 100%;
+    }
 }
 
 .tab {

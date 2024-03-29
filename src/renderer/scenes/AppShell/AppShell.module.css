@@ -54,6 +54,7 @@
     --app-shell-navbar-width: rem(200px);
     padding-inline: var(--mantine-spacing-sm);
     padding-block: var(--mantine-spacing-md);
+    padding-top: calc(var(--mantine-spacing-sm) / 2);
 
     @media (min-width: $mantine-breakpoint-sm) {
         padding-right: 0;

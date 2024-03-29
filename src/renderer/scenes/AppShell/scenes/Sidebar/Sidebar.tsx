@@ -1,30 +1,30 @@
 import React from "react";
-import { Stack, Tabs } from "@mantine/core";
+import { Stack, Tabs, Text } from "@mantine/core";
 import { type ToOptions, useNavigate } from "@tanstack/react-router";
+import { type Icon, IconHome, IconPhoto } from "@tabler/icons-react";
 
 import { useIsMobile } from "~/renderer/hooks/useIsMobile";
 import { Bottom } from "./components";
 import { useHistory } from "~/renderer/hooks";
 import classes from "./Sidebar.module.css";
 
-export type TabLink = {
-    to: ToOptions["to"];
+export type SidebarMarkup = {
     name: string;
-    Icon: ({ className }: { className: string }) => React.JSX.Element;
-};
+    Icon: Icon;
+    innerTabs: {
+        tabHeading: string;
+        tabs: {
+            name: string;
+            Icon: Icon;
+            to: ToOptions["to"];
+        }[];
+    }[];
+}[];
 
 const desktopProps = { variant: "outline" };
 const mobileProps = { variant: "pills" };
 
-const Sidebar = ({
-    links,
-    close,
-    children,
-}: {
-    links: TabLink[];
-    close: () => void;
-    children: React.ReactNode;
-}) => {
+const Sidebar = ({ sidebarMarkup, close }: { sidebarMarkup: SidebarMarkup; close: () => void }) => {
     const isMobile = useIsMobile();
     const navigate = useNavigate();
     const { currentPath } = useHistory();
@@ -36,27 +36,58 @@ const Sidebar = ({
 
     return (
         <Tabs
-            classNames={{ root: classes.root }}
-            defaultValue={currentPath}
-            keepMounted={true}
-            onChange={changeTab}
-            {...(isMobile ? mobileProps : desktopProps)}
+            variant="pills"
+            classNames={{
+                tab: classes.outerTab,
+                panel: classes.outerPanel,
+            }}
+            orientation="horizontal"
+            defaultValue={sidebarMarkup[0].name}
         >
-            <Stack p={0} m={0} gap={0} h="100%">
-                <Tabs.List>
-                    {links.map((link) => (
-                        <Tabs.Tab
-                            key={link.to}
-                            value={link.to}
-                            role="link"
-                            leftSection={<link.Icon className={classes.icon} />}
+            <Tabs.List>
+                {sidebarMarkup.map((outerTab) => (
+                    <Tabs.Tab
+                        key={outerTab.name}
+                        value={outerTab.name}
+                        leftSection={<outerTab.Icon className={classes.icon} />}
+                        // children={outerTab.name}
+                    />
+                ))}
+            </Tabs.List>
+
+            {sidebarMarkup.map((outerTab) => (
+                <Tabs.Panel key={outerTab.name} value={outerTab.name}>
+                    {outerTab.innerTabs.map((innerTab) => (
+                        <Tabs
+                            key={innerTab.tabHeading}
+                            classNames={{ root: classes.root }}
+                            defaultValue={currentPath}
+                            keepMounted={true}
+                            onChange={changeTab}
+                            {...(isMobile ? mobileProps : desktopProps)}
                         >
-                            {link.name}
-                        </Tabs.Tab>
+                            <Stack p={0} m={0} gap={0} h="100%">
+                                <Tabs.List>
+                                    <Text className={classes.tabHeading} c="dimmed">
+                                        {innerTab.tabHeading}
+                                    </Text>
+
+                                    {innerTab.tabs.map((tab) => (
+                                        <Tabs.Tab
+                                            key={tab.to}
+                                            value={tab.to}
+                                            role="link"
+                                            leftSection={<tab.Icon className={classes.icon} />}
+                                        >
+                                            {tab.name}
+                                        </Tabs.Tab>
+                                    ))}
+                                </Tabs.List>
+                            </Stack>
+                        </Tabs>
                     ))}
-                </Tabs.List>
-                {children}
-            </Stack>
+                </Tabs.Panel>
+            ))}
         </Tabs>
     );
 };

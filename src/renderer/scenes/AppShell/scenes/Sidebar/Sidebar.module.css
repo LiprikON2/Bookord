@@ -2,6 +2,30 @@
     width: rem(16);
     height: rem(16);
 }
+
+.iconBigger {
+    width: rem(20);
+    height: rem(20);
+}
 .root {
     display: block;
+}
+
+.tabHeading {
+    font-size: var(--mantine-font-size-sm);
+
+    padding-inline: var(--mantine-spacing-sm);
+    padding-top: var(--mantine-spacing-sm);
+    padding-bottom: rem(4px);
+}
+
+.outerTab {
+    width: min-content;
+    height: min-content;
+    aspect-ratio: 1 / 1;
+    padding: var(--mantine-spacing-xs);
+}
+
+.outerPanel {
+    background-color: transparent !important;
 }

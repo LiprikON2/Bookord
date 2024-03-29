@@ -1,16 +1,14 @@
 import React from "react";
 import { useDisclosure } from "@mantine/hooks";
 import {
-    Button,
-    Drawer,
     AppShell as MantineAppShell,
     AppShellProps as MantineAppShellProps,
     Overlay,
 } from "@mantine/core";
-import { IconInfoCircle, IconLibrary } from "@tabler/icons-react";
+import { IconHome, IconInfoCircle, IconLibrary } from "@tabler/icons-react";
 
 import { ThemeToggle } from "~/renderer/components";
-import { SettingsModal, Sidebar, Titlebar, type TabLink } from "./scenes";
+import { SettingsModal, Sidebar, type SidebarMarkup, Titlebar } from "./scenes";
 import classes from "./AppShell.module.css";
 
 interface AppShellProps {
@@ -24,15 +22,25 @@ type VariantsConfig = {
     };
 };
 
-const links: TabLink[] = [
-    { to: "/layout-library/library", name: "Library", Icon: IconLibrary },
-    { to: "/layout-library/about", name: "About", Icon: IconInfoCircle },
+const sidebarMarkup: SidebarMarkup = [
+    {
+        name: "Home",
+        Icon: IconHome,
+        innerTabs: [
+            {
+                tabHeading: "General",
+                tabs: [
+                    { name: "Library", Icon: IconLibrary, to: "/layout-library/library" },
+                    { name: "About", Icon: IconInfoCircle, to: "/layout-library/about" },
+                ],
+            },
+        ],
+    },
 ];
 
 export const AppShell = ({ variant = "library", children }: AppShellProps) => {
     const [opened, { toggle, close }] = useDisclosure();
 
-    // Define configurations for different variants
     const variantsConfig: VariantsConfig = {
         library: {
             MantineAppShellProps: {
@@ -65,12 +73,11 @@ export const AppShell = ({ variant = "library", children }: AppShellProps) => {
                 <Titlebar showBurger={opened} toggleBurger={toggle} />
             </MantineAppShell.Header>
             <MantineAppShell.Navbar>
-                <Sidebar links={links} close={close}>
-                    <Sidebar.Bottom>
-                        <SettingsModal />
-                        <ThemeToggle />
-                    </Sidebar.Bottom>
-                </Sidebar>
+                <Sidebar sidebarMarkup={sidebarMarkup} close={close}></Sidebar>
+                <Sidebar.Bottom>
+                    <SettingsModal />
+                    <ThemeToggle />
+                </Sidebar.Bottom>
             </MantineAppShell.Navbar>
             <MantineAppShell.Aside>Aside</MantineAppShell.Aside>
             <MantineAppShell.Main>
