@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { reaction } from "mobx";
 import _ from "lodash";
 
 // TODO move this context function closer
-import context from "../scenes/Library/scenes/BookGrid/ipc";
+import context from "../ipc";
 import {
     type Books,
     booksStore,
@@ -15,10 +16,9 @@ import {
     activeFilterTagsCompute,
     resetFilterTags,
 } from "../store";
-import { reaction, toJS } from "mobx";
 
 export const useBooks = () => {
-    // https://github.com/mobxjs/mobx/discussions/3737#discussioncomment-6548377
+    // ref: https://github.com/mobxjs/mobx/discussions/3737#discussioncomment-6548377
     const [booksValue, setBooksValue] = useState<Books>(() => booksStore.books);
     const [filteredBooksValue, setFilteredBooksValue] = useState<Books>(filteredBooksCompute.get());
     const [searchTermValue, setSearchTermValue] = useState<string>(() => booksStore.searchTerm);
@@ -63,7 +63,7 @@ export const useBooks = () => {
     }, []);
 
     useEffect(() => {
-        /* https://react.dev/learn/synchronizing-with-effects#fetching-data */
+        // ref: https://react.dev/learn/synchronizing-with-effects#fetching-data
         const updateBooks = async ({ list }: { list: string[] }) => {
             const currentBooks = Object.keys(booksValue);
             const addedBooks = _.difference(list, currentBooks);

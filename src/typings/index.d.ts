@@ -23,5 +23,9 @@ type Entries<T> = {
     [K in keyof T]: [K, T[K]];
 }[keyof T][];
 
+type Required<T> = {
+    [P in keyof T]-?: T[P];
+};
+
 type ArrayElement<ArrayType extends readonly unknown[]> =
     ArrayType extends readonly (infer ElementType)[] ? ElementType : never;

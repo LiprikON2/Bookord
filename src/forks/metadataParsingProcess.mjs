@@ -3,7 +3,7 @@
 
 import { mapInGroups, parseMetadata } from "./common/io.mjs";
 
-console.info("[utilityProcess] was created");
+console.info("[metadataParsingProcess] was created");
 
 process.parentPort.once(
     "message",
@@ -14,13 +14,13 @@ process.parentPort.once(
      * @param {Electron.MessagePortMain[]} param.ports
      */
     async ({ data, ports }) => {
-        console.info("[utilityProcess] request received");
+        console.info("[metadataParsingProcess] request received");
 
         const { filePaths } = data;
 
         const metadataEntries = await mapInGroups(filePaths, parseMetadata, 4);
 
-        console.info("[utilityProcess] response sent");
+        console.info("[metadataParsingProcess] response sent");
         process.parentPort.postMessage(metadataEntries);
     }
 );

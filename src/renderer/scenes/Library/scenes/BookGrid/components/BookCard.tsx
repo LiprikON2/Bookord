@@ -5,8 +5,8 @@ import { Link } from "@tanstack/react-router";
 
 import { bookKeyRoute } from "~/renderer/appRenderer";
 import sampleCover from "~/assets/images/sampleBookCover.webp";
-import { type Metadata } from "~/renderer/store";
-import context from "../ipc";
+import { type BookMetadata } from "~/renderer/store";
+import context from "../../../../../ipc";
 import { BookMenu, SummaryModal } from "./components";
 import classes from "./BookCard.module.css";
 
@@ -33,7 +33,7 @@ export const BookCard = ({
     skeleton = false,
 }: {
     filename: string;
-    metadata: Metadata;
+    metadata: BookMetadata;
     skeleton: boolean;
 }) => {
     const [openedModal, { open: openModal, close: closeModal }] = useDisclosure(false);

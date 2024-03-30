@@ -15,8 +15,9 @@ export type SidebarMarkup = {
         tabHeading: string;
         tabs: {
             name: string;
-            Icon: Icon;
             to: ToOptions["to"];
+            Icon?: Icon;
+            canBeClosed?: boolean;
         }[];
     }[];
 }[];
@@ -83,7 +84,9 @@ const Sidebar = ({ markup, close }: { markup: SidebarMarkup; close: () => void }
                                             key={tab.to}
                                             value={tab.to}
                                             role="link"
-                                            leftSection={<tab.Icon className={classes.icon} />}
+                                            leftSection={
+                                                tab.Icon && <tab.Icon className={classes.icon} />
+                                            }
                                         >
                                             {tab.name}
                                         </Tabs.Tab>

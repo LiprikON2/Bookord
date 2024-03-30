@@ -4,7 +4,8 @@ import axios from "axios";
 
 import io, { getResponse } from "~/main/utils";
 import { appDir } from "~/main/mainWindow";
-const parsingProccess = path.resolve(__dirname, "../forks/parsingProcess.mjs");
+const metadataParsingProcess = path.resolve(__dirname, "../forks/metadataParsingProcess.mjs");
+const contentsParsingProcess = path.resolve(__dirname, "../forks/contentsParsingProcess.mjs");
 
 export const registerBookGridIpc = (
     mainWindow: BrowserWindow,
@@ -56,12 +57,12 @@ export const registerBookGridIpc = (
         }
     });
 
-    ipcMain.handle("get-metadata", (e, fileNames: string[]) => {
+    ipcMain.handle("get-parsed-metadata", (e, fileNames: string[]) => {
         if (!validateSender(e)) return null;
 
         const { port1, port2 } = new MessageChannelMain();
-        const child = utilityProcess.fork(parsingProccess, [], {
-            serviceName: "Book parsing utility process",
+        const child = utilityProcess.fork(metadataParsingProcess, [], {
+            serviceName: "Book metadata parsing utility process",
         });
         const filePaths = io.namesToPaths(fileNames);
 
@@ -69,6 +70,23 @@ export const registerBookGridIpc = (
         console.info("[main] request sent");
 
         return getResponse(child);
+    });
+
+    ipcMain.handle("get-parsed-contents", (e, fileName: string) => {
+        if (!validateSender(e)) return null;
+
+        const { port1, port2 } = new MessageChannelMain();
+        const child = utilityProcess.fork(contentsParsingProcess, [], {
+            serviceName: "Book contents parsing utility process",
+        });
+        const [filePath] = io.namesToPaths([fileName]);
+
+        child.postMessage({ filePath }, [port1]);
+        console.info("[main] request sent");
+
+        return getResponse(child);
+        // const initBook = getResponse(child, false);
+        // return getResponse(child);
     });
 
     ipcMain.handle("delete-file", (e, fileName: string) => {

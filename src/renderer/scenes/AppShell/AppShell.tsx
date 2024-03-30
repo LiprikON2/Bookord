@@ -20,8 +20,8 @@ interface AppShellProps {
 
 export type LayoutMarkup = {
     getAppShellProps: (openedNavbar: boolean, openedAside: boolean) => MantineAppShellProps;
-    navbarMarkup: SidebarMarkup;
-    asideMarkup: SidebarMarkup;
+    getNavbarMarkup: () => SidebarMarkup;
+    getAsideMarkup: () => SidebarMarkup;
 };
 
 export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
@@ -45,7 +45,7 @@ export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
                 <Titlebar showBurger={openedNavbar} toggleBurger={toggleNavbar} />
             </MantineAppShell.Header>
             <MantineAppShell.Navbar>
-                <Sidebar markup={layoutMarkup.navbarMarkup} close={closeNavbar}></Sidebar>
+                <Sidebar markup={layoutMarkup.getNavbarMarkup()} close={closeNavbar}></Sidebar>
                 <Sidebar.Bottom>
                     <SettingsModal />
                     <ThemeToggle />

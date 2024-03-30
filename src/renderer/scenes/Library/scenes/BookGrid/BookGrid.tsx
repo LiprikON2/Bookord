@@ -5,7 +5,7 @@ import type { FileWithPath } from "@mantine/dropzone";
 import { useBooks } from "~/renderer/hooks";
 import { BookDropzone } from "./scenes";
 import { BookCard } from "./components";
-import context from "./ipc";
+import context from "../../../../ipc";
 
 export const BookGrid = () => {
     const { filteredBookEntries, bookEntries, hasBooks } = useBooks();
@@ -50,7 +50,7 @@ export const BookGrid = () => {
                         key={filename}
                         filename={filename}
                         metadata={metadata}
-                        skeleton={!state.isLoaded}
+                        skeleton={!state.metadataParsed}
                     />
                 ))}
             </SimpleGrid>

@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { LanguagePicker } from "~/components/LanguagePicker";
 import { getSetting } from "~/renderer/store";
 import flags from "~/assets/images/flags/language";
-import context from "../../../ipc";
+import context from "../../../../../../../ipc";
 import classes from "./SummaryModal.module.css";
 
 const selectLanguageData = [

@@ -8,8 +8,12 @@ const bookGridContext = {
         return ipcRenderer.invoke("open-file-dialog");
     },
 
-    getMetadata(fileNames: string[]): Promise<any> {
-        return ipcRenderer.invoke("get-metadata", fileNames);
+    getParsedMetadata(fileNames: string[]): Promise<any> {
+        return ipcRenderer.invoke("get-parsed-metadata", fileNames);
+    },
+
+    getParsedContents(fileName: string): Promise<any> {
+        return ipcRenderer.invoke("get-parsed-contents", fileName);
     },
 
     watcherSendUpdate(): Promise<void> {

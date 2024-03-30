@@ -4,9 +4,7 @@ import "~/main/mainPreload";
 import windowControlsContext, {
     type WindowControlsContextApi,
 } from "./scenes/AppShell/scenes/Titlebar/components/WindowControls/ipc/windowControlsContext";
-import bookGridContext, {
-    type BookGridContextApi,
-} from "./scenes/Library/scenes/BookGrid/ipc/bookGridContext";
+import bookGridContext, { type BookGridContextApi } from "./ipc/bookGridContext";
 
 console.log("[Preload]: Execution started");
 

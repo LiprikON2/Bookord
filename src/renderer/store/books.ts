@@ -1,9 +1,9 @@
 import { action, observable, autorun, set, toJS, computed, runInAction } from "mobx";
+import Fuse from "fuse.js";
 import _ from "lodash";
 
 import { isDev } from "~/common/helpers";
-import context from "../scenes/Library/scenes/BookGrid/ipc";
-import Fuse from "fuse.js";
+import context from "../ipc";
 
 declare global {
     interface Window {
@@ -28,17 +28,17 @@ const initBookMetadata = {
     sources: [] as string[],
 };
 
-const getMetadataYear = (metadata: Metadata) => {
+const getMetadataYear = (metadata: BookMetadata) => {
     const year = new Date(metadata.date).getFullYear();
     const yearString = Number.isNaN(year) ? "Unknown" : year.toString();
 
     return yearString;
 };
 
-export type Metadata = typeof initBookMetadata;
+export type BookMetadata = typeof initBookMetadata;
 
 export type Books = {
-    [key: string]: { metadata: Metadata; state: { isLoaded: boolean } };
+    [bookKey: string]: { metadata: BookMetadata; state: { metadataParsed: boolean } };
 };
 
 type TagsFilter = {
@@ -58,7 +58,7 @@ type BookTags = {
 export type BooksStore = { books: Books; searchTerm: string; tagsFilter: TagsFilter };
 
 const initBooksStore = (initStore: BooksStore = { books: {}, searchTerm: "", tagsFilter: {} }) => {
-    const bookStore = observable<BooksStore>(initStore);
+    const booksStore = observable<BooksStore>(initStore);
     autorun(
         () => {
             console.log("[Update]: booksStore");
@@ -75,7 +75,7 @@ const initBooksStore = (initStore: BooksStore = { books: {}, searchTerm: "", tag
         },
         { delay: 200 }
     );
-    return bookStore;
+    return booksStore;
 };
 
 export let booksStore = initBooksStore();
@@ -165,7 +165,7 @@ export const resetFilterTags = action(() => {
 });
 
 const tagCategoryCounter = (
-    tagsGetter: (metadata: Metadata) => string[],
+    tagsGetter: (metadata: BookMetadata) => string[],
     books: Books = booksStore.books
 ) => {
     const tagsObj: { [key: string]: number } = {};
@@ -195,7 +195,7 @@ export const bookTagsCompute = computed<BookTags>((books: Books = booksStore.boo
 export const addBooks = action((bookKeys: string[]) => {
     const addedInitBooks = bookKeys.map((bookKey) => [
         bookKey,
-        { metadata: initBookMetadata, state: { isLoaded: false } },
+        { metadata: initBookMetadata, state: { metadataParsed: false } },
     ]);
 
     const updatedBooks = Object.fromEntries([
@@ -208,15 +208,15 @@ export const addBooks = action((bookKeys: string[]) => {
 });
 
 const processInitBooks = async (initBookKeys: string[]) => {
-    const metadataEntries: [string, Metadata][] = await context.getMetadata(initBookKeys);
+    const metadataEntries: [string, BookMetadata][] = await context.getParsedMetadata(initBookKeys);
 
     const addedBooks: Entries<Books> = metadataEntries.map(([bookKey, metadata]) => [
         bookKey,
-        { metadata, state: { isLoaded: true } },
+        { metadata, state: { metadataParsed: true } },
     ]);
 
     const updatedBooks = Object.fromEntries([...Object.entries(booksStore.books), ...addedBooks]);
-    // https://stackoverflow.com/a/64771774/10744339
+    // ref: https://stackoverflow.com/a/64771774/10744339
     runInAction(() => {
         set(booksStore, "books", updatedBooks);
     });

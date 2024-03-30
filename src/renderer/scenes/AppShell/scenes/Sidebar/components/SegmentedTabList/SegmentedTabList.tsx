@@ -28,6 +28,7 @@ export const SegmentedTabList = ({ markup, showText = false, style }: SegmentedT
                 <Tabs.Tab
                     key={outerTab.name}
                     value={outerTab.name}
+                    title={outerTab.name}
                     leftSection={<outerTab.Icon className={classes.icon} />}
                     component={UnstyledButton}
                     className={classes.control}
