@@ -72,7 +72,7 @@ export const registerBookGridIpc = (
         return getResponse(child);
     });
 
-    ipcMain.handle("get-parsed-contents", (e, fileName: string) => {
+    ipcMain.handle("get-parsed-content", (e, fileName: string, initSectionIndex: number) => {
         if (!validateSender(e)) return null;
 
         const { port1, port2 } = new MessageChannelMain();
@@ -81,12 +81,11 @@ export const registerBookGridIpc = (
         });
         const [filePath] = io.namesToPaths([fileName]);
 
-        child.postMessage({ filePath }, [port1]);
+        child.postMessage({ filePath, initSectionIndex }, [port1]);
         console.info("[main] request sent");
 
         return getResponse(child);
-        // const initBook = getResponse(child, false);
-        // return getResponse(child);
+        // return [getResponse(child, false), getResponse(child)];
     });
 
     ipcMain.handle("delete-file", (e, fileName: string) => {

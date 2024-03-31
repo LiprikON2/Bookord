@@ -1,15 +1,30 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { observer } from "mobx-react-lite";
 
 import { bookKeyRoute } from "~/renderer/appRenderer";
-import { useOpenedBooks } from "~/renderer/hooks";
-// import { getRouteApi } from "@tanstack/react-router";
-// const bookKeyApi = getRouteApi("/reading/$bookKey");
+import { ttStore } from "~/renderer/store";
+import { toJS } from "mobx";
 
-// TODO
-// https://tanstack.com/router/latest/docs/framework/react/guide/router-context#how-about-an-external-data-fetching-library
-export const Reading = () => {
+export const Reading = observer(() => {
     const { bookKey } = bookKeyRoute.useParams();
-    const { openedBook } = useOpenedBooks(bookKey);
 
-    return <h1>hello {bookKey}</h1>;
-};
+    useEffect(() => {
+        ttStore.openBook(bookKey);
+    }, []);
+    const state = ttStore.getBookState(bookKey);
+    const metadata = ttStore.getBookMetadata(bookKey);
+    const content = ttStore.getBookContent(bookKey);
+    const contentState = ttStore.getBookContentState(bookKey);
+
+    // console.log("state", state);
+    // console.log("metadata", metadata);
+    // console.log("contentState", toJS(contentState));
+    // console.log("content", content);
+
+    return (
+        <>
+            <h1>hello {typeof metadata?.title === "string" ? metadata?.title : bookKey}</h1>
+            <h1>{contentState?.isInitSectionParsed ? "CONTENT" : "<Blank>"}</h1>
+        </>
+    );
+});

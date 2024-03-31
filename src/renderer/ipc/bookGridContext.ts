@@ -12,8 +12,8 @@ const bookGridContext = {
         return ipcRenderer.invoke("get-parsed-metadata", fileNames);
     },
 
-    getParsedContents(fileName: string): Promise<any> {
-        return ipcRenderer.invoke("get-parsed-contents", fileName);
+    getParsedContent(fileName: string, initSectionIndex: number): Promise<any> {
+        return ipcRenderer.invoke("get-parsed-content", fileName, initSectionIndex);
     },
 
     watcherSendUpdate(): Promise<void> {

@@ -27,6 +27,9 @@
     @mixin dark {
         color: var(--mantine-color-white);
     }
+    @mixin light {
+        color: var(--mantine-color-black);
+    }
 }
 
 .category {

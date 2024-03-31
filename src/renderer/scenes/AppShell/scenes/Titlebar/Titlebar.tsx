@@ -15,14 +15,14 @@ export const Titlebar = ({
     showBurger: boolean;
     toggleBurger: () => void;
 }) => {
-    const { setFilterTag, activeFilterTags } = useBooks();
+    // const { setFilterTag, activeFilterTags } = useBooks();
 
-    const handleRecentFilterOn = () => {
-        setFilterTag("Custom", "Recent", true);
-    };
-    const handleRecentFilterOff = () => {
-        setFilterTag("Custom", "Recent", false);
-    };
+    // const handleRecentFilterOn = () => {
+    //     setFilterTag("Custom", "Recent", true);
+    // };
+    // const handleRecentFilterOff = () => {
+    //     setFilterTag("Custom", "Recent", false);
+    // };
 
     return (
         <Group
@@ -44,7 +44,7 @@ export const Titlebar = ({
             <Group className={classes.searchGroup} wrap="nowrap">
                 <SearchInput />
                 <Group wrap="nowrap" gap={0}>
-                    <FilterMenu />
+                    {/* <FilterMenu />
                     <ToggleActionIcon
                         aria-label="Recent"
                         OnIcon={IconClockFilled}
@@ -53,7 +53,7 @@ export const Titlebar = ({
                         offAction={handleRecentFilterOff}
                         on={activeFilterTags.Custom?.Recent ?? false}
                         classNames={{ icon: classes.icon }}
-                    />
+                    /> */}
                 </Group>
             </Group>
             <Group className={classes.windowControlsGroup}>

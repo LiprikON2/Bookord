@@ -11,8 +11,8 @@ export const SearchInput = () => {
     const [searchTermValue, setSearchTermValue] = useState("");
     const [debouncedSearchTerm] = useDebouncedValue(searchTermValue, 100, { leading: true });
 
-    const { setSearchTerm } = useBooks();
-    useEffect(() => setSearchTerm(debouncedSearchTerm), [debouncedSearchTerm]);
+    // const { setSearchTerm } = useBooks();
+    // useEffect(() => setSearchTerm(debouncedSearchTerm), [debouncedSearchTerm]);
 
     useWindowEvent("keydown", (event) => {
         if (event.code === "KeyP" && (event.ctrlKey || event.metaKey)) {

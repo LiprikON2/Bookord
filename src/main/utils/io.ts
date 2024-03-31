@@ -38,7 +38,7 @@ export const initWatcher = (
         if (!validateSender(e)) return null;
 
         const watcherEvent = {
-            list: watcher.getWatched()[appDir],
+            bookKeys: watcher.getWatched()[appDir],
             update: {
                 action: "get-list",
             },
@@ -53,7 +53,7 @@ export const initWatcher = (
         console.info("[watcher]: was added:", fileName);
 
         const watcherEvent = {
-            list: watcher.getWatched()[appDir],
+            bookKeys: watcher.getWatched()[appDir],
             update: {
                 action: "add",
                 fileName,
@@ -69,7 +69,7 @@ export const initWatcher = (
         console.info("[watcher]: was deleted:", fileName);
 
         const watcherEvent = {
-            list: watcher.getWatched()[appDir],
+            bookKeys: watcher.getWatched()[appDir],
             update: {
                 action: "remove",
                 fileName,

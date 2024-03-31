@@ -1,12 +1,13 @@
 import React from "react";
-import { Stack, Tabs, Text } from "@mantine/core";
+import { Box, Button, Stack, Tabs, Text, rem } from "@mantine/core";
 import { type ToOptions, useNavigate } from "@tanstack/react-router";
-import { type Icon } from "@tabler/icons-react";
+import { IconCirclePlus, type Icon } from "@tabler/icons-react";
 
 import { useIsMobile } from "~/renderer/hooks/useIsMobile";
 import { useHistory } from "~/renderer/hooks";
-import classes from "./Sidebar.module.css";
+import context from "~/renderer/ipc/bookGridContextApi";
 import { Bottom, SegmentedTabList } from "./components";
+import classes from "./Sidebar.module.css";
 
 export type SidebarMarkup = {
     name: string;
@@ -30,6 +31,10 @@ const Sidebar = ({ markup, close }: { markup: SidebarMarkup; close: () => void }
     const navigate = useNavigate();
     const { currentPath } = useHistory();
 
+    const openFileDialog = async () => {
+        const distinctFileCount = await context.openFileDialog();
+    };
+
     const changeTab = (to: ToOptions["to"]) => {
         navigate({ to });
         close();
@@ -45,22 +50,34 @@ const Sidebar = ({ markup, close }: { markup: SidebarMarkup; close: () => void }
             orientation="horizontal"
             defaultValue={markup[0]?.name}
         >
-            {/* {markup.length > 1 && <SegmentedTabList markup={markup} />} */}
-            {
-                <SegmentedTabList
+            <Stack h={48} mr="sm" justify="center">
+                {markup.length > 1 ? (
+                    <SegmentedTabList markup={markup} />
+                ) : (
+                    <Button
+                        onClick={openFileDialog}
+                        leftSection={<IconCirclePlus className={classes.icon} />}
+                        variant="outline"
+                        mx="xs"
+                    >
+                        Add books
+                    </Button>
+                )}
+                {/* {markup.length > 1 && <SegmentedTabList markup={markup} />} */}
+                {/* <SegmentedTabList
                     markup={markup}
                     style={{ visibility: markup.length > 1 ? "visible" : "hidden" }}
-                />
-            }
-            {/* <Tabs.List>
-                {markup.map((outerTab) => (
-                    <Tabs.Tab
-                        key={outerTab.name}
-                        value={outerTab.name}
-                        leftSection={<outerTab.Icon className={classes.icon} />}
-                    />
-                ))}
-            </Tabs.List> */}
+                /> */}
+                {/* <Tabs.List>
+                    {markup.map((outerTab) => (
+                        <Tabs.Tab
+                            key={outerTab.name}
+                            value={outerTab.name}
+                            leftSection={<outerTab.Icon className={classes.icon} />}
+                        />
+                    ))}
+                </Tabs.List> */}
+            </Stack>
 
             {markup.map((outerTab) => (
                 <Tabs.Panel key={outerTab.name} value={outerTab.name}>

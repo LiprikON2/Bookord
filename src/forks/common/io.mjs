@@ -47,7 +47,7 @@ export const parseMetadata = async (/** @type {string} */ filePath) => {
     }
 };
 
-export const parseContents = async (
+export const parseContent = async (
     /** @type {string} */ filePath,
     /** @type {number} */ initSectionIndex
 ) => {
@@ -62,13 +62,11 @@ export const parseContents = async (
 
     const initSections = parsedEpub.sections.map((unparsedSection, index) => ({
         id: unparsedSection.id,
-        contents: index === initSectionIndex ? unparsedSection.toHtmlObjects() : null,
+        content: index === initSectionIndex ? unparsedSection.toHtmlObjects() : null,
     }));
     const initParsedBook = {
-        metadata: { ...baseBookMetadata, ...parsedEpub.info },
         styles: parsedEpub.styles,
         structure: parsedEpub.structure,
-        sectionNames: parsedEpub.sections.map((section) => section.id),
         sections: initSections,
     };
     // TODO return init book
@@ -102,9 +100,9 @@ export const parseSections = async (
     const sections = await mapInGroups(
         unparsedSections,
         async (/** @type {any} */ unparsedSection, /** @type {number} */ index) => {
-            const isUnparsed = initSections[index].contents === null;
+            const isUnparsed = initSections[index].content === null;
             if (isUnparsed)
-                return { ...initSections[index], contents: unparsedSection.toHtmlObjects() };
+                return { ...initSections[index], content: unparsedSection.toHtmlObjects() };
             return initSections[index];
         },
         4
