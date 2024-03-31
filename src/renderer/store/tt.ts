@@ -65,6 +65,9 @@ fix BookCard context import
 */
 
 export class BookStore {
+    // TODO default values
+    //  new Map([[bookKey, value]])
+    // ref: https://www.zhenghao.io/posts/object-vs-map
     storeStateRecords = new Map<BookKey, BookStoreState>();
     metadataRecords = new Map<BookKey, BookMetadata>();
     contentRecords = new Map<BookKey, BookContent>();
@@ -179,9 +182,7 @@ export class BookStore {
                 this.openBook(bookKey, storageState.requestedContentSection);
         });
 
-        const metadataEntries: [BookKey, BookMetadata][] = await context.getParsedMetadata(
-            bookKeys
-        );
+        const metadataEntries = await context.getParsedMetadata(bookKeys);
 
         metadataEntries.forEach(([bookKey, metadata]) => this.setBookMetadata(bookKey, metadata));
     }
@@ -209,12 +210,11 @@ export class BookStore {
         const state = this.getBookState(bookKey);
 
         const shouldNotBeOpened = !state.isInStorage || state.isContentRequested;
-
         if (shouldNotBeOpened) {
             this.setBookStoreState(bookKey, {
                 isInStorage: state.isInStorage,
                 requestedContentSection: initSectionIndex,
-                isContentRequested: false,
+                isContentRequested: state.isContentRequested,
             });
             return;
         }
@@ -225,15 +225,37 @@ export class BookStore {
             isContentRequested: true,
         });
 
-        const initContent: BookContent = await context.getParsedContent(bookKey, initSectionIndex);
+        context.getParsedContent(bookKey, initSectionIndex);
+        const unsub = window.electron_window.events("parsed-content-init", (initEvent) => {
+            if (initEvent.bookKey !== bookKey) return;
 
-        console.log("initContent", initContent);
-        this.setBookContent(bookKey, initContent);
+            this.setBookContent(bookKey, initEvent.initContent);
 
-        const updatedContentState = this.getContentStateFromContent(initContent);
-        this.setBookContentState(bookKey, updatedContentState);
+            const initContentState = this.getContentStateFromContent(initEvent.initContent);
+            this.setBookContentState(bookKey, initContentState);
+
+            const content = this.getBookContent(bookKey);
+            const unsub2 = window.electron_window.events(
+                "parsed-content-section",
+                (event: {
+                    bookKey: BookKey;
+                    sectionIndex: number;
+                    section: ArrayElement<BookContent["sections"]>;
+                }) => {
+                    if (event.bookKey !== bookKey) return;
+
+                    content.sections[event.sectionIndex].content = event.section.content;
+
+                    const updatedContentState = this.getContentStateFromContent(content);
+                    this.setBookContentState(bookKey, updatedContentState);
+
+                    if (updatedContentState.isFullyParsed) {
+                        unsub();
+                        unsub2();
+                    }
+                }
+            );
+        });
     }
-
-    async updateContent(bookKey: BookKey) {}
 }
 export const ttStore = new BookStore();

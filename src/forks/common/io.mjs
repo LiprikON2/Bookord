@@ -56,33 +56,19 @@ export const parseContent = async (
         parsedEpub = await parseEpub(filePath);
     } catch (error) {
         console.log("[utilityProcess io] error parsing epub:", error);
-        // TODO handle error
+        // TODO handle errors
     }
-    console.time("[parseContents time]");
 
     const initSections = parsedEpub.sections.map((unparsedSection, index) => ({
         id: unparsedSection.id,
         content: index === initSectionIndex ? unparsedSection.toHtmlObjects() : null,
     }));
-    const initParsedBook = {
+    const initContent = {
         styles: parsedEpub.styles,
         structure: parsedEpub.structure,
         sections: initSections,
     };
-    // TODO return init book
-    console.log("[parseContents time]: initParsedBook");
-    console.timeLog("[parseContents time]");
-
-    const sections = await parseSections(parsedEpub.sections, initSections);
-
-    const parsedBook = {
-        ...initParsedBook,
-        sections,
-    };
-    console.log("[parseContents time]: parsedBook");
-    console.timeEnd("[parseContents time]");
-
-    return parsedBook;
+    return { initContent, unparsedSections: parsedEpub.sections };
 };
 
 export const parseSections = async (

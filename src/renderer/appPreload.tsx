@@ -18,12 +18,8 @@ declare global {
     }
 }
 
-const eventsContext = (
-    channel: string,
-    callback: (event: Electron.IpcRendererEvent, ...args: any[]) => void
-) => {
+const eventsContext = (channel: string, callback: (...args: any[]) => void) => {
     // Deliberately strip event as it includes `sender`
-    //@ts-ignore
     const subscription = (event: Electron.IpcRendererEvent, ...args: any[]) => callback(...args);
 
     ipcRenderer.on(channel, subscription);

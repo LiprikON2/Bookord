@@ -1,9 +1,17 @@
-import { BrowserWindow, MessageChannelMain, dialog, ipcMain, utilityProcess } from "electron";
+import {
+    BrowserWindow,
+    MessageChannelMain,
+    dialog,
+    ipcMain,
+    ipcRenderer,
+    utilityProcess,
+} from "electron";
 import path from "path";
 import axios from "axios";
 
 import io, { getResponse } from "~/main/utils";
 import { appDir } from "~/main/mainWindow";
+import { BookContent } from "../store";
 const metadataParsingProcess = path.resolve(__dirname, "../forks/metadataParsingProcess.mjs");
 const contentsParsingProcess = path.resolve(__dirname, "../forks/contentsParsingProcess.mjs");
 
@@ -72,20 +80,36 @@ export const registerBookGridIpc = (
         return getResponse(child);
     });
 
-    ipcMain.handle("get-parsed-content", (e, fileName: string, initSectionIndex: number) => {
+    ipcMain.handle("get-parsed-content", async (e, fileName: string, initSectionIndex: number) => {
         if (!validateSender(e)) return null;
 
         const { port1, port2 } = new MessageChannelMain();
         const child = utilityProcess.fork(contentsParsingProcess, [], {
-            serviceName: "Book contents parsing utility process",
+            serviceName: "Book content parsing utility process",
         });
         const [filePath] = io.namesToPaths([fileName]);
 
         child.postMessage({ filePath, initSectionIndex }, [port1]);
         console.info("[main] request sent");
 
-        return getResponse(child);
-        // return [getResponse(child, false), getResponse(child)];
+        const initContent = (await getResponse(child, false)) as BookContent;
+        mainWindow.webContents.send("parsed-content-init", {
+            bookKey: fileName,
+            initContent,
+        });
+
+        await Promise.all(
+            initContent.sections.map(async (_, index) => {
+                const toKillAfter = index + 1 === initContent.sections.length;
+                const section = await getResponse(child, toKillAfter);
+                mainWindow.webContents.send("parsed-content-section", {
+                    bookKey: fileName,
+                    sectionIndex: index,
+                    section,
+                });
+            })
+        );
+        return;
     });
 
     ipcMain.handle("delete-file", (e, fileName: string) => {

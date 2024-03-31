@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import context from "../ipc";
 import { BookKey, ttStore } from "../store";
 
+// TODO move this logic inside store
 export const useUpdateStore = () => {
     /* Requests initial watcher update */
     useEffect(() => {

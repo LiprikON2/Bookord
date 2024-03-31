@@ -208,7 +208,7 @@ export const addBooks = action((bookKeys: string[]) => {
 });
 
 const processInitBooks = async (initBookKeys: string[]) => {
-    const metadataEntries: [string, BookMetadata][] = await context.getParsedMetadata(initBookKeys);
+    const metadataEntries = await context.getParsedMetadata(initBookKeys);
 
     const addedBooks: Entries<Books> = metadataEntries.map(([bookKey, metadata]) => [
         bookKey,

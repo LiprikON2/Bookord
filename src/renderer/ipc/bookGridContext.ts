@@ -1,4 +1,5 @@
 import { ipcRenderer } from "electron";
+import { BookMetadata } from "../store";
 
 const bookGridContext = {
     uploadFiles(files: FileObj[]): Promise<number> {
@@ -8,11 +9,11 @@ const bookGridContext = {
         return ipcRenderer.invoke("open-file-dialog");
     },
 
-    getParsedMetadata(fileNames: string[]): Promise<any> {
+    getParsedMetadata(fileNames: string[]): Promise<[string, BookMetadata][]> {
         return ipcRenderer.invoke("get-parsed-metadata", fileNames);
     },
 
-    getParsedContent(fileName: string, initSectionIndex: number): Promise<any> {
+    getParsedContent(fileName: string, initSectionIndex: number): Promise<void> {
         return ipcRenderer.invoke("get-parsed-content", fileName, initSectionIndex);
     },
 
