@@ -2,19 +2,19 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 
 import { bookKeyRoute } from "~/renderer/appRenderer";
-import { ttStore } from "~/renderer/store";
+import { bookStore } from "~/renderer/store";
 import { toJS } from "mobx";
 
 export const Reading = observer(() => {
     const { bookKey } = bookKeyRoute.useParams();
 
     useEffect(() => {
-        ttStore.openBook(bookKey);
+        bookStore.openBook(bookKey);
     }, []);
-    const state = ttStore.getBookState(bookKey);
-    const metadata = ttStore.getBookMetadata(bookKey);
-    const content = ttStore.getBookContent(bookKey);
-    const contentState = ttStore.getBookContentState(bookKey);
+    const state = bookStore.getBookState(bookKey);
+    const metadata = bookStore.getBookMetadata(bookKey);
+    const content = bookStore.getBookContent(bookKey);
+    const contentState = bookStore.getBookContentState(bookKey);
 
     // console.log("state", state);
     // console.log("metadata", metadata);

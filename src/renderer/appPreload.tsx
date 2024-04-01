@@ -4,7 +4,13 @@ import "~/main/mainPreload";
 import windowControlsContext, {
     type WindowControlsContextApi,
 } from "./scenes/AppShell/scenes/Titlebar/components/WindowControls/ipc/windowControlsContext";
-import bookGridContext, { type BookGridContextApi } from "./ipc/bookGridContext";
+import thirdPartyApiContext, {
+    type ThirdPartyApiContextApi,
+} from "./ipc/thirdPartyApi/thirdPartyApiContext";
+import storeContext, { type StoreContextApi } from "./store/ipc/storeContext";
+import fileOperationsContext, {
+    type FileOperationsContextApi,
+} from "./ipc/fileOperations/fileOperationsContext";
 
 console.log("[Preload]: Execution started");
 
@@ -12,7 +18,9 @@ declare global {
     interface Window {
         electron_window: {
             windowControls: WindowControlsContextApi;
-            bookGrid: BookGridContextApi;
+            thirdPartyApi: ThirdPartyApiContextApi;
+            store: StoreContextApi;
+            fileOperations: FileOperationsContextApi;
             events: typeof eventsContext;
         };
     }
@@ -32,9 +40,11 @@ const eventsContext = (channel: string, callback: (...args: any[]) => void) => {
 };
 
 contextBridge.exposeInMainWorld("electron_window", {
-    bookGrid: bookGridContext,
     windowControls: windowControlsContext,
     events: eventsContext,
+    store: storeContext,
+    fileOperations: fileOperationsContext,
+    thirdPartyApi: thirdPartyApiContext,
 });
 
 // Get versions

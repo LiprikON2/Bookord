@@ -1,6 +1,7 @@
-import { makeAutoObservable, runInAction, reaction } from "mobx";
-import context from "../ipc";
+import { makeAutoObservable } from "mobx";
 import _ from "lodash";
+
+import context from "./ipc";
 
 export type BookState = {
     isInStorage: boolean;
@@ -51,7 +52,14 @@ export type BookStoreState = {
 
 export type BookKey = string;
 
-export type BookStateAll = (BookState & { bookKey: BookKey })[];
+export type BookStateInStorage = (BookState & {
+    bookKey: BookKey;
+})[];
+
+export type BookStateOpened = (BookStoreState & {
+    bookKey: BookKey;
+    title: BookKey | BookMetadata["title"];
+})[];
 
 /* TODO move:
 
@@ -101,6 +109,14 @@ export class BookStore {
     setBookContent(bookKey: BookKey, content: BookContent) {
         this.contentRecords.set(bookKey, content);
     }
+    setBookContentSection(
+        bookKey: BookKey,
+        sectionIndex: number,
+        section: ArrayElement<BookContent["sections"]>
+    ) {
+        const content = this.getBookContent(bookKey);
+        content.sections[sectionIndex].content = section.content;
+    }
     removeBookContent(bookKey: BookKey) {
         this.contentRecords.delete(bookKey);
     }
@@ -125,9 +141,15 @@ export class BookStore {
         this.contentStateRecords.delete(bookKey);
     }
 
-    getBookKeysInStorage() {
+    getBookKeysInStorage(): BookKey[] {
         return Array.from(this.storeStateRecords)
-            .map(([bookKey, storeState]) => (storeState.isInStorage ? bookKey : undefined))
+            .map(([bookKey, storeState]) => (storeState.isInStorage ? bookKey : null))
+            .filter((item) => item);
+    }
+
+    getBookKeysContentRequested(): BookKey[] {
+        return Array.from(this.storeStateRecords)
+            .map(([bookKey, storeState]) => (storeState.isContentRequested ? bookKey : null))
             .filter((item) => item);
     }
 
@@ -162,29 +184,41 @@ export class BookStore {
         };
     }
 
-    getBookStateAll(): BookStateAll {
+    getBookStateInStorage(): BookStateInStorage {
         return this.getBookKeysInStorage().map((bookKey) => ({
-            bookKey,
             ...this.getBookState(bookKey),
+            bookKey,
+        }));
+    }
+    getBookStateOpened(): BookStateOpened {
+        return this.getBookKeysContentRequested().map((bookKey) => ({
+            ...this.getBookStoreState(bookKey),
+            title: this.getBookMetadata(bookKey)?.title ?? bookKey,
+            bookKey,
         }));
     }
 
     async addBooks(bookKeys: BookKey[]) {
         bookKeys.forEach((bookKey) => {
             const storageState = this.getBookStoreState(bookKey);
+
             this.setBookStoreState(bookKey, {
                 requestedContentSection: storageState?.requestedContentSection ?? null,
                 isContentRequested: !!storageState?.isContentRequested,
                 isInStorage: true,
             });
 
-            if (storageState && storageState.requestedContentSection !== null)
+            if (storageState && storageState.requestedContentSection !== null) {
                 this.openBook(bookKey, storageState.requestedContentSection);
+            }
         });
 
         const metadataEntries = await context.getParsedMetadata(bookKeys);
 
+        // // ref: https://stackoverflow.com/a/64771774/10744339
+        // runInAction(() => {
         metadataEntries.forEach(([bookKey, metadata]) => this.setBookMetadata(bookKey, metadata));
+        // });
     }
 
     // removeBook(bookKey: BookKey, deleteRecords: boolean = true) {
@@ -197,7 +231,7 @@ export class BookStore {
         bookKeys.forEach((bookKey) => this.removeBook(bookKey));
     }
 
-    async updateStore(storageBooks: BookKey[]) {
+    updateStore(storageBooks: BookKey[]) {
         const storeBooks = this.getBookKeysInStorage();
         const addedBooks = _.difference(storageBooks, storeBooks);
         const removedBooks = _.difference(storeBooks, storageBooks);
@@ -206,7 +240,7 @@ export class BookStore {
         if (removedBooks.length) this.removeBooks(removedBooks);
     }
 
-    async openBook(bookKey: BookKey, initSectionIndex: number = 0) {
+    openBook(bookKey: BookKey, initSectionIndex: number = 0) {
         const state = this.getBookState(bookKey);
 
         const shouldNotBeOpened = !state.isInStorage || state.isContentRequested;
@@ -216,6 +250,7 @@ export class BookStore {
                 requestedContentSection: initSectionIndex,
                 isContentRequested: state.isContentRequested,
             });
+
             return;
         }
 
@@ -244,7 +279,7 @@ export class BookStore {
                 }) => {
                     if (event.bookKey !== bookKey) return;
 
-                    content.sections[event.sectionIndex].content = event.section.content;
+                    this.setBookContentSection(bookKey, event.sectionIndex, event.section);
 
                     const updatedContentState = this.getContentStateFromContent(content);
                     this.setBookContentState(bookKey, updatedContentState);
@@ -258,4 +293,4 @@ export class BookStore {
         });
     }
 }
-export const ttStore = new BookStore();
+export const bookStore = new BookStore();

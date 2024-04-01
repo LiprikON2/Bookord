@@ -7,8 +7,8 @@ import {
     ScrollArea,
     rem,
 } from "@mantine/core";
-import { IconHome, IconInfoCircle, IconLibrary } from "@tabler/icons-react";
 
+import { type BookStateOpened } from "~/renderer/store";
 import { ThemeToggle } from "~/renderer/components";
 import { SettingsModal, Sidebar, type SidebarMarkup, Titlebar } from "./scenes";
 import classes from "./AppShell.module.css";
@@ -20,14 +20,13 @@ interface AppShellProps {
 
 export type LayoutMarkup = {
     getAppShellProps: (openedNavbar: boolean, openedAside: boolean) => MantineAppShellProps;
-    getNavbarMarkup: () => SidebarMarkup;
+    getNavbarMarkup: (openedBookRecords: BookStateOpened) => SidebarMarkup;
     getAsideMarkup: () => SidebarMarkup;
 };
 
 export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
     const [openedNavbar, { toggle: toggleNavbar, close: closeNavbar }] = useDisclosure();
     const [openedAside, { toggle: toggleAside, close: closeAside }] = useDisclosure();
-
     return (
         <MantineAppShell
             classNames={{
@@ -45,11 +44,10 @@ export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
                 <Titlebar showBurger={openedNavbar} toggleBurger={toggleNavbar} />
             </MantineAppShell.Header>
             <MantineAppShell.Navbar>
-                <Sidebar markup={layoutMarkup.getNavbarMarkup()} close={closeNavbar}></Sidebar>
-                <Sidebar.Bottom>
+                <Sidebar getMarkup={layoutMarkup.getNavbarMarkup} close={closeNavbar}>
                     <SettingsModal />
                     <ThemeToggle />
-                </Sidebar.Bottom>
+                </Sidebar>
             </MantineAppShell.Navbar>
             <MantineAppShell.Aside>Aside</MantineAppShell.Aside>
             <MantineAppShell.Main>

@@ -2,15 +2,15 @@ import React from "react";
 import { Paper, Text, Title, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "@tanstack/react-router";
+import { observer } from "mobx-react-lite";
 
+import context from "~/renderer/ipc/fileOperations";
+import { bookStore, type BookMetadata, BookKey } from "~/renderer/store";
 import { bookKeyRoute } from "~/renderer/appRenderer";
 import sampleCover from "~/assets/images/sampleBookCover.webp";
-import { ttStore, type BookMetadata, BookKey } from "~/renderer/store";
-import context from "../../../../../ipc";
 import { BookMenu, SummaryModal } from "./components";
+import { useStorageBooks } from "~/renderer/hooks";
 import classes from "./BookCard.module.css";
-import { useTt } from "~/renderer/hooks";
-import { observer } from "mobx-react-lite";
 
 const provideFallbackCover = (cover?: string): string => {
     if (!cover || cover === "unkown") return sampleCover;
@@ -37,7 +37,7 @@ export const BookCard = observer(
             context.deleteFile(bookKey);
         };
 
-        const metadataRecord = ttStore.getBookMetadata(bookKey);
+        const metadataRecord = bookStore.getBookMetadata(bookKey);
         const cover = provideFallbackCover(metadataRecord?.cover);
         const title = provideFallbackTitle(bookKey, metadataRecord?.title);
         const authors = provideFallbackAuthors(metadataRecord?.author);

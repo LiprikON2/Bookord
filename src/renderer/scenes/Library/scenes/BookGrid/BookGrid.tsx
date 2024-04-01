@@ -2,14 +2,14 @@ import React from "react";
 import { Box, SimpleGrid } from "@mantine/core";
 import type { FileWithPath } from "@mantine/dropzone";
 
-import { useBooks, useTt } from "~/renderer/hooks";
+import context from "~/renderer/ipc/fileOperations";
+import { useStorageBooks } from "~/renderer/hooks";
 import { BookDropzone } from "./scenes";
 import { BookCard } from "./components";
-import context from "../../../../ipc";
 
 export const BookGrid = () => {
     // const { filteredBookEntries, bookEntries, hasBooks } = useBooks();
-    const { bookStateRecords, isBookStorageEmpty } = useTt();
+    const { inStorageBookRecords, isBookStorageEmpty } = useStorageBooks();
 
     const handleDrop = async (fileBlobs: FileWithPath[]) => {
         const files = fileBlobs.map(({ path, size, name, lastModified }) => ({
@@ -46,11 +46,11 @@ export const BookGrid = () => {
                 cols={{ base: 2, xs: 2, sm: 3, md: 3, lg: 4, xl: 4 }}
                 style={{ justifyItems: "center" }}
             >
-                {bookStateRecords.map((stateRecord) => (
+                {inStorageBookRecords.map((inStorageBook) => (
                     <BookCard
-                        key={stateRecord.bookKey}
-                        bookKey={stateRecord.bookKey}
-                        skeleton={!stateRecord.isMetadataParsed}
+                        key={inStorageBook.bookKey}
+                        bookKey={inStorageBook.bookKey}
+                        skeleton={!inStorageBook.isMetadataParsed}
                     />
                 ))}
             </SimpleGrid>

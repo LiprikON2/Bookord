@@ -12,9 +12,11 @@
         "plugin:@typescript-eslint/recommended",
         "plugin:import/errors",
         "plugin:import/warnings",
-        "plugin:@tanstack/eslint-plugin-query/recommended"
+        "plugin:@tanstack/eslint-plugin-query/recommended",
+        "plugin:mobx/recommended" // https://github.com/mobxjs/mobx/blob/main/packages/eslint-plugin-mobx/README.md
     ],
     "parser": "@typescript-eslint/parser",
+    "plugins": ["mobx"],
     "settings": {
         "import/resolver": {
             "node": {

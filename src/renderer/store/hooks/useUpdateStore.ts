@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 
-// TODO move this context function closer
 import context from "../ipc";
-import { BookKey, ttStore } from "../store";
+import { BookKey, bookStore } from "..";
 
 // TODO move this logic inside store
 export const useUpdateStore = () => {
@@ -17,7 +16,7 @@ export const useUpdateStore = () => {
             bookKeys,
         }: {
             bookKeys: BookKey[];
-        }) => ttStore.updateStore(bookKeys)) as any);
+        }) => bookStore.updateStore(bookKeys)) as any);
 
         return () => unsub();
     }, []);

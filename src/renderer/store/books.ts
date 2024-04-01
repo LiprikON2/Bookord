@@ -2,8 +2,8 @@ import { action, observable, autorun, set, toJS, computed, runInAction } from "m
 import Fuse from "fuse.js";
 import _ from "lodash";
 
+import context from "./ipc";
 import { isDev } from "~/common/helpers";
-import context from "../ipc";
 
 declare global {
     interface Window {

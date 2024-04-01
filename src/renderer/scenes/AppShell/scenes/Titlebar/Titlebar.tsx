@@ -6,7 +6,7 @@ import { WindowControls, SearchInput, FilterMenu } from "./components";
 import { icons } from "~/components/Icons";
 import classes from "./Titlebar.module.css";
 import { ToggleActionIcon } from "~/components/ToggleActionIcon";
-import { useBooks } from "~/renderer/hooks";
+// import { useBooks } from "~/renderer/hooks";
 
 export const Titlebar = ({
     showBurger,
@@ -44,7 +44,8 @@ export const Titlebar = ({
             <Group className={classes.searchGroup} wrap="nowrap">
                 <SearchInput />
                 <Group wrap="nowrap" gap={0}>
-                    {/* <FilterMenu />
+                    {/* <FilterMenu /> */}
+                    {/*
                     <ToggleActionIcon
                         aria-label="Recent"
                         OnIcon={IconClockFilled}

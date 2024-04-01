@@ -30,6 +30,19 @@
     margin-right: 0.5px;
 }
 
+.tab {
+    max-width: 100%;
+    padding-block: calc(var(--mantine-spacing-xs) / 2);
+}
+
+.tabLabel {
+    text-overflow: ellipsis;
+    padding-block: calc(var(--mantine-spacing-xs) / 2);
+    overflow-x: hidden;
+    max-width: 100%;
+    height: 100%;
+}
+
 .outerPanel {
     background-color: transparent !important;
 }

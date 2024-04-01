@@ -1,8 +1,8 @@
 import React from "react";
 import clsx from "clsx";
 
-import { ControlButton } from "./components/ControlButton";
-import context from "./ipc/windowCotntrolsContextApi";
+import context from "./ipc";
+import { ControlButton } from "./components";
 import classes from "./WindowControls.module.css";
 
 type Props = {
