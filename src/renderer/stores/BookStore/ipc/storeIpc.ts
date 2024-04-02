@@ -2,7 +2,7 @@ import { BrowserWindow, MessageChannelMain, ipcMain, utilityProcess } from "elec
 import path from "path";
 
 import io, { getResponse } from "~/main/utils";
-import { type BookContent } from "..";
+import { type BookContent } from "../..";
 
 const metadataParsingProcess = path.resolve(__dirname, "../forks/metadataParsingProcess.mjs");
 const contentsParsingProcess = path.resolve(__dirname, "../forks/contentsParsingProcess.mjs");

@@ -5,6 +5,6 @@ export * from "./appRoot";
 export * from "./components";
 export * from "./hooks";
 export * from "./scenes";
-export * from "./store";
+export * from "./stores";
 export * from "./theme";
 export * from "./layouts";

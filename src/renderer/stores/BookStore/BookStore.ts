@@ -72,6 +72,11 @@ fix BookCard context import
 
 */
 
+/**
+ * Domain store
+ *
+ * ref: https://mobx.js.org/defining-data-stores.html#domain-stores
+ */
 export class BookStore {
     // TODO default values
     //  new Map([[bookKey, value]])
@@ -102,6 +107,9 @@ export class BookStore {
     removeBookMetadata(bookKey: BookKey) {
         this.metadataRecords.delete(bookKey);
     }
+    getBookTags(bookKey: BookKey) {
+        const metadata = this.getBookMetadata(bookKey);
+    }
 
     getBookContent(bookKey: BookKey) {
         return this.contentRecords.get(bookKey);
@@ -119,6 +127,12 @@ export class BookStore {
     }
     removeBookContent(bookKey: BookKey) {
         this.contentRecords.delete(bookKey);
+        this.setBookContentState(bookKey, {
+            isInitSectionParsed: false,
+            isFullyParsed: false,
+            parsedSections: [],
+            sectionNames: [],
+        });
     }
 
     getBookStoreState(bookKey: BookKey) {
@@ -168,7 +182,7 @@ export class BookStore {
         };
     }
 
-    getContentStateFromContent(content: BookContent): BookContentState {
+    getContentStateFromContent(content?: BookContent): BookContentState {
         const parsedSections = content.sections
             .map((section, index) => (section.content !== null ? index : null))
             .filter((item) => item !== null);
@@ -292,5 +306,15 @@ export class BookStore {
             );
         });
     }
+
+    closeBook(bookKey: BookKey) {
+        this.removeBookContent(bookKey);
+
+        const storeState = this.getBookStoreState(bookKey);
+        this.setBookStoreState(bookKey, {
+            ...storeState,
+            isContentRequested: false,
+            requestedContentSection: null,
+        });
+    }
 }
-export const bookStore = new BookStore();

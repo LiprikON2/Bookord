@@ -33,7 +33,7 @@
 
     &[data-active] {
         background-color: var(--mantine-color-dark-6);
-        border-right: none;
+        border-right-color: transparent;
 
         @mixin light {
             background-color: var(--mantine-color-gray-1);

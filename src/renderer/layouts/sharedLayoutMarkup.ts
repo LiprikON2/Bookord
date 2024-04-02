@@ -1,6 +1,6 @@
 import { IconBooks, IconHome, IconInfoCircle } from "@tabler/icons-react";
 
-import { BookStateOpened } from "../store";
+import { BookStateOpened } from "../stores";
 import { SidebarMarkup } from "../scenes/AppShell/scenes";
 import { bookKeyRoute } from "../appRenderer";
 

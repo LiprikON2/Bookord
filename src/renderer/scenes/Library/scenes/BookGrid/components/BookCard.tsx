@@ -5,11 +5,10 @@ import { Link } from "@tanstack/react-router";
 import { observer } from "mobx-react-lite";
 
 import context from "~/renderer/ipc/fileOperations";
-import { bookStore, type BookMetadata, BookKey } from "~/renderer/store";
+import { type BookMetadata, BookKey, bookStore } from "~/renderer/stores";
 import { bookKeyRoute } from "~/renderer/appRenderer";
 import sampleCover from "~/assets/images/sampleBookCover.webp";
 import { BookMenu, SummaryModal } from "./components";
-import { useStorageBooks } from "~/renderer/hooks";
 import classes from "./BookCard.module.css";
 
 const provideFallbackCover = (cover?: string): string => {

@@ -7,7 +7,7 @@ import windowControlsContext, {
 import thirdPartyApiContext, {
     type ThirdPartyApiContextApi,
 } from "./ipc/thirdPartyApi/thirdPartyApiContext";
-import storeContext, { type StoreContextApi } from "./store/ipc/storeContext";
+import storeContext, { type StoreContextApi } from "./stores/BookStore/ipc/storeContext";
 import fileOperationsContext, {
     type FileOperationsContextApi,
 } from "./ipc/fileOperations/fileOperationsContext";

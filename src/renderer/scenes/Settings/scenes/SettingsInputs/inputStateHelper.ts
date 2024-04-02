@@ -1,6 +1,6 @@
 import { TextInput } from "@mantine/core";
 import { type RootSettingMarkup } from "~/renderer/scenes/Settings";
-import { getSetting, setSetting } from "~/renderer/store";
+import { getSetting, setSetting } from "~/renderer/stores";
 
 export const getKeyList = (setting: Omit<RootSettingMarkup, "Input">) => {
     return [setting.tabHeading, setting.tab, setting.section, setting.label];

@@ -1,4 +1,4 @@
-import { getSetting, getSettingsStore, setSetting } from "~/renderer/store";
+import { getSetting, getSettingsStore, setSetting } from "~/renderer/stores";
 import { useMapSettings } from ".";
 import { SettingsMarkup } from "../Settings";
 

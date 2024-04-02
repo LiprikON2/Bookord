@@ -3,8 +3,8 @@ import { Box, Container } from "@mantine/core";
 
 import { DetailedTitle } from "~/renderer/components";
 import { BookGrid } from "./scenes";
-import { useBooks, useStorageBooks } from "~/renderer/hooks";
-import { bookStore } from "~/renderer/store";
+import { useBooks } from "~/renderer/hooks";
+import { bookStore } from "~/renderer/stores";
 
 export const Library = () => {
     // const { searchTerm, bookCount, filteredBookCount } = useBooks();

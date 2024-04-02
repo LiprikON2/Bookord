@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 
-import { type BookMetadata } from "..";
+import { type BookMetadata } from "../..";
 
 const storeContext = {
     getParsedMetadata(fileNames: string[]): Promise<[string, BookMetadata][]> {

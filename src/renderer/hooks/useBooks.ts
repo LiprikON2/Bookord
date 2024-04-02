@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { reaction } from "mobx";
 import _ from "lodash";
 
-import context from "../store/ipc";
+import context from "../stores/BookStore/ipc";
 import {
     type Books,
     booksStore,
@@ -14,7 +14,7 @@ import {
     setFilterTag,
     activeFilterTagsCompute,
     resetFilterTags,
-} from "../store/books";
+} from "../stores/books";
 
 export const useBooks = () => {
     // ref: https://github.com/mobxjs/mobx/discussions/3737#discussioncomment-6548377

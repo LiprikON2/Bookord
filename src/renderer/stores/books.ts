@@ -2,7 +2,7 @@ import { action, observable, autorun, set, toJS, computed, runInAction } from "m
 import Fuse from "fuse.js";
 import _ from "lodash";
 
-import context from "./ipc";
+import context from "./BookStore/ipc";
 import { isDev } from "~/common/helpers";
 
 declare global {

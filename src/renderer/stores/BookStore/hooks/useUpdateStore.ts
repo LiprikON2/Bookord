@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 import context from "../ipc";
-import { BookKey, bookStore } from "..";
+import { bookStore, type BookKey } from "..";
 
 // TODO move this logic inside store
 export const useUpdateStore = () => {

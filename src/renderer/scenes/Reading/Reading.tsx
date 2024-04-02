@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 
 import { bookKeyRoute } from "~/renderer/appRenderer";
-import { bookStore } from "~/renderer/store";
+import { bookStore } from "~/renderer/stores";
 import { toJS } from "mobx";
 
 export const Reading = observer(() => {

@@ -10,7 +10,7 @@ import "@mantine/core/styles.layer.css";
 import "@mantine/dropzone/styles.layer.css";
 import "@mantine/notifications/styles.layer.css";
 import "@mantine/spotlight/styles.layer.css";
-import { useUpdateStore } from "./hooks";
+import { useUpdateStore } from "./stores";
 
 console.log("[Renderer]: Execution started");
 const queryClient = new QueryClient();

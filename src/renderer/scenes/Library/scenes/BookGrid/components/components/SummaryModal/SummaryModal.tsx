@@ -8,7 +8,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 
 import { LanguagePicker } from "~/components/LanguagePicker";
-import { getSetting } from "~/renderer/store";
+import { getSetting } from "~/renderer/stores";
 import flags from "~/assets/images/flags/language";
 import classes from "./SummaryModal.module.css";
 import context from "~/renderer/ipc/thirdPartyApi";

@@ -3,9 +3,9 @@ import { Box, SimpleGrid } from "@mantine/core";
 import type { FileWithPath } from "@mantine/dropzone";
 
 import context from "~/renderer/ipc/fileOperations";
-import { useStorageBooks } from "~/renderer/hooks";
 import { BookDropzone } from "./scenes";
 import { BookCard } from "./components";
+import { useStorageBooks } from "~/renderer/stores";
 
 export const BookGrid = () => {
     // const { filteredBookEntries, bookEntries, hasBooks } = useBooks();

@@ -8,7 +8,7 @@ import {
     rem,
 } from "@mantine/core";
 
-import { type BookStateOpened } from "~/renderer/store";
+import { type BookStateOpened } from "~/renderer/stores";
 import { ThemeToggle } from "~/renderer/components";
 import { SettingsModal, Sidebar, type SidebarMarkup, Titlebar } from "./scenes";
 import classes from "./AppShell.module.css";
@@ -44,7 +44,7 @@ export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
                 <Titlebar showBurger={openedNavbar} toggleBurger={toggleNavbar} />
             </MantineAppShell.Header>
             <MantineAppShell.Navbar>
-                <Sidebar getMarkup={layoutMarkup.getNavbarMarkup} close={closeNavbar}>
+                <Sidebar getMarkup={layoutMarkup.getNavbarMarkup} onChangeTab={closeNavbar}>
                     <SettingsModal />
                     <ThemeToggle />
                 </Sidebar>
