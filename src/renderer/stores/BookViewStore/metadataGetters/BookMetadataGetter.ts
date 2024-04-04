@@ -1,5 +1,5 @@
 import { BookMetadata } from "../../BookStore/BookStore";
-import type { FilterTags, MetadataGetter } from "../interfaces";
+import type { FilterTags, MetadataGetter, RecentTagName } from "../interfaces";
 
 export class BookMetadataGetter<T extends BookMetadata> implements MetadataGetter<T> {
     getPublishYears(metadata: T) {
@@ -15,6 +15,50 @@ export class BookMetadataGetter<T extends BookMetadata> implements MetadataGette
         return metadata.subjects;
     }
 
+    getRecent(metadata: T): RecentTagName[] {
+        const currentDate = new Date();
+        // TODO
+        const openBookDate = new Date("2024-04-04");
+
+        const timeDifference = currentDate.valueOf() - openBookDate.valueOf();
+        const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+        const relativeDateGroupings: RecentTagName[] = [];
+
+        relativeDateGroupings.push("active");
+        switch (true) {
+            case daysDifference <= 0:
+                relativeDateGroupings.push("Today");
+                break;
+            case daysDifference <= 1:
+                relativeDateGroupings.push("Yesterday");
+                break;
+            case daysDifference <= 7:
+                relativeDateGroupings.push("Earlier this week");
+                break;
+            case daysDifference <= 14:
+                relativeDateGroupings.push("Last week");
+                break;
+            case daysDifference <= 30:
+                relativeDateGroupings.push("Earlier this month");
+                break;
+            case daysDifference <= 60:
+                relativeDateGroupings.push("Last month");
+                break;
+            case daysDifference <= 365:
+                relativeDateGroupings.push("Earlier this year");
+                break;
+            case daysDifference <= 730:
+                relativeDateGroupings.push("Last year");
+                break;
+            default:
+                relativeDateGroupings.push("A long time ago");
+                break;
+        }
+
+        return relativeDateGroupings;
+    }
+
     get(tag: keyof FilterTags, metadata: T) {
         switch (tag) {
             case "publishYears":
@@ -24,7 +68,7 @@ export class BookMetadataGetter<T extends BookMetadata> implements MetadataGette
             case "subjects":
                 return this.getSubjects(metadata);
             case "recent":
-                return [];
+                return this.getRecent(null);
 
             default:
                 throw new Error(`Tag ${tag} is not implemented`);

@@ -77,8 +77,8 @@ export class BookFilter<T extends BookMetadata> implements Filter<T> {
                     return activeTags.some((activeTag) => itemTags.includes(activeTag));
             };
 
-            if (filterTagsLogicalOp === "and") return activeFilterTags.some(predicate);
-            else if (filterTagsLogicalOp === "or") return activeFilterTags.every(predicate);
+            if (filterTagsLogicalOp === "and") return activeFilterTags.every(predicate);
+            else if (filterTagsLogicalOp === "or") return activeFilterTags.some(predicate);
         });
 
         return this;

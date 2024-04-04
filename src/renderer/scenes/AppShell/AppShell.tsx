@@ -19,6 +19,7 @@ interface AppShellProps {
 }
 
 export type LayoutMarkup = {
+    showFilterMenu: boolean;
     getAppShellProps: (openedNavbar: boolean, openedAside: boolean) => MantineAppShellProps;
     getNavbarMarkup: (openedBookRecords: BookStateOpened[]) => SidebarMarkup;
     getAsideMarkup: () => SidebarMarkup;
@@ -41,7 +42,11 @@ export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
             {...layoutMarkup.getAppShellProps(openedNavbar, openedAside)}
         >
             <MantineAppShell.Header>
-                <Titlebar showBurger={openedNavbar} toggleBurger={toggleNavbar} />
+                <Titlebar
+                    showBurger={openedNavbar}
+                    toggleBurger={toggleNavbar}
+                    showFilterMenu={layoutMarkup.showFilterMenu}
+                />
             </MantineAppShell.Header>
             <MantineAppShell.Navbar>
                 <Sidebar getMarkup={layoutMarkup.getNavbarMarkup} onChangeTab={closeNavbar}>

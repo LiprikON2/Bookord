@@ -6,8 +6,9 @@ export type TagName = string;
 export type TagCategory = {
     name: string;
     order: number;
-    /** Logical operator for `tagsActive` */
+    /** Logical operator between `tagsActive` */
     logicalOp: "or" | "and";
+    sortBy: "count" | "name";
     tagsActive: Map<TagName, boolean>;
     tagsCount: Map<TagName, number>;
     searchTerm: string;
@@ -38,7 +39,7 @@ export type CollectionKey = string;
 export interface Collection {
     searchTerm: string;
     filterTags: FilterTags;
-    /** Logical operator for `filterTags` */
+    /** Logical operator between `filterTags` */
     logicalOp: "or" | "and";
     // filterTagRelations: {
     //     logicalAnd: Map<keyof FilterTags, Set<keyof FilterTags>>;
@@ -56,8 +57,16 @@ export interface ViewStore<T> {
 
     newFilter(...args: any[]): Filter<T>;
 
+    sortTags(tags: Tag[], sortBy: TagCategory["sortBy"]): Tag[];
+
     getTagCategoryName(tagCategory: keyof FilterTags): string;
     getTagCategoryName(tagCategory: keyof FilterTags, collectionKey?: CollectionKey): string;
+
+    categoryHasActiveTag(tagCategory: keyof FilterTags): boolean;
+    categoryHasActiveTag(tagCategory: keyof FilterTags, collectionKey?: CollectionKey): boolean;
+
+    setSearchTerm(searchTerm: string): void;
+    setSearchTerm(searchTerm: string, collectionKey?: CollectionKey): void;
 
     setTagsSearchTerm(searchTerm: string, tagCategory: keyof FilterTags): void;
     setTagsSearchTerm(

@@ -7,15 +7,14 @@ import { observer } from "mobx-react-lite";
 import { ToggleButton } from "~/renderer/components";
 import { useFilterable } from "../hooks";
 import classes from "./FilterGroup.module.css";
-import { useDd } from "~/renderer/hooks";
-import { FilterTags } from "~/renderer/stores";
+import { FilterTags, useTags } from "~/renderer/stores";
 
 export type FilterGroupProps = {
     tagCategory: keyof FilterTags;
 };
 
 export const FilterGroup = ({ tagCategory }: FilterGroupProps) => {
-    const { setActiveTag, tags, setTagsSearchTerm, tagCategoryName } = useDd(tagCategory);
+    const { setActiveTag, tags, setTagsSearchTerm, tagCategoryName } = useTags(tagCategory);
 
     const [searchTermValue, setSearchTermValue] = useState("");
     const [debouncedSearchTerm] = useDebouncedValue(searchTermValue, 50, { leading: true });

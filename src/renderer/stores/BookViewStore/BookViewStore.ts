@@ -51,20 +51,23 @@ export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
 
     private getInitFilterTags(): FilterTags {
         return {
+            // TODO handle sort of recent tags
             recent: this.getInitTagCategory("Recent", 0),
             subjects: this.getInitTagCategory("Genres", 1),
-            publishYears: this.getInitTagCategory("Year", 2),
+            publishYears: this.getInitTagCategory("Year", 2, "name"),
             languages: this.getInitTagCategory("Language", 3),
         };
     }
 
     private getInitTagCategory(
         name: TagCategory["name"],
-        order: TagCategory["order"]
+        order: TagCategory["order"],
+        sortBy: TagCategory["sortBy"] = "count"
     ): TagCategory {
         return {
             name,
             order,
+            sortBy,
             logicalOp: "or",
             tagsActive: new Map(),
             tagsCount: new Map(),
@@ -83,6 +86,12 @@ export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
         return collection.filterTags[tagCategory].name;
     }
 
+    setSearchTerm(searchTerm: string): void;
+    setSearchTerm(searchTerm: string, collectionKey?: CollectionKey): void;
+    setSearchTerm(searchTerm: string, collectionKey?: CollectionKey) {
+        const collection = this.get(collectionKey);
+        collection.searchTerm = searchTerm;
+    }
     setTagsSearchTerm(searchTerm: string, tagCategory: keyof FilterTags): void;
     setTagsSearchTerm(
         searchTerm: string,
@@ -103,7 +112,7 @@ export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
     getTags(tagCategory: keyof FilterTags, collectionKey?: CollectionKey) {
         const collection = this.get(collectionKey);
 
-        const { tagsActive, tagsCount, searchTerm } = collection.filterTags[tagCategory];
+        const { tagsActive, tagsCount, searchTerm, sortBy } = collection.filterTags[tagCategory];
 
         const tagNames = Array.from(tagsActive.keys());
 
@@ -125,17 +134,24 @@ export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
                 count: tagsCount.get(tagName),
                 visible: false,
             }));
-            tags = [...filteredTags, ...filteredOutTags];
+            tags = [...filteredTags, ...this.sortTags(filteredOutTags, sortBy)];
         } else {
-            tags = tagNames.map((tagName) => ({
+            const filteredTags = tagNames.map((tagName) => ({
                 name: tagName,
                 active: tagsActive.get(tagName),
                 count: tagsCount.get(tagName),
                 visible: true,
             }));
+            tags = this.sortTags(filteredTags, sortBy);
         }
 
         return tags;
+    }
+
+    sortTags(tags: Tag[], sortBy: TagCategory["sortBy"]): Tag[] {
+        if (sortBy === "count") return tags.sort((tagA, tagB) => tagB.count - tagA.count);
+        else if (sortBy === "name")
+            return tags.sort((tagA, tagB) => tagB.name.localeCompare(tagA.name));
     }
 
     getTagsAll(): Tags;
@@ -181,9 +197,17 @@ export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
             excludedTagCategories
         );
         return tagCategories.some((tagCategory: keyof FilterTags) =>
-            Array.from(collection.filterTags[tagCategory].tagsActive.values()).some(
-                (active) => active
-            )
+            this.categoryHasActiveTag(tagCategory, collectionKey)
+        );
+    }
+
+    categoryHasActiveTag(tagCategory: keyof FilterTags): boolean;
+    categoryHasActiveTag(tagCategory: keyof FilterTags, collectionKey?: CollectionKey): boolean;
+    categoryHasActiveTag(tagCategory: keyof FilterTags, collectionKey?: CollectionKey) {
+        const collection = this.get(collectionKey);
+
+        return Array.from(collection.filterTags[tagCategory].tagsActive.values()).some(
+            (active) => active
         );
     }
 

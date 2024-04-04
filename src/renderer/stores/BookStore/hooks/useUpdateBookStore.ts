@@ -3,8 +3,7 @@ import { useEffect } from "react";
 import context from "../ipc";
 import { bookStore, type BookKey } from "..";
 
-// TODO move this logic inside store
-export const useUpdateStore = () => {
+export const useUpdateBookStore = () => {
     /* Requests initial watcher update */
     useEffect(() => {
         context.watcherSendUpdate();

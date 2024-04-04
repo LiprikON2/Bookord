@@ -6,23 +6,29 @@ import { WindowControls, SearchInput, FilterMenu } from "./components";
 import { icons } from "~/components/Icons";
 import classes from "./Titlebar.module.css";
 import { ToggleActionIcon } from "~/components/ToggleActionIcon";
+import { useFilterTags, useTags } from "~/renderer/stores";
 // import { useBooks } from "~/renderer/hooks";
 
 export const Titlebar = ({
     showBurger,
     toggleBurger,
+    showFilterMenu,
 }: {
     showBurger: boolean;
     toggleBurger: () => void;
+    showFilterMenu: boolean;
 }) => {
-    // const { setFilterTag, activeFilterTags } = useBooks();
+    const { resetActiveTags } = useFilterTags();
+    const { tagCategoryName, tags, resetTagCategory, setActiveTag } = useTags("recent");
+    const recentFilterActive = tags.find((tag) => tag.name === "active")?.active ?? false;
 
-    // const handleRecentFilterOn = () => {
-    //     setFilterTag("Custom", "Recent", true);
-    // };
-    // const handleRecentFilterOff = () => {
-    //     setFilterTag("Custom", "Recent", false);
-    // };
+    const handleRecentFilterOn = () => {
+        resetActiveTags();
+        setActiveTag("active", true);
+    };
+    const handleRecentFilterOff = () => {
+        resetTagCategory();
+    };
 
     return (
         <Group
@@ -43,19 +49,21 @@ export const Titlebar = ({
             </Group>
             <Group className={classes.searchGroup} wrap="nowrap">
                 <SearchInput />
-                <Group wrap="nowrap" gap={0}>
-                    <FilterMenu />
-                    {/*
-                    <ToggleActionIcon
-                        aria-label="Recent"
-                        OnIcon={IconClockFilled}
-                        OffIcon={IconClock}
-                        onAction={handleRecentFilterOn}
-                        offAction={handleRecentFilterOff}
-                        on={activeFilterTags.Custom?.Recent ?? false}
-                        classNames={{ icon: classes.icon }}
-                    /> */}
-                </Group>
+                {showFilterMenu && (
+                    <Group wrap="nowrap" gap={0}>
+                        <FilterMenu />
+
+                        <ToggleActionIcon
+                            aria-label={tagCategoryName}
+                            OnIcon={IconClockFilled}
+                            OffIcon={IconClock}
+                            onAction={handleRecentFilterOn}
+                            offAction={handleRecentFilterOff}
+                            on={recentFilterActive}
+                            classNames={{ icon: classes.icon }}
+                        />
+                    </Group>
+                )}
             </Group>
             <Group className={classes.windowControlsGroup}>
                 <WindowControls platform="windows" tooltips={true} />

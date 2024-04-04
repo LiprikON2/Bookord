@@ -1,14 +1,32 @@
 import { FilterTags, TagName } from "./ViewStore";
 
-// export type ExtractedTags = {
-//     publishYears: TagName;
-//     languages: TagName[];
-//     subjects: TagName[];
-// };
+// enum RelativeDateGroupings {
+//     "Today",
+//     "Yesterday",
+//     "Earlier this month",
+//     "Last month",
+//     "Earlier this year",
+//     "Last year",
+// }
 
+// export type RecentTagName = `${RelativeDateGroupings}`;
+
+type RelativeDateGroupings =
+    | "Today"
+    | "Yesterday"
+    | "Earlier this week"
+    | "Last week"
+    | "Earlier this month"
+    | "Last month"
+    | "Earlier this year"
+    | "Last year"
+    | "A long time ago";
+
+export type RecentTagName = RelativeDateGroupings | "active";
 export interface MetadataGetter<T> {
     getPublishYears(metadata: T): TagName[];
     getLanguages(metadata: T): TagName[];
     getSubjects(metadata: T): TagName[];
-    get(tag: keyof FilterTags, metadata: T): TagName | TagName[];
+    getRecent(metadata: T): RecentTagName[];
+    get(tag: keyof FilterTags, metadata: T): TagName[];
 }

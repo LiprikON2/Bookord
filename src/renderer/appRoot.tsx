@@ -10,12 +10,12 @@ import "@mantine/core/styles.layer.css";
 import "@mantine/dropzone/styles.layer.css";
 import "@mantine/notifications/styles.layer.css";
 import "@mantine/spotlight/styles.layer.css";
-import { useUpdateStore } from "./stores";
+import { useUpdateBookStore } from "./stores";
 
 console.log("[Renderer]: Execution started");
 const queryClient = new QueryClient();
 
-if (isDev() && false)
+if (isDev())
     configure({
         enforceActions: "always",
         computedRequiresReaction: true,
@@ -28,7 +28,7 @@ export const Root = () => {
     // TODO consider moving it to the route level
     // might be of use: https://tanstack.com/router/latest/docs/framework/react/guide/router-context#how-about-an-external-data-fetching-library
 
-    useUpdateStore();
+    useUpdateBookStore();
 
     return (
         <>

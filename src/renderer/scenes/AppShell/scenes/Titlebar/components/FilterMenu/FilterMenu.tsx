@@ -2,23 +2,20 @@ import React, { useEffect, useState } from "react";
 import { Button, Menu, rem } from "@mantine/core";
 import { IconFilter, IconFilterFilled } from "@tabler/icons-react";
 
-import { useBooks, useDd } from "~/renderer/hooks";
 import { FilterGroup } from "./components";
 import { ToggleActionIcon } from "~/components/ToggleActionIcon";
 import classes from "./FilterMenu.modules.css";
+import { useFilterTags, useTags } from "~/renderer/stores";
 
 export const FilterMenu = () => {
-    const { tags, setFilterTag, resetFilterTags, activeFilterTags, areMainFiltersActive } =
-        useBooks();
-
-    // TODO move into separate hook
-    const { resetActiveTags, hasActiveTag } = useDd("recent");
+    const { resetActiveTags, categoriesHaveActiveTag } = useFilterTags();
+    const { resetTagCategory } = useTags("recent");
 
     const [opened, setOpened] = useState(false);
 
     const handleMenuToggle = (opened: boolean) => {
         setOpened(opened);
-        if (opened) setFilterTag("Custom", "Recent", false);
+        if (opened) resetTagCategory();
     };
 
     return (
@@ -35,7 +32,7 @@ export const FilterMenu = () => {
                     aria-label="Filter"
                     OnIcon={IconFilterFilled}
                     OffIcon={IconFilter}
-                    on={opened || hasActiveTag}
+                    on={opened || categoriesHaveActiveTag}
                     classNames={{ icon: classes.icon }}
                 />
             </Menu.Target>

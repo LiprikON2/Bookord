@@ -5,14 +5,15 @@ import { IconSearch } from "@tabler/icons-react";
 
 import { useBooks } from "~/renderer/hooks";
 import classes from "./SearchInput.module.css";
+import { useFilterTags } from "~/renderer/stores";
 
 export const SearchInput = () => {
     const { ref, focused } = useFocusWithin<HTMLInputElement>();
     const [searchTermValue, setSearchTermValue] = useState("");
     const [debouncedSearchTerm] = useDebouncedValue(searchTermValue, 100, { leading: true });
 
-    // const { setSearchTerm } = useBooks();
-    // useEffect(() => setSearchTerm(debouncedSearchTerm), [debouncedSearchTerm]);
+    const { setSearchTerm } = useFilterTags();
+    useEffect(() => setSearchTerm(debouncedSearchTerm), [debouncedSearchTerm]);
 
     useWindowEvent("keydown", (event) => {
         if (event.code === "KeyP" && (event.ctrlKey || event.metaKey)) {

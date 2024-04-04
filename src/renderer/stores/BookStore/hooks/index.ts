@@ -1,2 +1,2 @@
 export * from "./useStorageBooks";
-export * from "./useUpdateStore";
+export * from "./useUpdateBookStore";

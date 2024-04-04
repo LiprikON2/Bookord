@@ -6,6 +6,7 @@ import { AppShell, LayoutMarkup } from "~/renderer/scenes";
 import { getHomeMarkup } from "./sharedLayoutMarkup";
 
 const readingLayoutMarkup: LayoutMarkup = {
+    showFilterMenu: false,
     getAppShellProps: (openedNavbar, openedAside) => ({
         navbar: { width: 200, breakpoint: "sm", collapsed: { mobile: !openedNavbar } },
         aside: { width: 200, breakpoint: "sm", collapsed: { mobile: true, desktop: true } },
