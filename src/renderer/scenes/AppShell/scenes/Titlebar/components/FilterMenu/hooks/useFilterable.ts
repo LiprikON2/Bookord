@@ -28,7 +28,7 @@ const toFilterable = <T extends { [key: string]: any }>(
     return [...filteredEntries, ...filteredOutEntries];
 };
 
-export const useFilterable = <T extends { [key: string]: any }>(items: T, filterTerm: string) => {
+export const useFilterable = (items: { [key: string]: any }, filterTerm: string) => {
     const [filteredEntries, setFilteredEntries] = useState(toFilterable(items));
 
     useShallowEffect(() => {

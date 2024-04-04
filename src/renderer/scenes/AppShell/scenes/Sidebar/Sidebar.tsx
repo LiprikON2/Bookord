@@ -45,7 +45,7 @@ export const Sidebar = observer(
         onChangeTab,
         children,
     }: {
-        getMarkup: (openedBookRecords: BookStateOpened) => SidebarMarkup;
+        getMarkup: (openedBookRecords: BookStateOpened[]) => SidebarMarkup;
         onChangeTab: () => void;
         children: React.ReactNode;
     }) => {

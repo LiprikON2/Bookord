@@ -44,7 +44,7 @@ export const Titlebar = ({
             <Group className={classes.searchGroup} wrap="nowrap">
                 <SearchInput />
                 <Group wrap="nowrap" gap={0}>
-                    {/* <FilterMenu /> */}
+                    <FilterMenu />
                     {/*
                     <ToggleActionIcon
                         aria-label="Recent"

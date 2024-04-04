@@ -1,4 +1,7 @@
 .root {
+    &:where(:disabled:not([data-loading]), [data-disabled]:not([data-loading])) {
+        border-width: var(--button-bd);
+    }
     &[data-variant="default"] {
         @mixin dark {
             --button-bg: var(--mantine-color-dark-6);

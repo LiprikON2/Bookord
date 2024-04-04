@@ -1,6 +1,6 @@
-import { ViewStore } from "./ViewStore";
-import { BookMetadataGetter } from "./metadataGetters";
-
-export const bookViewStore = new ViewStore(new BookMetadataGetter());
-
-export * from "./ViewStore";
+export * from "./BookViewStore";
+export * from "./filters";
+export * from "./hooks";
+export * from "./interfaces";
+export * from "./metadataGetters";
+export * from "./store";

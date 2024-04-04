@@ -52,14 +52,16 @@ export type BookStoreState = {
 
 export type BookKey = string;
 
-export type BookStateInStorage = (BookState & {
-    bookKey: BookKey;
-})[];
+export type BookStateInStorage = BookState & {
+    id: BookKey;
+};
 
-export type BookStateOpened = (BookStoreState & {
+export type BookStateInStorageWithMetadata = BookStateInStorage & { metadata: BookMetadata | null };
+
+export type BookStateOpened = BookStoreState & {
     bookKey: BookKey;
     title: BookKey | BookMetadata["title"];
-})[];
+};
 
 /* TODO move:
 
@@ -161,10 +163,31 @@ export class BookStore {
             .filter((item) => item);
     }
 
+    getBookStateInStorage(): BookStateInStorage[] {
+        return this.getBookKeysInStorage().map((bookKey) => ({
+            ...this.getBookState(bookKey),
+            id: bookKey,
+        }));
+    }
+    getBookMetadataInStorage(): BookStateInStorageWithMetadata[] {
+        return this.getBookStateInStorage().map((bookState) => ({
+            ...bookState,
+            metadata: bookState.isMetadataParsed ? this.getBookMetadata(bookState.id) : null,
+        }));
+    }
+
     getBookKeysContentRequested(): BookKey[] {
         return Array.from(this.storeStateRecords)
             .map(([bookKey, storeState]) => (storeState.isContentRequested ? bookKey : null))
             .filter((item) => item);
+    }
+
+    getBookStateOpened(): BookStateOpened[] {
+        return this.getBookKeysContentRequested().map((bookKey) => ({
+            ...this.getBookStoreState(bookKey),
+            title: this.getBookMetadata(bookKey)?.title ?? bookKey,
+            bookKey,
+        }));
     }
 
     getBookState(bookKey: BookKey): BookState {
@@ -196,20 +219,6 @@ export class BookStore {
             parsedSections,
             sectionNames,
         };
-    }
-
-    getBookStateInStorage(): BookStateInStorage {
-        return this.getBookKeysInStorage().map((bookKey) => ({
-            ...this.getBookState(bookKey),
-            bookKey,
-        }));
-    }
-    getBookStateOpened(): BookStateOpened {
-        return this.getBookKeysContentRequested().map((bookKey) => ({
-            ...this.getBookStoreState(bookKey),
-            title: this.getBookMetadata(bookKey)?.title ?? bookKey,
-            bookKey,
-        }));
     }
 
     async addBooks(bookKeys: BookKey[]) {

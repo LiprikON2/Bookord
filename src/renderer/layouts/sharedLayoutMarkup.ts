@@ -4,7 +4,9 @@ import { BookStateOpened } from "../stores";
 import { SidebarMarkup } from "../scenes/AppShell/scenes";
 import { bookKeyRoute } from "../appRenderer";
 
-export const getHomeMarkup = (openedBookRecords: BookStateOpened): ArrayElement<SidebarMarkup> => ({
+export const getHomeMarkup = (
+    openedBookRecords: BookStateOpened[]
+): ArrayElement<SidebarMarkup> => ({
     name: "Home",
     Icon: IconHome,
     innerTabs: [

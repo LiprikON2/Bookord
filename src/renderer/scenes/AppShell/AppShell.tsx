@@ -20,7 +20,7 @@ interface AppShellProps {
 
 export type LayoutMarkup = {
     getAppShellProps: (openedNavbar: boolean, openedAside: boolean) => MantineAppShellProps;
-    getNavbarMarkup: (openedBookRecords: BookStateOpened) => SidebarMarkup;
+    getNavbarMarkup: (openedBookRecords: BookStateOpened[]) => SidebarMarkup;
     getAsideMarkup: () => SidebarMarkup;
 };
 

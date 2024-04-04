@@ -6,6 +6,7 @@ import context from "~/renderer/ipc/fileOperations";
 import { BookDropzone } from "./scenes";
 import { BookCard } from "./components";
 import { useStorageBooks } from "~/renderer/stores";
+import { useDd } from "~/renderer/hooks";
 
 export const BookGrid = () => {
     // const { filteredBookEntries, bookEntries, hasBooks } = useBooks();
@@ -48,8 +49,8 @@ export const BookGrid = () => {
             >
                 {inStorageBookRecords.map((inStorageBook) => (
                     <BookCard
-                        key={inStorageBook.bookKey}
-                        bookKey={inStorageBook.bookKey}
+                        key={inStorageBook.id}
+                        bookKey={inStorageBook.id}
                         skeleton={!inStorageBook.isMetadataParsed}
                     />
                 ))}

@@ -10,6 +10,9 @@ export const useStorageBooks = () => {
     );
     // This did not work, even link did not help https://stackoverflow.com/a/64771774/10744339
     // const [openedBookRecords, setOpenedBookRecords] = useState(() => bookStore.getBookStateOpened());
+    const [metaBookRecords, setMetaBookRecords] = useState(() =>
+        bookStore.getBookMetadataInStorage()
+    );
 
     /* Syncs mobx store to react state without the need for observable in components */
     useEffect(() => {
@@ -21,14 +24,18 @@ export const useStorageBooks = () => {
         //     () => bookStore.getBookStateOpened(),
         //     (openedBookRecords) => setOpenedBookRecords(openedBookRecords)
         // );
+        const unsub2 = reaction(
+            () => bookStore.getBookMetadataInStorage(),
+            (metaBookRecords) => setMetaBookRecords(metaBookRecords)
+        );
 
         return () => {
             unsub1();
-            // unsub2();
+            unsub2();
         };
     }, []);
 
     const isBookStorageEmpty = !inStorageBookRecords.length;
 
-    return { isBookStorageEmpty, inStorageBookRecords };
+    return { isBookStorageEmpty, inStorageBookRecords, metaBookRecords };
 };

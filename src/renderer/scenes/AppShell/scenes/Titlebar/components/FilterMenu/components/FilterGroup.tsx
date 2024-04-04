@@ -1,29 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Badge, CloseButton, Menu, ScrollArea, Stack, TextInput, rem } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
+import { observer } from "mobx-react-lite";
 
 import { ToggleButton } from "~/renderer/components";
 import { useFilterable } from "../hooks";
 import classes from "./FilterGroup.module.css";
+import { useDd } from "~/renderer/hooks";
+import { FilterTags } from "~/renderer/stores";
 
 export type FilterGroupProps = {
-    label: string;
-    items: { [key: string]: number };
-    setItem: (label: string, item: string, value: boolean) => void;
-    itemsState:
-        | {
-              [itemKey: string]: boolean;
-          }
-        | undefined;
-    className: string;
+    tagCategory: keyof FilterTags;
 };
 
-export const FilterGroup = ({ label, items, setItem, itemsState, ...rest }: FilterGroupProps) => {
+export const FilterGroup = ({ tagCategory }: FilterGroupProps) => {
+    const { setActiveTag, tags, setTagsSearchTerm, tagCategoryName } = useDd(tagCategory);
+
     const [searchTermValue, setSearchTermValue] = useState("");
     const [debouncedSearchTerm] = useDebouncedValue(searchTermValue, 50, { leading: true });
 
-    const filteredEntries = useFilterable(items, debouncedSearchTerm);
+    useEffect(() => setTagsSearchTerm(debouncedSearchTerm), [debouncedSearchTerm]);
 
     return (
         <Stack gap={rem(4)}>
@@ -32,7 +29,7 @@ export const FilterGroup = ({ label, items, setItem, itemsState, ...rest }: Filt
                     value={searchTermValue}
                     onChange={(e) => setSearchTermValue(e.currentTarget.value)}
                     variant="subtle"
-                    placeholder={label}
+                    placeholder={tagCategoryName}
                     size="xs"
                     px="xs"
                     rightSectionPointerEvents={searchTermValue ? "auto" : "none"}
@@ -55,22 +52,22 @@ export const FilterGroup = ({ label, items, setItem, itemsState, ...rest }: Filt
                 w="100%"
                 offsetScrollbars
                 scrollbarSize={6}
-                px={rem(2)}
+                px={2}
                 classNames={{ viewport: classes.viewport, thumb: classes.thumb }}
             >
                 <Stack gap={rem(4)}>
-                    {filteredEntries.map(([item, { value, visible }]) => (
+                    {tags.map(({ name, active, visible, count }) => (
                         <Menu.Item
                             style={{ opacity: visible ? "1" : "0.5" }}
-                            key={item}
-                            title={item}
+                            key={name}
+                            title={name}
                             renderRoot={(props) => (
                                 <ToggleButton
                                     disabled={!visible}
                                     {...props}
-                                    px={rem(8)}
-                                    py={rem(4)}
-                                    pr={rem(4)}
+                                    px={8}
+                                    py={4}
+                                    pr={4}
                                     classNames={{
                                         root: classes.root,
                                         inner: classes.inner,
@@ -79,15 +76,15 @@ export const FilterGroup = ({ label, items, setItem, itemsState, ...rest }: Filt
                                     justify="space-between"
                                     rightSection={
                                         <Badge size="sm" radius="sm" variant="default">
-                                            {value}
+                                            {count}
                                         </Badge>
                                     }
-                                    onClick={(on) => setItem(label, item, on)}
-                                    on={itemsState?.[item] ?? false}
+                                    onClick={(on) => setActiveTag(name, on)}
+                                    on={active}
                                 />
                             )}
                         >
-                            {item}
+                            {name}
                         </Menu.Item>
                     ))}
                 </Stack>

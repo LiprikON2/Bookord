@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Menu, rem } from "@mantine/core";
 import { IconFilter, IconFilterFilled } from "@tabler/icons-react";
 
-import { useBooks } from "~/renderer/hooks";
+import { useBooks, useDd } from "~/renderer/hooks";
 import { FilterGroup } from "./components";
 import { ToggleActionIcon } from "~/components/ToggleActionIcon";
 import classes from "./FilterMenu.modules.css";
@@ -10,6 +10,10 @@ import classes from "./FilterMenu.modules.css";
 export const FilterMenu = () => {
     const { tags, setFilterTag, resetFilterTags, activeFilterTags, areMainFiltersActive } =
         useBooks();
+
+    // TODO move into separate hook
+    const { resetActiveTags, hasActiveTag } = useDd("recent");
+
     const [opened, setOpened] = useState(false);
 
     const handleMenuToggle = (opened: boolean) => {
@@ -31,54 +35,23 @@ export const FilterMenu = () => {
                     aria-label="Filter"
                     OnIcon={IconFilterFilled}
                     OffIcon={IconFilter}
-                    on={opened || areMainFiltersActive}
+                    on={opened || hasActiveTag}
                     classNames={{ icon: classes.icon }}
                 />
             </Menu.Target>
             <Menu.Dropdown p={rem(8)} h="40vh">
                 <div className={classes.filterGrid}>
-                    <FilterGroup
-                        className={classes.filterGroup}
-                        label="Genres"
-                        items={tags.subjects}
-                        itemsState={activeFilterTags.Genres}
-                        setItem={setFilterTag}
-                    />
-                    <FilterGroup
-                        className={classes.filterGroup}
-                        label="Year"
-                        items={tags.year}
-                        itemsState={activeFilterTags.Year}
-                        setItem={setFilterTag}
-                    />
-                    <FilterGroup
-                        className={classes.filterGroup}
-                        label="Year"
-                        items={tags.year}
-                        itemsState={activeFilterTags.Year}
-                        setItem={setFilterTag}
-                    />
-                    <FilterGroup
-                        className={classes.filterGroup}
-                        label="Year"
-                        items={tags.year}
-                        itemsState={activeFilterTags.Year}
-                        setItem={setFilterTag}
-                    />
-                    <FilterGroup
-                        className={classes.filterGroup}
-                        label="Year"
-                        items={tags.year}
-                        itemsState={activeFilterTags.Year}
-                        setItem={setFilterTag}
-                    />
+                    <FilterGroup tagCategory="subjects" />
+                    <FilterGroup tagCategory="subjects" />
+                    <FilterGroup tagCategory="publishYears" />
+                    <FilterGroup tagCategory="languages" />
                     <Button
                         variant="default-alt-2"
                         value="settings"
                         fw="normal"
                         mt="auto"
                         style={{ alignSelf: "flex-end" }}
-                        onClick={resetFilterTags}
+                        onClick={resetActiveTags}
                     >
                         Reset Filters
                     </Button>
