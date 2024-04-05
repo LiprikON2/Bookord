@@ -39,7 +39,6 @@ export const FilterMenu = () => {
             <Menu.Dropdown p={rem(8)} h="40vh">
                 <div className={classes.filterGrid}>
                     <FilterGroup tagCategory="subjects" />
-                    <FilterGroup tagCategory="subjects" />
                     <FilterGroup tagCategory="publishYears" />
                     <FilterGroup tagCategory="languages" />
                     <Button

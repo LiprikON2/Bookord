@@ -3,7 +3,6 @@ import { observer } from "mobx-react-lite";
 
 import { bookKeyRoute } from "~/renderer/appRenderer";
 import { bookStore } from "~/renderer/stores";
-import { toJS } from "mobx";
 
 export const Reading = observer(() => {
     const { bookKey } = bookKeyRoute.useParams();

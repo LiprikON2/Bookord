@@ -15,10 +15,19 @@ export class BookMetadataGetter<T extends BookMetadata> implements MetadataGette
         return metadata.subjects;
     }
 
-    getRecent(metadata: T): RecentTagName[] {
-        const currentDate = new Date();
+    getOpenDate(metadata: T) {
         // TODO
         const openBookDate = new Date("2024-04-04");
+        return openBookDate;
+    }
+
+    getTitle(metadata: T) {
+        return metadata.title;
+    }
+
+    getRecent(metadata: T): RecentTagName[] {
+        const currentDate = new Date();
+        const openBookDate = this.getOpenDate(metadata);
 
         const timeDifference = currentDate.valueOf() - openBookDate.valueOf();
         const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
@@ -59,7 +68,9 @@ export class BookMetadataGetter<T extends BookMetadata> implements MetadataGette
         return relativeDateGroupings;
     }
 
-    get(tag: keyof FilterTags, metadata: T) {
+    get(tag: keyof FilterTags, metadata: T | null) {
+        if (!metadata) return [];
+
         switch (tag) {
             case "publishYears":
                 return this.getPublishYears(metadata);

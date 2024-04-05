@@ -2,12 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Badge, CloseButton, Menu, ScrollArea, Stack, TextInput, rem } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
-import { observer } from "mobx-react-lite";
 
 import { ToggleButton } from "~/renderer/components";
-import { useFilterable } from "../hooks";
-import classes from "./FilterGroup.module.css";
 import { FilterTags, useTags } from "~/renderer/stores";
+import classes from "./FilterGroup.module.css";
 
 export type FilterGroupProps = {
     tagCategory: keyof FilterTags;
@@ -86,6 +84,7 @@ export const FilterGroup = ({ tagCategory }: FilterGroupProps) => {
                             {name}
                         </Menu.Item>
                     ))}
+                    {!tags.length && <Menu.Item disabled={true}>No tags...</Menu.Item>}
                 </Stack>
             </ScrollArea>
         </Stack>

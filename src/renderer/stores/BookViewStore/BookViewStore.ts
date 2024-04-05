@@ -1,4 +1,6 @@
 import { makeAutoObservable } from "mobx";
+import _ from "lodash";
+import Fuse from "fuse.js";
 
 import { BookMetadata } from "../BookStore";
 import type {
@@ -15,8 +17,6 @@ import type {
 } from "./interfaces";
 import { BookFilter } from "./filters";
 import { BookMetadataGetter } from "./metadataGetters";
-import _ from "lodash";
-import Fuse from "fuse.js";
 
 /**
  * UI store
@@ -28,10 +28,6 @@ export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
     mainCollection = this.getInitCollection();
     // userTags = new Map<BookKey, UserTag>();
     userCollections = new Map<CollectionKey, Collection>();
-
-    test() {
-        this.mainCollection.filterTags.subjects.tagsActive.set("ha", true);
-    }
 
     constructor() {
         makeAutoObservable(this);
@@ -92,6 +88,7 @@ export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
         const collection = this.get(collectionKey);
         collection.searchTerm = searchTerm;
     }
+
     setTagsSearchTerm(searchTerm: string, tagCategory: keyof FilterTags): void;
     setTagsSearchTerm(
         searchTerm: string,
@@ -148,12 +145,6 @@ export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
         return tags;
     }
 
-    sortTags(tags: Tag[], sortBy: TagCategory["sortBy"]): Tag[] {
-        if (sortBy === "count") return tags.sort((tagA, tagB) => tagB.count - tagA.count);
-        else if (sortBy === "name")
-            return tags.sort((tagA, tagB) => tagB.name.localeCompare(tagA.name));
-    }
-
     getTagsAll(): Tags;
     getTagsAll(collectionKey?: CollectionKey): Tags;
     getTagsAll(collectionKey?: CollectionKey) {
@@ -165,6 +156,11 @@ export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
                 this.getTags(tagCategory, collectionKey),
             ])
         ) as any as Tags;
+    }
+    sortTags(tags: Tag[], sortBy: TagCategory["sortBy"]): Tag[] {
+        if (sortBy === "count") return tags.sort((tagA, tagB) => tagB.count - tagA.count);
+        else if (sortBy === "name")
+            return tags.sort((tagA, tagB) => tagB.name.localeCompare(tagA.name));
     }
 
     setActiveTag(tagCategory: keyof FilterTags, tag: TagName, active: boolean): void;

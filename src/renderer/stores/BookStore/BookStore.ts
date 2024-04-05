@@ -56,7 +56,10 @@ export type BookStateInStorage = BookState & {
     id: BookKey;
 };
 
-export type BookStateInStorageWithMetadata = BookStateInStorage & { metadata: BookMetadata | null };
+export type BookStateInStorageWithMetadata = BookStateInStorage & {
+    visible: boolean;
+    metadata: BookMetadata | null;
+};
 
 export type BookStateOpened = BookStoreState & {
     bookKey: BookKey;
@@ -172,6 +175,7 @@ export class BookStore {
     getBookMetadataInStorage(): BookStateInStorageWithMetadata[] {
         return this.getBookStateInStorage().map((bookState) => ({
             ...bookState,
+            visible: true,
             metadata: bookState.isMetadataParsed ? this.getBookMetadata(bookState.id) : null,
         }));
     }

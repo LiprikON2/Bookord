@@ -10,6 +10,8 @@ import { useFilteredBooks } from "~/renderer/stores";
 export const BookGrid = () => {
     const { bookGroups, isBookStorageEmpty } = useFilteredBooks();
 
+    console.log("bookGroups", bookGroups[0].items.length);
+
     const handleDrop = async (fileBlobs: FileWithPath[]) => {
         const files = fileBlobs.map(({ path, size, name, lastModified }) => ({
             path,

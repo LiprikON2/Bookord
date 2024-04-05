@@ -15,7 +15,7 @@ import { useUpdateBookStore } from "./stores";
 console.log("[Renderer]: Execution started");
 const queryClient = new QueryClient();
 
-if (isDev())
+if (isDev() && false)
     configure({
         enforceActions: "always",
         computedRequiresReaction: true,

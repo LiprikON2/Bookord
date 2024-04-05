@@ -34,15 +34,30 @@ export class BookFilter<T extends BookMetadata> implements Filter<T> {
     sort(items: ViewItem<T>[]): ViewItem<T>[] {
         const { sort, sortBy } = this.collection;
 
-        // Sort items
-        // this.items = ...;
+        if (sortBy === "recent") {
+            this.items.sort((itemA, itemB) => {
+                const openDateA = this.metadataGetter.getOpenDate(itemA.metadata);
+                const openDateB = this.metadataGetter.getOpenDate(itemB.metadata);
+
+                if (sort === "ascending") return openDateB.valueOf() - openDateA.valueOf();
+                else if (sort === "descending") return openDateA.valueOf() - openDateB.valueOf();
+            });
+        } else if (sortBy === "title") {
+            this.items.sort((itemA, itemB) => {
+                const titleA = this.metadataGetter.getTitle(itemA.metadata);
+                const titleB = this.metadataGetter.getTitle(itemB.metadata);
+
+                if (sort === "ascending") return titleB.localeCompare(titleA);
+                else if (sort === "descending") return titleA.localeCompare(titleB);
+            });
+        }
 
         return items;
     }
 
     search(items: ViewItem<T>[]) {
         const { searchTerm } = this.collection;
-
+        // TODO use `visible: false` instead of filtering
         return items;
     }
 
@@ -65,6 +80,7 @@ export class BookFilter<T extends BookMetadata> implements Filter<T> {
         const activeFilterTags = this.getActiveFilterTags();
         if (activeFilterTags.length === 0) return this;
 
+        // TODO use `visible: false` instead of filtering
         this.items = this.items.filter((item) => {
             const predicate = ([categoryKey, activeTags]: [keyof FilterTags, string[]]) => {
                 const itemTags = this.metadataGetter.get(categoryKey, item.metadata);

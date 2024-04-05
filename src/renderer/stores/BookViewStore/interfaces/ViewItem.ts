@@ -1,6 +1,7 @@
 export interface ViewItem<T> {
     id: string;
-    metadata: T;
+    visible: boolean;
+    metadata: T | null;
 }
 
 export type ViewItemGroup<T> = {

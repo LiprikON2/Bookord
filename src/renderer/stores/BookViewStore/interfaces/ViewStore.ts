@@ -46,7 +46,7 @@ export interface Collection {
     //     logicalOr: Map<keyof FilterTags, Set<keyof FilterTags>>;
     // };
     sort: "ascending" | "descending";
-    sortBy: keyof FilterTags;
+    sortBy: "title" | "recent";
     groupBy: keyof FilterTags | null;
 }
 
