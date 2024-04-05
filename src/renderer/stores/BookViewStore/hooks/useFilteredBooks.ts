@@ -8,7 +8,7 @@ import { useStorageBooks } from "../../BookStore";
 export const useFilteredBooks = () => {
     const { activeCollectionKey } = useContext(BookViewStoreContext);
 
-    const { metaBookRecords, isBookStorageEmpty } = useStorageBooks();
+    const { metaBookRecords, isBookStorageEmpty, inStorageBookCount } = useStorageBooks();
 
     const [bookGroups, setBookGroups] = useState(() =>
         bookViewStore.apply(metaBookRecords, activeCollectionKey)
@@ -27,5 +27,14 @@ export const useFilteredBooks = () => {
         };
     }, [metaBookRecords]);
 
-    return { bookGroups, isBookStorageEmpty };
+    const visibleBookCount = bookGroups.reduce(
+        (acc, cur) => cur.items.filter((item) => item.visible).length,
+        0
+    );
+    return {
+        bookGroups,
+        isBookStorageEmpty,
+        inStorageBookCount,
+        visibleBookCount,
+    };
 };

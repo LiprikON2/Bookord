@@ -2,12 +2,11 @@ import React from "react";
 import { Image, Burger, Group, Text, rem } from "@mantine/core";
 import { IconClock, IconClockFilled } from "@tabler/icons-react";
 
-import { WindowControls, SearchInput, FilterMenu } from "./components";
-import { icons } from "~/components/Icons";
-import classes from "./Titlebar.module.css";
-import { ToggleActionIcon } from "~/components/ToggleActionIcon";
 import { useFilterTags, useTags } from "~/renderer/stores";
-// import { useBooks } from "~/renderer/hooks";
+import { icons } from "~/renderer/components";
+import { ToggleActionIcon } from "~/renderer/components";
+import { WindowControls, SearchInput, FilterMenu } from "./components";
+import classes from "./Titlebar.module.css";
 
 export const Titlebar = ({
     showBurger,

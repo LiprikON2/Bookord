@@ -10,15 +10,21 @@ export const useFilterTags = (specialTagCategory: keyof FilterTags = "recent") =
     const [categoriesHaveActiveTag, setCategoriesHaveActiveTag] = useState(() =>
         bookViewStore.hasActiveTag([specialTagCategory], activeCollectionKey)
     );
+    const [searchTerm, setSearchTermValue] = useState(() => bookViewStore.getSearchTerm());
 
     useEffect(() => {
         const unsub1 = reaction(
             () => bookViewStore.hasActiveTag([specialTagCategory], activeCollectionKey),
             (hasActiveTag) => setCategoriesHaveActiveTag(hasActiveTag)
         );
+        const unsub2 = reaction(
+            () => bookViewStore.getSearchTerm(),
+            (searchTerm) => setSearchTermValue(searchTerm)
+        );
 
         return () => {
             unsub1();
+            unsub2();
         };
     }, []);
 
@@ -32,5 +38,6 @@ export const useFilterTags = (specialTagCategory: keyof FilterTags = "recent") =
         resetActiveTags,
         categoriesHaveActiveTag,
         setSearchTerm,
+        searchTerm,
     };
 };

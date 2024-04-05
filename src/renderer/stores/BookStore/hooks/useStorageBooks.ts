@@ -35,7 +35,8 @@ export const useStorageBooks = () => {
         };
     }, []);
 
-    const isBookStorageEmpty = !inStorageBookRecords.length;
+    const inStorageBookCount = inStorageBookRecords.length;
+    const isBookStorageEmpty = !inStorageBookCount;
 
-    return { isBookStorageEmpty, inStorageBookRecords, metaBookRecords };
+    return { isBookStorageEmpty, inStorageBookCount, inStorageBookRecords, metaBookRecords };
 };

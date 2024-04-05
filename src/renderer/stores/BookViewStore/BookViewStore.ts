@@ -82,6 +82,13 @@ export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
         return collection.filterTags[tagCategory].name;
     }
 
+    getSearchTerm(): string;
+    getSearchTerm(collectionKey?: CollectionKey): string;
+    getSearchTerm(collectionKey?: CollectionKey) {
+        const collection = this.get(collectionKey);
+        return collection.searchTerm;
+    }
+
     setSearchTerm(searchTerm: string): void;
     setSearchTerm(searchTerm: string, collectionKey?: CollectionKey): void;
     setSearchTerm(searchTerm: string, collectionKey?: CollectionKey) {

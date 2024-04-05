@@ -5,11 +5,15 @@ import type { FileWithPath } from "@mantine/dropzone";
 import context from "~/renderer/ipc/fileOperations";
 import { BookDropzone } from "./scenes";
 import { BookCard } from "./components";
-import { useFilteredBooks } from "~/renderer/stores";
+import { BookMetadata, ViewItemGroup, useFilteredBooks } from "~/renderer/stores";
 
-export const BookGrid = () => {
-    const { bookGroups, isBookStorageEmpty } = useFilteredBooks();
-
+export const BookGrid = ({
+    bookGroups,
+    isBookStorageEmpty,
+}: {
+    bookGroups: ViewItemGroup<BookMetadata>[];
+    isBookStorageEmpty: boolean;
+}) => {
     const handleDrop = async (fileBlobs: FileWithPath[]) => {
         const files = fileBlobs.map(({ path, size, name, lastModified }) => ({
             path,

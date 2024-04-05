@@ -3,7 +3,6 @@ import { useDebouncedValue, useFocusWithin, useWindowEvent } from "@mantine/hook
 import { CloseButton, Pill, TextInput } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 
-import { useBooks } from "~/renderer/hooks";
 import classes from "./SearchInput.module.css";
 import { useFilterTags } from "~/renderer/stores";
 

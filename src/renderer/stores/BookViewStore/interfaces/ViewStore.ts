@@ -47,10 +47,6 @@ export interface Collection {
     filterTags: FilterTags;
     /** Logical operator between `filterTags` */
     logicalOp: "or" | "and";
-    // filterTagRelations: {
-    //     logicalAnd: Map<keyof FilterTags, Set<keyof FilterTags>>;
-    //     logicalOr: Map<keyof FilterTags, Set<keyof FilterTags>>;
-    // };
     sort: "ascending" | "descending";
     sortBy: "title" | "recent";
     groupBy: keyof FilterTags | null;
@@ -70,6 +66,9 @@ export interface ViewStore<T> {
 
     categoryHasActiveTag(tagCategory: keyof FilterTags): boolean;
     categoryHasActiveTag(tagCategory: keyof FilterTags, collectionKey?: CollectionKey): boolean;
+
+    getSearchTerm(): string;
+    getSearchTerm(collectionKey?: CollectionKey): string;
 
     setSearchTerm(searchTerm: string): void;
     setSearchTerm(searchTerm: string, collectionKey?: CollectionKey): void;

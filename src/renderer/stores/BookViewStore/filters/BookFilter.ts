@@ -1,14 +1,13 @@
 import Fuse from "fuse.js";
+
 import { BookMetadata } from "../../BookStore";
 import type {
     ActiveTags,
     Collection,
     Filter,
     FilterTags,
-    MetadataGetter,
     TagCategory,
     TagName,
-    Tags,
     ViewItem,
     ViewItemGroup,
 } from "../interfaces";
@@ -58,7 +57,8 @@ export class BookFilter<T extends BookMetadata> implements Filter<T> {
                 },
                 {
                     name: "author",
-                    getFn: (item: ViewItem<T>) => this.metadataGetter.getAuthors(item.metadata),
+                    getFn: (item: ViewItem<T>) =>
+                        item.metadata ? this.metadataGetter.getAuthors(item.metadata) : "",
                 },
             ],
         };
