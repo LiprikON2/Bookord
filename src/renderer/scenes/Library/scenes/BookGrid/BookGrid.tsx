@@ -6,6 +6,7 @@ import context from "~/renderer/ipc/fileOperations";
 import { BookDropzone } from "./scenes";
 import { BookCard } from "./components";
 import { BookMetadata, ViewItemGroup, useFilteredBooks } from "~/renderer/stores";
+import { AnimatePresence } from "framer-motion";
 
 export const BookGrid = ({
     bookGroups,
@@ -51,9 +52,11 @@ export const BookGrid = ({
                     cols={{ base: 2, xs: 2, sm: 3, md: 3, lg: 4, xl: 4 }}
                     style={{ justifyItems: "center" }}
                 >
-                    {bookGroup.items.map((book) => (
-                        <BookCard key={book.id} bookKey={book.id} visible={book.visible} />
-                    ))}
+                    <AnimatePresence initial={true}>
+                        {bookGroup.items.map((book) => (
+                            <BookCard key={book.id} bookKey={book.id} visible={book.visible} />
+                        ))}
+                    </AnimatePresence>
                 </SimpleGrid>
             ))}
         </Box>

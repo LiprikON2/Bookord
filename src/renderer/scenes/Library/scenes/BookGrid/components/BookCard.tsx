@@ -2,6 +2,7 @@ import React from "react";
 import { Paper, Text, Title, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "@tanstack/react-router";
+import { AnimatePresence, motion } from "framer-motion";
 
 import context from "~/renderer/ipc/fileOperations";
 import { BookKey, useBookMetadata } from "~/renderer/stores";
@@ -16,55 +17,61 @@ export const BookCard = ({ bookKey, visible = true }: { bookKey: BookKey; visibl
 
     const handleDelete = () => context.deleteFile(bookKey);
 
-    if (!visible) return <></>;
     return (
-        <Link
-            disabled={!visible}
+        <motion.div
             className={classes.link}
-            to={bookKeyRoute.to}
-            params={{
-                bookKey,
-            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
         >
-            <Paper
-                shadow="md"
-                p="md"
-                radius="md"
-                className={classes.card}
-                style={{ backgroundImage: `url(${metadata.cover})` }}
+            <Link
+                disabled={!visible}
+                className={classes.link}
+                to={bookKeyRoute.to}
+                params={{
+                    bookKey,
+                }}
             >
-                <div>
-                    <Text className={classes.category} size="xs">
-                        {metadata.authors}
-                    </Text>
-                </div>
-                <Group
-                    justify="space-between"
-                    w="100%"
-                    wrap="nowrap"
-                    h="3rem"
-                    onClick={(e) => e.preventDefault()}
+                <Paper
+                    shadow="md"
+                    p="md"
+                    radius="md"
+                    className={classes.card}
+                    style={{ backgroundImage: `url(${metadata.cover})` }}
                 >
-                    <Paper
-                        color="cyan.3"
-                        style={{ flexGrow: 1 }}
-                        h="100%"
-                        p="0.5rem"
-                        styles={{ root: { display: "flex" } }}
+                    <div>
+                        <Text className={classes.category} size="xs">
+                            {metadata.authors}
+                        </Text>
+                    </div>
+                    <Group
+                        justify="space-between"
+                        w="100%"
+                        wrap="nowrap"
+                        h="3rem"
+                        onClick={(e) => e.preventDefault()}
                     >
-                        <Title order={3} className={classes.title}>
-                            {metadata.title}
-                        </Title>
-                    </Paper>
-                    <BookMenu handleDelete={handleDelete} openModal={openModal} />
-                </Group>
-            </Paper>
-            <SummaryModal
-                title={metadata.title}
-                authors={metadata.authors}
-                opened={openedModal}
-                onClose={closeModal}
-            />
-        </Link>
+                        <Paper
+                            color="cyan.3"
+                            style={{ flexGrow: 1 }}
+                            h="100%"
+                            p="0.5rem"
+                            styles={{ root: { display: "flex" } }}
+                        >
+                            <Title order={3} className={classes.title}>
+                                {metadata.title}
+                            </Title>
+                        </Paper>
+                        <BookMenu handleDelete={handleDelete} openModal={openModal} />
+                    </Group>
+                </Paper>
+                <SummaryModal
+                    title={metadata.title}
+                    authors={metadata.authors}
+                    opened={openedModal}
+                    onClose={closeModal}
+                />
+            </Link>
+        </motion.div>
     );
 };

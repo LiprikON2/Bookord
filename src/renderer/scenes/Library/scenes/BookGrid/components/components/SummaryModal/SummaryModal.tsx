@@ -10,8 +10,8 @@ import { useQuery } from "@tanstack/react-query";
 import { LanguagePicker } from "~/components/LanguagePicker";
 import { getSetting } from "~/renderer/stores";
 import flags from "~/assets/images/flags/language";
-import classes from "./SummaryModal.module.css";
 import context from "~/renderer/ipc/thirdPartyApi";
+import classes from "./SummaryModal.module.css";
 
 const selectLanguageData = [
     { label: "English", image: flags.en },
@@ -62,7 +62,6 @@ interface SummaryModalProps {
 }
 
 // TODO persist summaries https://tanstack.com/query/v4/docs/react/plugins/persistQueryClient
-
 export const SummaryModal = ({ opened = false, title, authors, onClose }: SummaryModalProps) => {
     const [selectedLang, setSelectedLang] = useState(selectLanguageData[0]);
     const [selectedLen, setSelectedLen] = useState(selectLengthData[0]);

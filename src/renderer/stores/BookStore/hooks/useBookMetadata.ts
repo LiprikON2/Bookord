@@ -17,9 +17,12 @@ const provideFallbackTitle = (filename: string, title?: any): string => {
 };
 
 const provideFallbackAuthors = (authors?: any): string => {
-    if (typeof authors === "object" && "_" in authors) return authors?._ ?? "Unknown";
-    if (typeof authors === "string" && authors) return authors;
-    return "Unknown";
+    if (typeof authors === "object") {
+        if ("_" in authors && typeof authors?._ === "string") {
+            return authors._;
+        } else return "Unknown";
+    } else if (typeof authors === "string" && authors) return authors;
+    return authors;
 };
 
 export const useBookMetadata = (bookKey: BookKey) => {

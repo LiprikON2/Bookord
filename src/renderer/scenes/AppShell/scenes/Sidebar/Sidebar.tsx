@@ -161,7 +161,6 @@ export const Sidebar = ({
                                                     rightSection={
                                                         tab.canBeClosed && (
                                                             <CloseButton
-                                                                // variant="transparent"
                                                                 size="sm"
                                                                 onClick={(e) => closeBook(e, tab)}
                                                             />

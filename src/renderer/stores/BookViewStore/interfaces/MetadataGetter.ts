@@ -1,3 +1,4 @@
+import { BookMetadata } from "../../BookStore";
 import { FilterTags, TagName } from "./ViewStore";
 
 // enum RelativeDateGroupings {

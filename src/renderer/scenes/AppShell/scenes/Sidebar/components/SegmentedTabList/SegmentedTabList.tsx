@@ -24,7 +24,7 @@ export const SegmentedTabList = ({ markup, showText = false, style }: SegmentedT
 
     return (
         <Tabs.List className={classes.root} ref={setRootRef} style={style}>
-            {markup.map((outerTab: any, index: number) => (
+            {markup.map((outerTab, index) => (
                 <Tabs.Tab
                     key={outerTab.name}
                     value={outerTab.name}

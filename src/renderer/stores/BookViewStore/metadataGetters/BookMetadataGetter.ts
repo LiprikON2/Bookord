@@ -22,7 +22,7 @@ export class BookMetadataGetter<T extends BookMetadata> implements MetadataGette
     }
 
     getTitle(metadata: T) {
-        return metadata.title;
+        return typeof metadata.title === "string" ? metadata.title : "";
     }
     getAuthors(metadata: T) {
         if (typeof metadata.author === "object") {

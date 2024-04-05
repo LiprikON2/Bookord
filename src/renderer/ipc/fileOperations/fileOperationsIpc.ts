@@ -16,7 +16,7 @@ export const registerFileOperationsIpc = (
     ipcMain.handle("open-file-dialog", (e) => {
         if (!validateSender(e)) return null;
         // TODO sync file dialog halts main process while it is opened,
-        // renderer process is meanwhile responsive
+        // meanwhile renderer process is responsive
         const filePaths = dialog.showOpenDialogSync({
             properties: ["openFile", "multiSelections"],
             filters: [

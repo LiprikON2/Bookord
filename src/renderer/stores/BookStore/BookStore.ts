@@ -16,7 +16,7 @@ export type BookContentState = {
 };
 
 export type BookMetadata = {
-    title: string;
+    title: string | object | null;
     description: string;
     date: string;
     cover: string;
@@ -63,7 +63,7 @@ export type BookStateInStorageWithMetadata = BookStateInStorage & {
 
 export type BookStateOpened = BookStoreState & {
     bookKey: BookKey;
-    title: BookKey | BookMetadata["title"];
+    title: BookKey | string;
 };
 
 /* TODO move:
@@ -77,14 +77,19 @@ fix BookCard context import
 
 */
 
+// TODO Do metadata fallbacks in `setBookMetadata`
+const provideFallbackTitle = (filename: string, title?: any): string => {
+    if (typeof title === "object" && "_" in title) return title?._ ?? filename;
+    if (typeof title === "string" && title) return title;
+    return filename;
+};
+
 /**
  * Domain store
  *
  * ref: https://mobx.js.org/defining-data-stores.html#domain-stores
  */
 export class BookStore {
-    // TODO default values
-    //  new Map([[bookKey, value]])
     // ref: https://www.zhenghao.io/posts/object-vs-map
     storeStateRecords = new Map<BookKey, BookStoreState>();
     metadataRecords = new Map<BookKey, BookMetadata>();
@@ -198,7 +203,7 @@ export class BookStore {
     getBookStateOpened(): BookStateOpened[] {
         return this.getBookKeysContentRequested().map((bookKey) => ({
             ...this.getBookStoreState(bookKey),
-            title: this.getBookMetadata(bookKey)?.title ?? bookKey,
+            title: provideFallbackTitle(bookKey, this.getBookMetadata(bookKey)?.title),
             bookKey,
         }));
     }
@@ -260,8 +265,10 @@ export class BookStore {
     // removeBook(bookKey: BookKey, deleteRecords: boolean = true) {
     removeBook(bookKey: BookKey) {
         this.removeBookContent(bookKey);
-        this.removeBookMetadata(bookKey);
         this.removeBookStoreState(bookKey);
+
+        // Allows for animating components out with the cover of the book intact
+        setInterval(() => this.removeBookMetadata(bookKey), 200);
     }
     removeBooks(bookKeys: BookKey[]) {
         bookKeys.forEach((bookKey) => this.removeBook(bookKey));

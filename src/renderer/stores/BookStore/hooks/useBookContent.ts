@@ -4,6 +4,8 @@ import { reaction } from "mobx";
 import { BookKey } from "../BookStore";
 import { bookStore } from "../store";
 
+// TODO closing this tab while the book content is being streamed results in an infinite loop of errors
+// https://i.imgur.com/TTrm2fl.png
 export const useBookContent = (bookKey: BookKey, initSectionIndex = 0) => {
     const [content, setContent] = useState(() => bookStore.getBookContent(bookKey));
     const [contentState, setContentState] = useState(() => bookStore.getBookContentState(bookKey));
