@@ -1,8 +1,8 @@
 import { reaction } from "mobx";
 import { useContext, useEffect, useState } from "react";
 
-import { bookViewStore, TagName, FilterTags } from "..";
 import { BookViewStoreContext } from "~/renderer/contexts";
+import { bookViewStore, TagName, FilterTags } from "..";
 
 export const useTags = (tagCategory: keyof FilterTags) => {
     const { activeCollectionKey } = useContext(BookViewStoreContext);

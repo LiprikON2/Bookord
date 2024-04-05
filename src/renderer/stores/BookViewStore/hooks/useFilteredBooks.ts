@@ -1,10 +1,8 @@
-import { useContext, useEffect, useLayoutEffect, useState } from "react";
+import { useContext, useLayoutEffect, useState } from "react";
+import { reaction } from "mobx";
 
 import { BookViewStoreContext } from "~/renderer/contexts";
-import { ViewItem } from "../interfaces";
-import { BookMetadata } from "../../books";
 import { bookViewStore } from "../store";
-import { reaction } from "mobx";
 import { useStorageBooks } from "../../BookStore";
 
 export const useFilteredBooks = () => {

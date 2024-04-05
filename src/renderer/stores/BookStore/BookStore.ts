@@ -112,12 +112,15 @@ export class BookStore {
     removeBookMetadata(bookKey: BookKey) {
         this.metadataRecords.delete(bookKey);
     }
-    getBookTags(bookKey: BookKey) {
-        const metadata = this.getBookMetadata(bookKey);
-    }
 
     getBookContent(bookKey: BookKey) {
-        return this.contentRecords.get(bookKey);
+        const content = this.contentRecords.get(bookKey) ?? {
+            styles: [],
+            structure: [],
+            sections: [],
+        };
+
+        return content;
     }
     setBookContent(bookKey: BookKey, content: BookContent) {
         this.contentRecords.set(bookKey, content);
@@ -151,7 +154,13 @@ export class BookStore {
     }
 
     getBookContentState(bookKey: BookKey) {
-        return this.contentStateRecords.get(bookKey);
+        const contentState = this.contentStateRecords.get(bookKey) ?? {
+            isInitSectionParsed: false,
+            isFullyParsed: false,
+            parsedSections: [],
+            sectionNames: [],
+        };
+        return contentState;
     }
     setBookContentState(bookKey: BookKey, contentState: BookContentState) {
         this.contentStateRecords.set(bookKey, contentState);
@@ -209,7 +218,7 @@ export class BookStore {
         };
     }
 
-    getContentStateFromContent(content?: BookContent): BookContentState {
+    getContentStateFromContent(content: BookContent): BookContentState {
         const parsedSections = content.sections
             .map((section, index) => (section.content !== null ? index : null))
             .filter((item) => item !== null);

@@ -10,8 +10,6 @@ import { useFilteredBooks } from "~/renderer/stores";
 export const BookGrid = () => {
     const { bookGroups, isBookStorageEmpty } = useFilteredBooks();
 
-    console.log("bookGroups", bookGroups[0].items.length);
-
     const handleDrop = async (fileBlobs: FileWithPath[]) => {
         const files = fileBlobs.map(({ path, size, name, lastModified }) => ({
             path,
@@ -50,7 +48,7 @@ export const BookGrid = () => {
                     style={{ justifyItems: "center" }}
                 >
                     {bookGroup.items.map((book) => (
-                        <BookCard key={book.id} bookKey={book.id} skeleton={!book.metadata} />
+                        <BookCard key={book.id} bookKey={book.id} visible={book.visible} />
                     ))}
                 </SimpleGrid>
             ))}
