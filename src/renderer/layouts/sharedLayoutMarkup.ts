@@ -29,14 +29,14 @@ export const getHomeMarkup = (
         },
         {
             tabHeading: "Books",
-            tabs: openedBookRecords.map((bookState) => ({
-                id: `/layout-reading/reading/${bookState.bookKey}`,
-                name: bookState.title,
+            tabs: openedBookRecords.map((openedBook) => ({
+                id: `/layout-reading/reading/${openedBook.bookKey}`,
+                name: openedBook.title,
                 canBeClosed: true,
                 navParams: {
                     to: bookKeyRoute.to,
                     params: {
-                        bookKey: bookState.bookKey,
+                        bookKey: openedBook.bookKey,
                     },
                 },
             })),
