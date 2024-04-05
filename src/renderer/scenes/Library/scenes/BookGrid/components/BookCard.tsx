@@ -16,8 +16,10 @@ export const BookCard = ({ bookKey, visible = true }: { bookKey: BookKey; visibl
 
     const handleDelete = () => context.deleteFile(bookKey);
 
+    if (!visible) return <></>;
     return (
         <Link
+            disabled={!visible}
             className={classes.link}
             to={bookKeyRoute.to}
             params={{

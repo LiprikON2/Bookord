@@ -1,10 +1,14 @@
+import Fuse from "fuse.js";
 import { BookMetadata } from "../../BookStore";
 import type {
+    ActiveTags,
     Collection,
     Filter,
     FilterTags,
     MetadataGetter,
     TagCategory,
+    TagName,
+    Tags,
     ViewItem,
     ViewItemGroup,
 } from "../interfaces";
@@ -17,25 +21,11 @@ export class BookFilter<T extends BookMetadata> implements Filter<T> {
         private metadataGetter: BookMetadataGetter<T>
     ) {}
 
-    // applyAll(): ViewItem<T>[] {
-    //     this.applySearchTerm().applyFilterTags().applySort().applyGroupBy();
-
-    //     return this.items;
-    // }
-
-    // applySearchTerm(): this {
-    //     const { searchTerm } = this.collection;
-    //     // Filter items based on search term
-    //     // this.items = ...;
-
-    //     return this;
-    // }
-
-    sort(items: ViewItem<T>[]): ViewItem<T>[] {
+    private sort(items: ViewItem<T>[]): ViewItem<T>[] {
         const { sort, sortBy } = this.collection;
 
         if (sortBy === "recent") {
-            this.items.sort((itemA, itemB) => {
+            items.sort((itemA, itemB) => {
                 const openDateA = this.metadataGetter.getOpenDate(itemA.metadata);
                 const openDateB = this.metadataGetter.getOpenDate(itemB.metadata);
 
@@ -43,7 +33,7 @@ export class BookFilter<T extends BookMetadata> implements Filter<T> {
                 else if (sort === "descending") return openDateA.valueOf() - openDateB.valueOf();
             });
         } else if (sortBy === "title") {
-            this.items.sort((itemA, itemB) => {
+            items.sort((itemA, itemB) => {
                 const titleA = this.metadataGetter.getTitle(itemA.metadata);
                 const titleB = this.metadataGetter.getTitle(itemB.metadata);
 
@@ -55,13 +45,37 @@ export class BookFilter<T extends BookMetadata> implements Filter<T> {
         return items;
     }
 
-    search(items: ViewItem<T>[]) {
+    private search(items: ViewItem<T>[]) {
         const { searchTerm } = this.collection;
-        // TODO use `visible: false` instead of filtering
-        return items;
+        if (!searchTerm) return items;
+
+        const options = {
+            keys: [
+                {
+                    name: "title",
+                    getFn: (item: ViewItem<T>) =>
+                        item.metadata ? this.metadataGetter.getTitle(item.metadata) : item.id,
+                },
+                {
+                    name: "author",
+                    getFn: (item: ViewItem<T>) => this.metadataGetter.getAuthors(item.metadata),
+                },
+            ],
+        };
+
+        const fuse = new Fuse(items, options);
+
+        const foundItemIds = fuse.search(searchTerm).map((result) => result.item.id);
+
+        const searchedItems = items.map((item) => ({
+            ...item,
+            visible: item.visible && foundItemIds.includes(item.id),
+        }));
+
+        return searchedItems;
     }
 
-    getActiveFilterTags() {
+    private getActiveFilterTags(): Entries<ActiveTags> {
         const { filterTags } = this.collection;
 
         return Object.entries(filterTags)
@@ -71,31 +85,39 @@ export class BookFilter<T extends BookMetadata> implements Filter<T> {
                     .filter(([tag, active]) => active)
                     .map(([tag]) => tag),
             ])
-            .filter(([categoryKey, activeTags]) => activeTags.length);
+            .filter(
+                ([categoryKey, activeTags]: [keyof FilterTags, TagName[]]) => activeTags.length
+            ) as Entries<ActiveTags>;
+    }
+
+    private shouldBeVisible(
+        item: ViewItem<T>,
+        filterTags: Entries<ActiveTags>,
+        filterTagsLogicalOp: Collection["logicalOp"]
+    ) {
+        const predicate = ([categoryKey, activeTags]: [keyof FilterTags, string[]]) => {
+            const itemTags = this.metadataGetter.get(categoryKey, item.metadata);
+            const { logicalOp } = this.collection.filterTags[categoryKey];
+            if (activeTags.length === 0) return true;
+            else if (logicalOp === "and")
+                return activeTags.every((activeTag) => itemTags.includes(activeTag));
+            else if (logicalOp === "or")
+                return activeTags.some((activeTag) => itemTags.includes(activeTag));
+        };
+        if (filterTagsLogicalOp === "and") return filterTags.every(predicate);
+        else if (filterTagsLogicalOp === "or") return filterTags.some(predicate);
     }
 
     applyFilterTags(): this {
-        const { logicalOp: filterTagsLogicalOp } = this.collection;
+        const { logicalOp } = this.collection;
 
         const activeFilterTags = this.getActiveFilterTags();
         if (activeFilterTags.length === 0) return this;
 
-        // TODO use `visible: false` instead of filtering
-        this.items = this.items.filter((item) => {
-            const predicate = ([categoryKey, activeTags]: [keyof FilterTags, string[]]) => {
-                const itemTags = this.metadataGetter.get(categoryKey, item.metadata);
-                const { logicalOp } = this.collection.filterTags[categoryKey];
-
-                if (activeTags.length === 0) return true;
-                else if (logicalOp === "and")
-                    return activeTags.every((activeTag) => itemTags.includes(activeTag));
-                else if (logicalOp === "or")
-                    return activeTags.some((activeTag) => itemTags.includes(activeTag));
-            };
-
-            if (filterTagsLogicalOp === "and") return activeFilterTags.every(predicate);
-            else if (filterTagsLogicalOp === "or") return activeFilterTags.some(predicate);
-        });
+        this.items = this.items.map((item) => ({
+            ...item,
+            visible: item.visible && this.shouldBeVisible(item, activeFilterTags, logicalOp),
+        }));
 
         return this;
     }

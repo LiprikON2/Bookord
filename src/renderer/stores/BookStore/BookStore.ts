@@ -20,7 +20,7 @@ export type BookMetadata = {
     description: string;
     date: string;
     cover: string;
-    author: string;
+    author: string | object | null;
     indentifiers: string[];
     languages: string[];
     relations: string[];

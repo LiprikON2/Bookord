@@ -34,6 +34,12 @@ export interface Tags {
     languages: Tag[];
     subjects: Tag[];
 }
+export type ActiveTags = Partial<{
+    recent: TagName[];
+    publishYears: TagName[];
+    languages: TagName[];
+    subjects: TagName[];
+}>;
 
 export type CollectionKey = string;
 export interface Collection {

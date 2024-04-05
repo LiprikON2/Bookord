@@ -24,9 +24,13 @@ type RelativeDateGroupings =
 
 export type RecentTagName = RelativeDateGroupings | "active";
 export interface MetadataGetter<T> {
+    getAuthors(metadata: T): string;
+    getTitle(metadata: T): string;
+
     getPublishYears(metadata: T): TagName[];
     getLanguages(metadata: T): TagName[];
     getSubjects(metadata: T): TagName[];
     getRecent(metadata: T): RecentTagName[];
+
     get(tag: keyof FilterTags, metadata: T): TagName[];
 }

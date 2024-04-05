@@ -24,6 +24,14 @@ export class BookMetadataGetter<T extends BookMetadata> implements MetadataGette
     getTitle(metadata: T) {
         return metadata.title;
     }
+    getAuthors(metadata: T) {
+        if (typeof metadata.author === "object") {
+            if ("_" in metadata.author && typeof metadata.author?._ === "string") {
+                return metadata.author._;
+            } else return "Unknown";
+        } else if (typeof metadata.author === "string" && metadata.author) return metadata.author;
+        return metadata.author;
+    }
 
     getRecent(metadata: T): RecentTagName[] {
         const currentDate = new Date();
