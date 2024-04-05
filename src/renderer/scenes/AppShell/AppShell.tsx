@@ -62,7 +62,14 @@ export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
                 <ScrollArea
                     h="100%"
                     type="auto"
-                    styles={{ scrollbar: { margin: "-1px", marginTop: rem(8) } }}
+                    styles={{
+                        root: {
+                            paddingRight: "var(--mantine-spacing-xs)",
+                            height: "calc(100vh - var(--app-shell-header-height) - var(--mantine-spacing-xs))",
+                        },
+
+                        scrollbar: { margin: "-1px", marginTop: rem(8) },
+                    }}
                 >
                     {children}
                 </ScrollArea>

@@ -9,10 +9,10 @@ export class BookMetadataGetter<T extends BookMetadata> implements MetadataGette
         return [yearString];
     }
     getLanguages(metadata: T) {
-        return metadata.languages;
+        return Array.isArray(metadata.languages) ? metadata.languages : [];
     }
     getSubjects(metadata: T) {
-        return metadata.subjects;
+        return Array.isArray(metadata.subjects) ? metadata.subjects : [];
     }
 
     getOpenDate(metadata: T) {

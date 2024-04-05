@@ -1,12 +1,12 @@
-import React from "react";
-import { Box, SimpleGrid } from "@mantine/core";
+import React, { useState } from "react";
+import { Box, Modal, SimpleGrid } from "@mantine/core";
 import type { FileWithPath } from "@mantine/dropzone";
 
 import context from "~/renderer/ipc/fileOperations";
 import { BookDropzone } from "./scenes";
 import { BookCard } from "./components";
 import { BookMetadata, ViewItemGroup, useFilteredBooks } from "~/renderer/stores";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 export const BookGrid = ({
     bookGroups,
@@ -15,6 +15,8 @@ export const BookGrid = ({
     bookGroups: ViewItemGroup<BookMetadata>[];
     isBookStorageEmpty: boolean;
 }) => {
+    const [selectedBookKey, setSelectedBookKey] = useState<string>(null);
+
     const handleDrop = async (fileBlobs: FileWithPath[]) => {
         const files = fileBlobs.map(({ path, size, name, lastModified }) => ({
             path,
@@ -30,7 +32,7 @@ export const BookGrid = ({
     };
 
     return (
-        <Box pt="md">
+        <Box pt="md" style={{ position: "relative" }}>
             <BookDropzone
                 fullscreen={!isBookStorageEmpty}
                 onDrop={handleDrop}
@@ -52,13 +54,37 @@ export const BookGrid = ({
                     cols={{ base: 2, xs: 2, sm: 3, md: 3, lg: 4, xl: 4 }}
                     style={{ justifyItems: "center" }}
                 >
-                    <AnimatePresence initial={true}>
+                    <AnimatePresence initial={false}>
                         {bookGroup.items.map((book) => (
-                            <BookCard key={book.id} bookKey={book.id} visible={book.visible} />
+                            <BookCard
+                                key={book.id}
+                                bookKey={book.id}
+                                visible={book.visible}
+                                onClick={() => setSelectedBookKey(book.id)}
+                            />
                         ))}
                     </AnimatePresence>
                 </SimpleGrid>
             ))}
+
+            {/* <div
+                style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                }}
+            >
+                <AnimatePresence>
+                    {selectedBookKey && (
+                        <BookCard
+                            bookKey={selectedBookKey}
+                            onClick={() => setSelectedBookKey(null)}
+                            scale={1.5}
+                        />
+                    )}
+                </AnimatePresence>
+            </div> */}
         </Box>
     );
 };

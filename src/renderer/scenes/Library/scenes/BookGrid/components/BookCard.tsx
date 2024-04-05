@@ -10,22 +10,34 @@ import { bookKeyRoute } from "~/renderer/appRenderer";
 import { BookMenu, SummaryModal } from "./components";
 import classes from "./BookCard.module.css";
 
-export const BookCard = ({ bookKey, visible = true }: { bookKey: BookKey; visible: boolean }) => {
+export const BookCard = ({
+    bookKey,
+    onClick,
+    visible = true,
+}: {
+    bookKey: BookKey;
+    onClick?: () => void;
+    visible?: boolean;
+}) => {
     const [openedModal, { open: openModal, close: closeModal }] = useDisclosure(false);
 
     const metadata = useBookMetadata(bookKey);
 
     const handleDelete = () => context.deleteFile(bookKey);
 
+    if (!visible) return <></>;
     return (
         <motion.div
+            layout
+            layoutId={bookKey}
             className={classes.link}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            onClick={onClick}
         >
             <Link
-                disabled={!visible}
+                disabled={!visible || true}
                 className={classes.link}
                 to={bookKeyRoute.to}
                 params={{
