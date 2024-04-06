@@ -22,16 +22,16 @@ class SectionState {
     title = "";
 
     get currentPage() {
-        const displayWidth = this.#parentComponent._getDisplayWidth();
-        const currentOffset = this.#parentComponent._getCurrentOffset();
+        const displayWidth = this.#parentComponent.displayWidth;
+        const currentOffset = this.#parentComponent.currentOffset;
         const currentPage = currentOffset / displayWidth;
         return currentPage;
     }
     get totalPages() {
-        const totalWidth = this.#parentComponent._getTotalDisplayWidth();
-        const width = this.#parentComponent._getDisplayWidth();
+        const totalWidth = this.#parentComponent.totalDisplayWidth;
+        const displayWidth = this.#parentComponent.displayWidth;
 
-        const sectionPages = totalWidth / width;
+        const sectionPages = totalWidth / displayWidth;
         const rounded = Math.round(sectionPages);
 
         if (Math.abs(rounded - sectionPages) > 0.01)
@@ -55,7 +55,6 @@ export default class StateManager {
     #parentComponent;
 
     totalSections = 0;
-    bookTitle = "";
 
     sectionPagesArr = [0];
 
@@ -66,9 +65,8 @@ export default class StateManager {
         this.section = new SectionState(this.#parentComponent);
     }
 
-    setInitBookInfo(totalSections, title) {
+    setInitBookInfo(totalSections) {
         this.totalSections = totalSections;
-        this.bookTitle = title;
     }
 
     getSectionBookPageBelongsTo(page) {
@@ -82,8 +80,8 @@ export default class StateManager {
     }
 
     getCurrentSectionPage() {
-        const displayWidth = this.#parentComponent._getDisplayWidth();
-        const currentOffset = this.#parentComponent._getCurrentOffset();
+        const displayWidth = this.#parentComponent.displayWidth;
+        const currentOffset = this.#parentComponent.currentOffset;
 
         const currentPage = currentOffset / displayWidth;
         return currentPage;

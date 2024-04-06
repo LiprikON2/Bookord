@@ -36,7 +36,7 @@ export type BookMetadata = {
 export type BookContent = {
     styles: object[];
     structure: object[];
-    sections: { id: string; content: object | null }[];
+    sections: { id: string; content: object[] | null }[];
 };
 
 export type BookStoreState = {

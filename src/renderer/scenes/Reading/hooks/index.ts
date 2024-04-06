@@ -1,1 +1,1 @@
-export * from "./useWebComponentRef";
+export * from "./useWebComponent";

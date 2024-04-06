@@ -1,15 +1,17 @@
 ///<reference path="./components/BookWebComponent/BookWebComponent.d.ts" />
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useEventListener, useHotkeys } from "@mantine/hooks";
+import { Box, Group, Stack } from "@mantine/core";
+import { toJS } from "mobx";
 
 import { bookKeyRoute } from "~/renderer/appRenderer";
 import { bookStore, useBookContent, useBookMetadata } from "~/renderer/stores";
 import { BookUi } from "./components";
-import { useWebComponentRef } from "./hooks";
-import "./components/BookWebComponent/BookWebComponent";
+import { useWebComponent } from "./hooks";
 import classes from "./Reading.module.css";
-import { useHotkeys } from "@mantine/hooks";
-import { Box, Group, Stack } from "@mantine/core";
-import { toJS } from "mobx";
+import type BookWebComponent from "./components/BookWebComponent/BookWebComponent";
+import type { BookWebComponentEventMap } from "./components/BookWebComponent/BookWebComponent";
+import "./components/BookWebComponent/BookWebComponent";
 
 // TODO https://eisenbergeffect.medium.com/web-components-2024-winter-update-445f27e7613a
 export const Reading = () => {
@@ -18,18 +20,34 @@ export const Reading = () => {
     const metadata = useBookMetadata(bookKey);
     const { content, contentState } = useBookContent(bookKey, 5);
 
-    const [bookComponentRef, setBookComponentRef, refReadyDecorator] = useWebComponentRef();
+    const [uiState, setUiState] = useState({
+        currentSectionTitle: "",
+        currentSectionPage: 0,
+        totalSectionPages: 0,
+        currentBookPage: 0,
+        totalBookPages: 0,
+    });
 
-    useEffect(() => {
-        const bookComponent = bookComponentRef.current;
-        if (bookComponent && contentState.isInitSectionParsed) {
-            bookComponent.loadBook(contentState, content, metadata);
-            // bookComponent.addEventListener("imgClickEvent", handleImgClick);
-            // bookComponent.addEventListener("saveBookmarksEvent", handleSavingBookmarks);
-            // bookComponent.addEventListener("saveParsedBookEvent", handleSavingParsedBook);
-            // bookComponent.addEventListener("uiStateUpdate", handleUiUpdate);
-        }
-    }, [Object.values(contentState), bookComponentRef.current]);
+    const handleImgClick = () => {
+        console.log("click");
+    };
+
+    const [bookComponentRef, setBookComponentRef, refReadyDecorator] = useWebComponent<
+        BookWebComponentEventMap,
+        BookWebComponent
+    >([
+        {
+            type: "imgClickEvent",
+            listener: () => handleImgClick(),
+        },
+        {
+            type: "uiStateUpdate",
+            listener: (e) => {
+                console.log("e.detail", e.detail);
+                setUiState(e.detail);
+            },
+        },
+    ]);
 
     useHotkeys([
         [
@@ -49,32 +67,27 @@ export const Reading = () => {
             () => refReadyDecorator((bookComponent: any) => bookComponent.flipNPages(-5)),
         ],
         [
-            "Ctrl + Shift + ArrowRight",
+            "Ctrl + Alt + ArrowRight",
             () => refReadyDecorator((bookComponent: any) => bookComponent.sectionForward()),
         ],
         [
-            "Ctrl + Shift + ArrowLeft",
+            "Ctrl + Alt + ArrowLeft",
             () => refReadyDecorator((bookComponent: any) => bookComponent.sectionBackward()),
         ],
     ]);
 
-    return (
-        <>
-            {/* <h1>hello {typeof metadata?.title === "string" ? metadata?.title : bookKey}</h1>
-            <h1>{contentState?.isInitSectionParsed ? "CONTENT" : "<Blank>"}</h1> */}
+    useEffect(() => {
+        const bookComponent = bookComponentRef.current;
+        const isReadyToDisplay = bookComponent && contentState.isInitSectionParsed;
 
-            <BookUi
-                uiState={{
-                    bookTitle: typeof metadata?.title === "string" ? metadata?.title : bookKey,
-                    currentSectionTitle: "",
-                    currentSectionPage: 0,
-                    totalSectionPages: 0,
-                    currentBookPage: 0,
-                    totalBookPages: 0,
-                }}
-            >
-                <book-web-component class={classes.bookWebComponent} ref={setBookComponentRef} />
-            </BookUi>
-        </>
+        if (isReadyToDisplay) bookComponent.loadBook(contentState, content, metadata);
+    }, [contentState.isInitSectionParsed, bookComponentRef.current]);
+
+    const bookTitle = typeof metadata?.title === "string" ? metadata?.title : bookKey;
+
+    return (
+        <BookUi title={bookTitle} uiState={uiState}>
+            <book-web-component class={classes.bookWebComponent} ref={setBookComponentRef} />
+        </BookUi>
     );
 };

@@ -101,8 +101,7 @@
  */
 
 /** Book state for the purposes of displaying
- * @typedef {Object} UIState
- * @property {string} bookTitle
+ * @typedef {Object} UiState
  * @property {string} currentSectionTitle
  * @property {number} currentSectionPage
  * @property {number} totalSectionPages
