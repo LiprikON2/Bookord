@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useMergedRef } from "@mantine/hooks";
+import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 
 type EventListener<K> = {
     type: keyof K;
@@ -10,7 +11,8 @@ export const useWebComponent = <K, T extends HTMLElement = any>(
     events: EventListener<K>[],
     onMount: (webComponent: T) => void = () => {}
 ) => {
-    const webComponentRef = useRef<T>(null);
+    const ref = useRef<T>(null);
+    const webComponentRef = useMergedRef<T>(ref) as unknown as MutableRefObject<T>;
 
     const setWebComponentRef = useCallback((webComponent: T) => {
         if (webComponent) onMount(webComponent);

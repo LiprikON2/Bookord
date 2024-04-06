@@ -10,7 +10,7 @@ import {
     rem,
 } from "@mantine/core";
 
-import { type BookStateOpened } from "~/renderer/stores";
+import { BookKey, type BookStateOpened } from "~/renderer/stores";
 import { ThemeToggle } from "~/renderer/components";
 import { SettingsModal, Sidebar, type SidebarMarkup, Titlebar } from "./scenes";
 import classes from "./AppShell.module.css";
@@ -58,7 +58,7 @@ export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
                     <ThemeToggle />
                 </Sidebar>
             </MantineAppShell.Navbar>
-            <MantineAppShell.Aside>Aside</MantineAppShell.Aside>
+            <MantineAppShell.Aside></MantineAppShell.Aside>
             <MantineAppShell.Main>
                 {openedNavbar && <Overlay onClick={closeNavbar} backgroundOpacity={0.25} />}
 

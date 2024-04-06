@@ -1,11 +1,9 @@
 ///<reference path="./components/BookWebComponent/BookWebComponent.d.ts" />
 import React, { useEffect, useState } from "react";
-import { useEventListener, useHotkeys } from "@mantine/hooks";
-import { Box, Group, Stack } from "@mantine/core";
-import { toJS } from "mobx";
+import { useHotkeys } from "@mantine/hooks";
 
 import { bookKeyRoute } from "~/renderer/appRenderer";
-import { bookStore, useBookContent, useBookMetadata } from "~/renderer/stores";
+import { useBookContent, useBookMetadata } from "~/renderer/stores";
 import { BookUi } from "./components";
 import { useWebComponent } from "./hooks";
 import classes from "./Reading.module.css";
@@ -18,7 +16,7 @@ export const Reading = () => {
     const { bookKey } = bookKeyRoute.useParams();
 
     const metadata = useBookMetadata(bookKey);
-    const { content, contentState } = useBookContent(bookKey, 5);
+    const { content, contentState } = useBookContent(bookKey, 0);
 
     const [uiState, setUiState] = useState({
         currentSectionTitle: "",
@@ -42,12 +40,10 @@ export const Reading = () => {
         },
         {
             type: "uiStateUpdate",
-            listener: (e) => {
-                console.log("e.detail", e.detail);
-                setUiState(e.detail);
-            },
+            listener: (e) => setUiState(e.detail),
         },
     ]);
+    const isReadyToDisplay = Boolean(bookComponentRef.current && contentState.isInitSectionParsed);
 
     useHotkeys([
         [
@@ -77,11 +73,8 @@ export const Reading = () => {
     ]);
 
     useEffect(() => {
-        const bookComponent = bookComponentRef.current;
-        const isReadyToDisplay = bookComponent && contentState.isInitSectionParsed;
-
-        if (isReadyToDisplay) bookComponent.loadBook(contentState, content, metadata);
-    }, [contentState.isInitSectionParsed, bookComponentRef.current]);
+        if (isReadyToDisplay) bookComponentRef.current.loadBook(contentState, content, metadata);
+    }, [isReadyToDisplay]);
 
     const bookTitle = typeof metadata?.title === "string" ? metadata?.title : bookKey;
 

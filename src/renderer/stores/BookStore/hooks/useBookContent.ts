@@ -6,11 +6,13 @@ import { bookStore } from "../store";
 
 // TODO closing this tab while the book content is being streamed results in an infinite loop of errors
 // https://i.imgur.com/TTrm2fl.png
-export const useBookContent = (bookKey: BookKey, initSectionIndex = 0) => {
+export const useBookContent = (bookKey: BookKey, initSectionIndex?: number) => {
     const [content, setContent] = useState(() => bookStore.getBookContent(bookKey));
     const [contentState, setContentState] = useState(() => bookStore.getBookContentState(bookKey));
 
-    useEffect(() => bookStore.openBook(bookKey, initSectionIndex), []);
+    useEffect(() => {
+        if (initSectionIndex !== undefined) bookStore.openBook(bookKey, initSectionIndex);
+    }, []);
 
     useEffect(() => {
         const unsub1 = reaction(

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, CloseButton, Stack, Tabs, Text } from "@mantine/core";
+import { Box, Button, CloseButton, ScrollArea, Stack, Tabs, Text } from "@mantine/core";
 import { type ToOptions, useNavigate, useParams } from "@tanstack/react-router";
 import { IconCirclePlus, type Icon } from "@tabler/icons-react";
 
@@ -32,11 +32,15 @@ export type SidebarMarkup = {
     name: string;
     Icon: Icon;
     innerTabs: SidebarInnerTab[];
+    Component?: (...args: any[]) => React.ReactNode;
+    componentProps?: object;
 }[];
 
 const desktopProps = { variant: "outline" };
 const mobileProps = { variant: "pills" };
 
+// TODO use another router (<Outlet/>) to render Sidebar tabs' content
+// TODO tab panel scrollarea
 export const Sidebar = ({
     getMarkup,
     onChangeTab,
@@ -125,6 +129,11 @@ export const Sidebar = ({
 
                 {markup.map((outerTab) => (
                     <Tabs.Panel key={outerTab.name} value={outerTab.name}>
+                        {outerTab.Component && (
+                            <Box px="md" pl={0} py="sm">
+                                <outerTab.Component {...outerTab.componentProps} />
+                            </Box>
+                        )}
                         {outerTab.innerTabs
                             .filter((innerTab) => innerTab.tabs.length)
                             .map((innerTab) => (
