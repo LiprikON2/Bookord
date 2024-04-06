@@ -265,7 +265,6 @@ export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
 
             itemsWithMetadata.forEach((item) => {
                 const itemTags = this.metadataGetter.get(categoryKey, item.metadata);
-                console.log("categoryKey,", categoryKey);
                 itemTags.forEach((itemTag) => {
                     if (!(itemTag in tagsCountObj)) tagsCountObj[itemTag] = 1;
                     else tagsCountObj[itemTag] += 1;

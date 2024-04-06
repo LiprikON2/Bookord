@@ -15,6 +15,8 @@ const libraryLayoutMarkup: LayoutMarkup = {
 
     getNavbarMarkup: (openedBookRecords) => [getHomeMarkup(openedBookRecords)],
     getAsideMarkup: () => [],
+    scrollArea: true,
+    mainBoxProps: { p: "md" },
 };
 
 export const LayoutLibrary = () => {

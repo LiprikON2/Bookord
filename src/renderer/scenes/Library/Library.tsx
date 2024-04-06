@@ -11,11 +11,11 @@ export const Library = () => {
     const filterTitle = useFilterTitle();
 
     return (
-        <Box p="md" h="100%">
+        <>
             <Container p="lg" pt={0} h="100%">
                 <DetailedTitle size="lg">{filterTitle}</DetailedTitle>
                 <BookGrid bookGroups={bookGroups} isBookStorageEmpty={isBookStorageEmpty} />
             </Container>
-        </Box>
+        </>
     );
 };

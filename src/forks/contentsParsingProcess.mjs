@@ -28,18 +28,35 @@ process.parentPort.once(
         console.log("[parseContents time]: init content");
         console.timeLog("[parseContents time]");
 
-        await mapInGroups(
-            unparsedSections,
-            async (/** @type {any} */ unparsedSection, /** @type {number} */ index) => {
+        // await mapInGroups(
+        //     unparsedSections,
+        //     async (/** @type {any} */ unparsedSection, /** @type {number} */ index) => {
+        //         const isUnparsed = initContent.sections[index].content === null;
+
+        //         const content = unparsedSection.toHtmlObjects();
+        //         console.log(isUnparsed, "unparsedSection", unparsedSection.id, content.length);
+        //         const parsedSection = isUnparsed
+        //             ? { ...initContent.sections[index], content }
+        //             : initContent.sections[index];
+
+        //         process.parentPort.postMessage(parsedSection);
+        //         return parsedSection;
+        //     },
+        //     4
+        // );
+
+        unparsedSections.forEach(
+            (/** @type {any} */ unparsedSection, /** @type {number} */ index) => {
                 const isUnparsed = initContent.sections[index].content === null;
+
+                const content = unparsedSection.toHtmlObjects();
                 const parsedSection = isUnparsed
-                    ? { ...initContent.sections[index], content: unparsedSection.toHtmlObjects() }
+                    ? { ...initContent.sections[index], content }
                     : initContent.sections[index];
 
                 process.parentPort.postMessage(parsedSection);
                 return parsedSection;
-            },
-            4
+            }
         );
         console.log("[parseContents time]: content");
         console.timeEnd("[parseContents time]");

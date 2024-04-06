@@ -37,7 +37,7 @@ export const BookCard = ({
             onClick={onClick}
         >
             <Link
-                disabled={!visible || true}
+                disabled={!visible}
                 className={classes.link}
                 to={bookKeyRoute.to}
                 params={{

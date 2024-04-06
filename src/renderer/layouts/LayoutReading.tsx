@@ -9,7 +9,7 @@ const readingLayoutMarkup: LayoutMarkup = {
     showFilterMenu: false,
     getAppShellProps: (openedNavbar, openedAside) => ({
         navbar: { width: 200, breakpoint: "sm", collapsed: { mobile: !openedNavbar } },
-        aside: { width: 200, breakpoint: "sm", collapsed: { mobile: true, desktop: true } },
+        aside: { width: 200, breakpoint: "sm", collapsed: { mobile: true, desktop: false } },
     }),
 
     getNavbarMarkup: (openedBookRecords) => [
@@ -20,7 +20,15 @@ const readingLayoutMarkup: LayoutMarkup = {
             innerTabs: [],
         },
     ],
-    getAsideMarkup: () => [],
+    getAsideMarkup: () => [
+        {
+            name: "Table Of Contents",
+            Icon: IconList,
+            innerTabs: [],
+        },
+    ],
+    scrollArea: false,
+    mainBoxProps: { px: "md", py: 0 },
 };
 
 export const LayoutReading = () => {

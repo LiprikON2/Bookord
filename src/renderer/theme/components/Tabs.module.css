@@ -39,6 +39,14 @@
             background-color: var(--mantine-color-gray-1);
         }
     }
+
+    & .tabSection[data-position="right"] {
+        opacity: 0;
+    }
+    &:hover .tabSection[data-position="right"],
+    &[data-active] .tabSection[data-position="right"] {
+        opacity: 1;
+    }
 }
 
 .panel {

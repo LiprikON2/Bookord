@@ -85,6 +85,7 @@ export const baseTheme = createTheme({
                 list: tabs.list,
                 tab: tabs.tab,
                 panel: tabs.panel,
+                tabSection: tabs.tabSection,
             },
         },
         Container: {

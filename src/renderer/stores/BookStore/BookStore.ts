@@ -11,6 +11,7 @@ export type BookState = {
 export type BookContentState = {
     isInitSectionParsed: boolean;
     isFullyParsed: boolean;
+    initSectionIndex: number | null;
     parsedSections: number[];
     sectionNames: string[];
 };
@@ -143,6 +144,7 @@ export class BookStore {
         this.setBookContentState(bookKey, {
             isInitSectionParsed: false,
             isFullyParsed: false,
+            initSectionIndex: null,
             parsedSections: [],
             sectionNames: [],
         });
@@ -162,6 +164,7 @@ export class BookStore {
         const contentState = this.contentStateRecords.get(bookKey) ?? {
             isInitSectionParsed: false,
             isFullyParsed: false,
+            initSectionIndex: null,
             parsedSections: [],
             sectionNames: [],
         };
@@ -223,7 +226,7 @@ export class BookStore {
         };
     }
 
-    getContentStateFromContent(content: BookContent): BookContentState {
+    getContentStateFromContent(content: BookContent, initSectionIndex: number): BookContentState {
         const parsedSections = content.sections
             .map((section, index) => (section.content !== null ? index : null))
             .filter((item) => item !== null);
@@ -231,9 +234,11 @@ export class BookStore {
         const isFullyParsed = parsedSections.length === content.sections.length;
         const sectionNames = content.sections.map((section) => section.id);
 
+        // console.log("update", parsedSections.length, content.sections.length, parsedSections);
         return {
             isInitSectionParsed,
             isFullyParsed,
+            initSectionIndex,
             parsedSections,
             sectionNames,
         };
@@ -304,12 +309,20 @@ export class BookStore {
         });
 
         context.getParsedContent(bookKey, initSectionIndex);
+        // TODO add types
+        //
+        // TODO probably triggers:
+        // (node:7320) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 message listeners
+        // added to [ForkUtilityProcess]. Use emitter.setMaxListeners() to increase limit
         const unsub = window.electron_window.events("parsed-content-init", (initEvent) => {
             if (initEvent.bookKey !== bookKey) return;
 
             this.setBookContent(bookKey, initEvent.initContent);
 
-            const initContentState = this.getContentStateFromContent(initEvent.initContent);
+            const initContentState = this.getContentStateFromContent(
+                initEvent.initContent,
+                initSectionIndex
+            );
             this.setBookContentState(bookKey, initContentState);
 
             const content = this.getBookContent(bookKey);
@@ -324,7 +337,10 @@ export class BookStore {
 
                     this.setBookContentSection(bookKey, event.sectionIndex, event.section);
 
-                    const updatedContentState = this.getContentStateFromContent(content);
+                    const updatedContentState = this.getContentStateFromContent(
+                        content,
+                        initSectionIndex
+                    );
                     this.setBookContentState(bookKey, updatedContentState);
 
                     if (updatedContentState.isFullyParsed) {

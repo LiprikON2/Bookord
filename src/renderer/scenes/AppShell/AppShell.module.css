@@ -7,7 +7,7 @@
     --app-shell-edge-offset: var(--mantine-spacing-xs);
 
     padding-left: var(--app-shell-navbar-offset);
-    padding-right: var(--app-shell-aside-offset);
+    padding-right: calc(var(--app-shell-aside-offset) + var(--app-shell-edge-offset));
     padding-top: var(--app-shell-header-height);
     padding-bottom: var(--app-shell-edge-offset);
 
@@ -30,12 +30,12 @@
 
         top: var(--app-shell-header-height);
         left: var(--app-shell-navbar-offset);
-        right: var(--app-shell-aside-offset);
+        right: calc(var(--app-shell-edge-offset) + var(--app-shell-aside-offset));
         height: calc(100% - var(--app-shell-header-height) - var(--app-shell-edge-offset));
         z-index: -1;
 
         /* TODO properly handle padding on disabled aside in desktop */
-        right: var(--app-shell-edge-offset);
+        /* right: var(--app-shell-edge-offset); */
 
         @media (max-width: $mantine-breakpoint-sm) {
             left: var(--app-shell-edge-offset);
@@ -45,6 +45,10 @@
             background-color: var(--mantine-color-gray-1);
         }
     }
+}
+
+.mainBox {
+    height: calc(100vh - var(--app-shell-header-height) - var(--app-shell-edge-offset));
 }
 
 .header,

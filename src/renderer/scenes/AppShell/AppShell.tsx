@@ -1,6 +1,8 @@
 import React from "react";
 import { useDisclosure } from "@mantine/hooks";
 import {
+    Box,
+    BoxProps,
     AppShell as MantineAppShell,
     AppShellProps as MantineAppShellProps,
     Overlay,
@@ -23,6 +25,8 @@ export type LayoutMarkup = {
     getAppShellProps: (openedNavbar: boolean, openedAside: boolean) => MantineAppShellProps;
     getNavbarMarkup: (openedBookRecords: BookStateOpened[]) => SidebarMarkup;
     getAsideMarkup: () => SidebarMarkup;
+    scrollArea: boolean;
+    mainBoxProps: BoxProps;
 };
 
 export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
@@ -59,20 +63,22 @@ export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
                 {openedNavbar && <Overlay onClick={closeNavbar} backgroundOpacity={0.25} />}
 
                 {/* TODO scroll area isn't showing anymore */}
-                <ScrollArea
-                    h="100%"
-                    type="auto"
-                    styles={{
-                        root: {
-                            paddingRight: "var(--mantine-spacing-xs)",
-                            height: "calc(100vh - var(--app-shell-header-height) - var(--mantine-spacing-xs))",
-                        },
 
-                        scrollbar: { margin: "-1px", marginTop: rem(8) },
-                    }}
-                >
-                    {children}
-                </ScrollArea>
+                <Box className={classes.mainBox} {...layoutMarkup.mainBoxProps}>
+                    {layoutMarkup.scrollArea ? (
+                        <ScrollArea
+                            h="100%"
+                            type="auto"
+                            styles={{
+                                scrollbar: { margin: "-1px", marginTop: rem(8) },
+                            }}
+                        >
+                            {children}
+                        </ScrollArea>
+                    ) : (
+                        children
+                    )}
+                </Box>
             </MantineAppShell.Main>
         </MantineAppShell>
     );

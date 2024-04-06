@@ -45,9 +45,12 @@ export const registerStoreIpc = (
         });
 
         await Promise.all(
-            initContent.sections.map(async (_, index) => {
+            initContent.sections.map(async ({ id }, index) => {
                 const toKillAfter = index + 1 === initContent.sections.length;
-                const section = await getResponse(child, toKillAfter);
+                const section = (await getResponse(child, toKillAfter, id)) as ArrayElement<
+                    BookContent["sections"]
+                >;
+
                 mainWindow.webContents.send("parsed-content-section", {
                     bookKey: fileName,
                     sectionIndex: index,
