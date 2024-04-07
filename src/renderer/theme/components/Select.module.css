@@ -1,0 +1,9 @@
+.section {
+    & > svg {
+        @mixin light {
+        }
+        @mixin dark {
+            color: var(--mantine-color-dark-2);
+        }
+    }
+}

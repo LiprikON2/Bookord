@@ -1,8 +1,8 @@
 import React from "react";
 import { Outlet } from "@tanstack/react-router";
-import { IconList } from "@tabler/icons-react";
+import { IconList, IconSpeakerphone } from "@tabler/icons-react";
 
-import { AppShell, LayoutMarkup } from "~/renderer/scenes";
+import { AppShell, LayoutMarkup, TextToSpeech } from "~/renderer/scenes";
 import { getHomeMarkup } from "./sharedLayoutMarkup";
 import { Toc } from "../scenes/Reading/components/Toc";
 import { bookKeyRoute } from "../appRenderer";
@@ -30,13 +30,21 @@ export const LayoutReading = () => {
                 },
             },
         ],
+        navbarTopSection: null,
+
         getAsideMarkup: () => [
             {
-                name: "Table Of Contents",
-                Icon: IconList,
+                name: "Text-to-Speech",
+                Icon: IconSpeakerphone,
                 innerTabs: [],
+                Component: TextToSpeech,
+                // componentProps: {
+                //     bookKey,
+                // },
             },
         ],
+        asideTopSection: null,
+
         scrollArea: false,
         mainBoxProps: { px: "md", py: 0 },
     };

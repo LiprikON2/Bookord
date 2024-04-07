@@ -1,2 +1,3 @@
 export * from "./BookUi";
-// export * from "./BookWebComponent";
+export * from "./TextToSpeech";
+export * from "./Toc";

@@ -9,6 +9,7 @@ import switchInput from "./components/Switch.module.css";
 import checkboxInput from "./components/Checkbox.module.css";
 import passwordInput from "./components/PasswordInput.module.css";
 import scrollArea from "./components/ScrollArea.module.css";
+import select from "./components/Select.module.css";
 
 export const baseTheme = createTheme({
     fontFamily:
@@ -130,6 +131,11 @@ export const baseTheme = createTheme({
             classNames: {
                 root: checkboxInput.root,
                 input: checkboxInput.input,
+            },
+        },
+        Select: {
+            classNames: {
+                section: select.section,
             },
         },
     },

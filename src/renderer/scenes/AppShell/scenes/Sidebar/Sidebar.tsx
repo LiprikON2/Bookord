@@ -43,12 +43,14 @@ const mobileProps = { variant: "pills" };
 // TODO tab panel scrollarea
 export const Sidebar = ({
     getMarkup,
+    topSection,
     onChangeTab,
     children,
 }: {
     getMarkup: (openedBookRecords: BookStateOpened[]) => SidebarMarkup;
+    topSection?: React.ReactNode;
     onChangeTab: () => void;
-    children: React.ReactNode;
+    children?: React.ReactNode;
 }) => {
     const isMobile = useIsMobile();
     const navigate = useNavigate();
@@ -58,10 +60,6 @@ export const Sidebar = ({
     const openedBooks = useOpenedBooks();
 
     const markup = getMarkup(openedBooks);
-
-    const openFileDialog = async () => {
-        const distinctFileCount = await context.openFileDialog();
-    };
 
     const closeBook = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, tab: SidebarTab) => {
         e.stopPropagation();
@@ -112,20 +110,12 @@ export const Sidebar = ({
                 orientation="horizontal"
                 defaultValue={markup[0]?.name}
             >
-                <Stack h={48} mr="sm" justify="center">
-                    {markup.length > 1 ? (
-                        <SegmentedTabList markup={markup} />
-                    ) : (
-                        <Button
-                            onClick={openFileDialog}
-                            leftSection={<IconCirclePlus className={classes.icon} />}
-                            variant="outline"
-                            mx="xs"
-                        >
-                            Add books
-                        </Button>
-                    )}
-                </Stack>
+                {(topSection || markup.length > 1) && (
+                    <Stack h={48} mr="sm" justify="center">
+                        {topSection}
+                        {markup.length > 1 && <SegmentedTabList markup={markup} />}
+                    </Stack>
+                )}
 
                 {markup.map((outerTab) => (
                     <Tabs.Panel key={outerTab.name} value={outerTab.name}>

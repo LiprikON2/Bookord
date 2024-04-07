@@ -24,14 +24,17 @@ export type LayoutMarkup = {
     showFilterMenu: boolean;
     getAppShellProps: (openedNavbar: boolean, openedAside: boolean) => MantineAppShellProps;
     getNavbarMarkup: (openedBookRecords: BookStateOpened[]) => SidebarMarkup;
+    navbarTopSection: React.ReactNode;
     getAsideMarkup: () => SidebarMarkup;
+    asideTopSection: React.ReactNode;
     scrollArea: boolean;
     mainBoxProps: BoxProps;
 };
 
 export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
-    const [openedNavbar, { toggle: toggleNavbar, close: closeNavbar }] = useDisclosure();
-    const [openedAside, { toggle: toggleAside, close: closeAside }] = useDisclosure();
+    const [openedNavbar, { toggle: mobileToggleNavbar, close: mobileCloseNavbar }] =
+        useDisclosure();
+    const [openedAside, { toggle: mobileToggleAside, close: mobileCloseAside }] = useDisclosure();
     return (
         <MantineAppShell
             classNames={{
@@ -48,19 +51,29 @@ export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
             <MantineAppShell.Header>
                 <Titlebar
                     showBurger={openedNavbar}
-                    toggleBurger={toggleNavbar}
+                    toggleBurger={mobileToggleNavbar}
                     showFilterMenu={layoutMarkup.showFilterMenu}
                 />
             </MantineAppShell.Header>
             <MantineAppShell.Navbar>
-                <Sidebar getMarkup={layoutMarkup.getNavbarMarkup} onChangeTab={closeNavbar}>
+                <Sidebar
+                    topSection={layoutMarkup.navbarTopSection}
+                    getMarkup={layoutMarkup.getNavbarMarkup}
+                    onChangeTab={mobileCloseNavbar}
+                >
                     <SettingsModal />
                     <ThemeToggle />
                 </Sidebar>
             </MantineAppShell.Navbar>
-            <MantineAppShell.Aside></MantineAppShell.Aside>
+            <MantineAppShell.Aside>
+                <Sidebar
+                    topSection={layoutMarkup.asideTopSection}
+                    getMarkup={layoutMarkup.getAsideMarkup}
+                    onChangeTab={mobileCloseAside}
+                ></Sidebar>
+            </MantineAppShell.Aside>
             <MantineAppShell.Main>
-                {openedNavbar && <Overlay onClick={closeNavbar} backgroundOpacity={0.25} />}
+                {openedNavbar && <Overlay onClick={mobileCloseNavbar} backgroundOpacity={0.25} />}
 
                 {/* TODO scroll area isn't showing anymore */}
 

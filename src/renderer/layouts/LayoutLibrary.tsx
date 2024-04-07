@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet } from "@tanstack/react-router";
 
-import { AppShell, LayoutMarkup } from "~/renderer/scenes";
+import { AddBooksButton, AppShell, LayoutMarkup } from "~/renderer/scenes";
 import { getHomeMarkup } from "./sharedLayoutMarkup";
 import { useStorageBooks } from "../stores";
 import { BookViewStoreContextProvider } from "../contexts";
@@ -14,7 +14,9 @@ const libraryLayoutMarkup: LayoutMarkup = {
     }),
 
     getNavbarMarkup: (openedBookRecords) => [getHomeMarkup(openedBookRecords)],
+    navbarTopSection: <AddBooksButton />,
     getAsideMarkup: () => [],
+    asideTopSection: null,
     scrollArea: true,
     mainBoxProps: { p: "md" },
 };
