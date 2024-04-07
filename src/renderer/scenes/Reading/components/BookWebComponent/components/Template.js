@@ -44,7 +44,7 @@ export const style = /*css*/ `
     }
 
     p, h1, h2, h3, h4, h5, h6 { 
-        line-height: var(--lh-book-global, 1.2) !important;
+        line-height: var(--lh-book-global, 1.33) !important;
         font-family: var(--ff-book-global, unset) !important;
     }
 
@@ -59,9 +59,12 @@ export const style = /*css*/ `
         width: 100%;
         height: 100%;
 
+        user-select: text;
+
         columns: var(--columns-count);
         column-gap: var(--column-gap);
     }
+
 
     .book-container img {
         cursor: zoom-in;
@@ -75,6 +78,10 @@ export const style = /*css*/ `
         /* To prevent images from spanning multiple columns when they are enabled */
         /* height: 100%;
         object-fit: contain; */
+    }
+
+    ::selection {
+        /* background-color: #e8590c; */
     }
 `;
 

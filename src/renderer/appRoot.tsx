@@ -2,15 +2,18 @@ import React from "react";
 import { MantineProvider, ColorSchemeScript } from "@mantine/core";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Outlet } from "@tanstack/react-router";
+import { ContextMenuProvider } from "mantine-contextmenu";
 import { configure } from "mobx";
 
+import { useUpdateBookStore } from "./stores";
 import { isDev } from "~/common/helpers";
 import { baseTheme } from "./theme";
 import "@mantine/core/styles.layer.css";
 import "@mantine/dropzone/styles.layer.css";
 import "@mantine/notifications/styles.layer.css";
 import "@mantine/spotlight/styles.layer.css";
-import { useUpdateBookStore } from "./stores";
+import "mantine-contextmenu/styles.layer.css";
+import "./layout.css";
 
 console.log("[Renderer]: Execution started");
 const queryClient = new QueryClient();
@@ -34,9 +37,11 @@ export const Root = () => {
         <>
             <ColorSchemeScript defaultColorScheme="dark" />
             <MantineProvider defaultColorScheme="dark" theme={baseTheme}>
-                <QueryClientProvider client={queryClient}>
-                    <Outlet />
-                </QueryClientProvider>
+                <ContextMenuProvider>
+                    <QueryClientProvider client={queryClient}>
+                        <Outlet />
+                    </QueryClientProvider>
+                </ContextMenuProvider>
             </MantineProvider>
         </>
     );

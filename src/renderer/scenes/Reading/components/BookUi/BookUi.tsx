@@ -6,24 +6,12 @@ export const BookUi = forwardRef(
     (
         {
             title,
-            uiState = {
-                currentSectionTitle: "",
-                currentSectionPage: 0,
-                totalSectionPages: 0,
-                currentBookPage: 0,
-                totalBookPages: 0,
-            },
+            uiState,
             visible = true,
             children,
         }: {
             title: string;
-            uiState: {
-                currentSectionTitle: string;
-                currentSectionPage: number;
-                totalSectionPages: number;
-                currentBookPage: number;
-                totalBookPages: number;
-            };
+            uiState: UiState;
             visible?: boolean;
             children?: React.ReactNode;
         },

@@ -18,3 +18,18 @@ html:root[data-mantine-color-scheme="light"] {
     --mantine-color-dimmed: var(--mantine-color-gray-6);
     --mantine-color-placeholder: var(--mantine-color-gray-6);
 }
+
+.mantine-contextmenu {
+    --paper-radius: var(--mantine-radius-md) !important;
+}
+
+::selection {
+    background-color: var(--mantine-primary-color-filled);
+
+    @mixin light {
+        color: var(--mantine-color-black);
+    }
+    @mixin dark {
+        color: var(--mantine-color-white);
+    }
+}

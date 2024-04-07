@@ -5,29 +5,58 @@ type BookComponentContextType = {
     setContextRef: (ref: any) => void;
     contextUiState: UiState;
     setContextUiState: (state: UiState) => void;
+    ttsTarget: TtsTarget;
+    setTtsTarget: (state: TtsTarget) => void;
+    resetTtsTarget: () => void;
+};
+
+const defaultUiState = {
+    currentSectionTitle: "",
+    currentSectionPage: 0,
+    totalSectionPages: 0,
+    currentBookPage: 0,
+    totalBookPages: 0,
+};
+
+type TtsTarget = {
+    startElement: ParentNode | null;
+    startElementSelectedText: string | null;
+};
+
+const defaultTtsTarget: TtsTarget = {
+    startElement: null,
+    startElementSelectedText: null,
 };
 
 export const BookComponentContext = createContext<BookComponentContextType>({
     contextRef: null,
     setContextRef: () => {},
-    contextUiState: {
-        currentSectionTitle: "",
-        currentSectionPage: 0,
-        totalSectionPages: 0,
-        currentBookPage: 0,
-        totalBookPages: 0,
-    },
+    contextUiState: defaultUiState,
     setContextUiState: () => {},
+    ttsTarget: defaultTtsTarget,
+    setTtsTarget: () => {},
+    resetTtsTarget: () => {},
 });
 
 // ref: https://stackoverflow.com/a/65440349/10744339
 export const BookComponentContextProvider = ({ children }: { children?: React.ReactNode }) => {
-    const [contextRef, setContextRef] = useState<any>();
-    const [contextUiState, setContextUiState] = useState<any>();
+    const [contextRef, setContextRef] = useState<any>(null);
+    const [contextUiState, setContextUiState] = useState<UiState>(defaultUiState);
+    const [ttsTarget, setTtsTarget] = useState<TtsTarget>();
+
+    const resetTtsTarget = () => setTtsTarget(defaultTtsTarget);
 
     return (
         <BookComponentContext.Provider
-            value={{ contextRef, setContextRef, contextUiState, setContextUiState }}
+            value={{
+                contextRef,
+                setContextRef,
+                contextUiState,
+                setContextUiState,
+                ttsTarget,
+                setTtsTarget,
+                resetTtsTarget,
+            }}
             children={children}
         />
     );

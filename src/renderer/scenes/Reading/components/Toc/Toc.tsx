@@ -9,6 +9,7 @@ interface TocProps {
     bookKey: BookKey;
 }
 
+// TODO consider https://ui.mantine.dev/category/toc/
 export const Toc = ({ bookKey }: TocProps) => {
     const { content } = useBookContent(bookKey);
     const tocChildren = content?.structure;

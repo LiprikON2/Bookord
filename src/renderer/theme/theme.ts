@@ -10,6 +10,7 @@ import checkboxInput from "./components/Checkbox.module.css";
 import passwordInput from "./components/PasswordInput.module.css";
 import scrollArea from "./components/ScrollArea.module.css";
 import select from "./components/Select.module.css";
+import slider from "./components/Slider.module.css";
 
 export const baseTheme = createTheme({
     fontFamily:
@@ -87,6 +88,11 @@ export const baseTheme = createTheme({
                 tab: tabs.tab,
                 panel: tabs.panel,
                 tabSection: tabs.tabSection,
+            },
+        },
+        Slider: {
+            classNames: {
+                thumb: slider.thumb,
             },
         },
         Container: {

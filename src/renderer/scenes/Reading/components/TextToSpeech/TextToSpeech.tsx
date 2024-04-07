@@ -1,35 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
+    ActionIcon,
     Box,
     Combobox,
+    Group,
     Input,
     InputBase,
+    Kbd,
     ScrollArea,
-    Select,
+    Stack,
     Text,
     useCombobox,
 } from "@mantine/core";
 
 import classes from "./TextToSpeech.module.css";
+import {
+    IconPlayerPauseFilled,
+    IconPlayerPlayFilled,
+    IconPlayerStopFilled,
+} from "@tabler/icons-react";
+import { useTts, useTtsVoices } from "./hooks";
+import { SliderInput } from "./components";
 
 interface TextToSpeechProps {}
 
 export const TextToSpeech = ({}: TextToSpeechProps) => {
-    const voices = speechSynthesis.getVoices();
-    const voicesGroups = Object.entries(Object.groupBy(voices, ({ lang }) => lang));
+    const [pitch, setPitch] = useState<number>(1);
+    const [rate, setRate] = useState<number>(1.5);
 
-    const defaultVoice = voices[0];
-
-    const [selectedVoice, setSelectedVoice] = useState(defaultVoice);
-    useEffect(() => {
-        if (defaultVoice && !selectedVoice) setSelectedVoice(defaultVoice);
-    }, [defaultVoice]);
-
-    const handleVoiceChange = (voiceName: string) => {
-        const voice = voices.find((voice) => voice.name === voiceName);
-        setSelectedVoice(voice);
-        combobox.closeDropdown();
-    };
+    const { selectedVoice, handleVoiceChange, voicesGroups } = useTtsVoices();
+    const { ttsStatus, pauseTts, resumeTts, stopTts } = useTts(selectedVoice, pitch, rate);
 
     const combobox = useCombobox({
         onDropdownClose: () => combobox.resetSelectedOption(),
@@ -40,15 +40,20 @@ export const TextToSpeech = ({}: TextToSpeechProps) => {
             <Text c="dimmed" size="sm" px="sm" mb="xs">
                 Text-to-Speech
             </Text>
-            <Box pl="sm">
+            <Stack pl="sm">
                 <Combobox
+                    disabled={ttsStatus !== "standby"}
                     size="xs"
                     store={combobox}
                     withinPortal={false}
-                    onOptionSubmit={handleVoiceChange}
+                    onOptionSubmit={(value) => {
+                        handleVoiceChange(value);
+                        combobox.closeDropdown();
+                    }}
                 >
                     <Combobox.Target>
                         <InputBase
+                            disabled={ttsStatus !== "standby"}
                             size="sm"
                             component="button"
                             type="button"
@@ -99,7 +104,60 @@ export const TextToSpeech = ({}: TextToSpeechProps) => {
                         </Combobox.Options>
                     </Combobox.Dropdown>
                 </Combobox>
-            </Box>
+                <SliderInput
+                    disabled={ttsStatus !== "standby"}
+                    label="Pitch"
+                    value={pitch}
+                    onChange={setPitch}
+                />
+                <SliderInput
+                    disabled={ttsStatus !== "standby"}
+                    label="Rate"
+                    value={rate}
+                    onChange={setRate}
+                />
+
+                <Group>
+                    {ttsStatus !== "standby" && (
+                        <>
+                            <ActionIcon
+                                onClick={ttsStatus === "speaking" ? pauseTts : resumeTts}
+                                variant="outline"
+                                aria-label={ttsStatus === "speaking" ? "Pause" : "Resume"}
+                            >
+                                {ttsStatus === "speaking" && (
+                                    <IconPlayerPauseFilled
+                                        style={{ width: "70%", height: "70%" }}
+                                        stroke={1.5}
+                                    />
+                                )}
+                                {ttsStatus === "paused" && (
+                                    <IconPlayerPlayFilled
+                                        style={{ width: "70%", height: "70%" }}
+                                        stroke={1.5}
+                                    />
+                                )}
+                            </ActionIcon>
+                            <ActionIcon variant="outline" onClick={stopTts} aria-label="Stop">
+                                <IconPlayerStopFilled
+                                    style={{ width: "70%", height: "70%" }}
+                                    stroke={1.5}
+                                />
+                            </ActionIcon>
+                        </>
+                    )}
+                    {ttsStatus === "standby" && (
+                        <Box>
+                            <Text size="sm" c="dimmed">
+                                Select text and click
+                            </Text>
+                            <Text size="sm" c="dimmed">
+                                <Kbd>Text-to-Speech</Kbd> to start.
+                            </Text>
+                        </Box>
+                    )}
+                </Group>
+            </Stack>
         </>
     );
 };

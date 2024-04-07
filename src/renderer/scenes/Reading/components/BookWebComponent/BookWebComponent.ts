@@ -23,6 +23,14 @@ type Book = BookContent & {
 export interface BookWebComponentEventMap extends HTMLElementEventMap {
     imgClickEvent: MouseEvent;
     uiStateUpdate: Event & { detail: UiState };
+    contextMenuEvent: MouseEvent & {
+        detail: {
+            e: MouseEvent;
+            startElement: ParentNode;
+            startElementSelectedText: string;
+            selectedText: string;
+        };
+    };
 }
 
 /**
@@ -159,6 +167,7 @@ export default class BookWebComponent extends HTMLElement {
 
         this.processContentImages();
         this.processContentLinks();
+        this.processContentElements();
     }
 
     /**
@@ -186,6 +195,137 @@ export default class BookWebComponent extends HTMLElement {
                 parent.appendChild(textNode);
             }
         });
+    }
+
+    processContentElements() {
+        const elems = this.contentElem.querySelectorAll("*");
+
+        elems.forEach((elem) => {
+            elem.addEventListener("contextmenu", (e: MouseEvent) => {
+                // @ts-ignore
+                const selection = this.shadowRoot.getSelection() as Selection;
+
+                const selectedText = selection.toString();
+
+                const range = selection.getRangeAt(0);
+                const startElement = range.startContainer.parentNode;
+                const [startElementSelectedText] = selectedText.split("\n");
+
+                if (startElement && startElementSelectedText) {
+                    // console.log("startElement", startElement, startElementSelectedText);
+                    e.stopPropagation();
+                    this.emitContextMenuEvent(
+                        e,
+                        startElement,
+                        startElementSelectedText,
+                        selectedText
+                    );
+                }
+            });
+        });
+    }
+
+    emitContextMenuEvent(
+        e: MouseEvent,
+        startElement: ParentNode,
+        startElementSelectedText: string,
+        selectedText: string
+    ) {
+        const contextMenuEvent = new CustomEvent("contextMenuEvent", {
+            bubbles: true,
+            cancelable: false,
+            composed: true,
+            detail: { event: e, startElement, startElementSelectedText, selectedText },
+        });
+
+        this.dispatchEvent(contextMenuEvent);
+    }
+
+    processContentLinks() {
+        const anchors = this.contentElem.querySelectorAll("a");
+        anchors.forEach((a) => {
+            a.addEventListener("click", (e) => this.handleLink(e));
+        });
+    }
+
+    /**
+     * Handles clicks on book navigation links and website links
+     */
+    handleLink(e: Event) {
+        e.preventDefault();
+        const target = e.currentTarget as HTMLAnchorElement;
+        let [sectionId, markerId] = target.href.split("#").pop().split(",");
+        markerId = "#" + markerId;
+
+        const isLinkValid = this.navToLink(sectionId, markerId);
+
+        // Opens link in external browser
+        if (!isLinkValid && target.href) window.open(target.href, "_blank");
+    }
+
+    navToLink(sectionId: string, markerId?: string) {
+        const sectionIndex = this.book.sectionNames.findIndex(
+            (sectionName) => sectionName === sectionId
+        );
+        const isLinkValid = sectionIndex !== -1;
+
+        if (isLinkValid) {
+            const position = { markerId };
+
+            this.loadSection(sectionIndex, position);
+        }
+
+        return isLinkValid;
+    }
+
+    /**
+     * Attaches event emitter to img tags to handle open modals on click
+     */
+    processContentImages() {
+        const images = this.contentElem.querySelectorAll("img");
+
+        images.forEach((img) => {
+            img.addEventListener("click", this.emitImgClickEvent);
+            this.applyCenteringStyles(img);
+        });
+    }
+
+    /**
+     * Makes div parents (up to contentElem) of the provided image tag to center their content
+     */
+    applyCenteringStyles(imgElement: HTMLImageElement) {
+        const isDecorativeImage =
+            imgElement.alt === "" ||
+            imgElement.role === "presentation" ||
+            imgElement.role === "none";
+
+        if (!isDecorativeImage) {
+            let imgContainer = imgElement.parentNode as HTMLElement;
+            while (imgContainer !== this.contentElem && imgContainer.children.length === 1) {
+                imgContainer.style.display = "flex";
+                imgContainer.style.justifyContent = "center";
+                imgContainer.style.alignItems = "center";
+                imgContainer.style.height = "100%";
+                imgContainer.style.margin = "auto";
+
+                imgContainer = imgContainer.parentNode as HTMLElement;
+            }
+        }
+    }
+
+    /**
+     * Emits "imgClickEvent" for when the img tag is clicked
+     */
+    emitImgClickEvent(e: MouseEvent) {
+        const target = e.target as HTMLImageElement;
+        const imgClickEvent = new CustomEvent("imgClickEvent", {
+            bubbles: true,
+            cancelable: false,
+            composed: true,
+            detail: { src: target.src },
+        });
+
+        this.dispatchEvent(imgClickEvent);
     }
 
     /**
@@ -387,36 +527,6 @@ export default class BookWebComponent extends HTMLElement {
     }
 
     /**
-     * Handles clicks on book navigation links and website links
-     */
-    handleLink(e: Event) {
-        e.preventDefault();
-        const target = e.currentTarget as HTMLAnchorElement;
-        let [sectionId, markerId] = target.href.split("#").pop().split(",");
-        markerId = "#" + markerId;
-
-        const isLinkValid = this.navToLink(sectionId, markerId);
-
-        // Opens link in external browser
-        if (!isLinkValid && target.href) window.open(target.href, "_blank");
-    }
-
-    navToLink(sectionId: string, markerId?: string) {
-        const sectionIndex = this.book.sectionNames.findIndex(
-            (sectionName) => sectionName === sectionId
-        );
-        const isLinkValid = sectionIndex !== -1;
-
-        if (isLinkValid) {
-            const position = { markerId };
-
-            this.loadSection(sectionIndex, position);
-        }
-
-        return isLinkValid;
-    }
-
-    /**
      * Updates book's UI elements such as book title, section title and page counters
      */
     updateBookUi() {
@@ -448,16 +558,6 @@ export default class BookWebComponent extends HTMLElement {
         });
 
         this.dispatchEvent(uiStateUpdateEvent);
-    }
-
-    /**
-     * Attaches event handlers to anchor tags to handle book navigation
-     */
-    processContentLinks() {
-        const anchors = this.shadowRoot.querySelectorAll("a");
-        anchors.forEach((a) => {
-            a.addEventListener("click", (e) => this.handleLink(e));
-        });
     }
 
     /**
@@ -663,56 +763,6 @@ export default class BookWebComponent extends HTMLElement {
         });
 
         this.dispatchEvent(saveParsedBookEvent);
-    }
-
-    /**
-     * Attaches event emitter to img tags to handle open modals on click
-     */
-    processContentImages() {
-        const images = this.shadowRoot.querySelectorAll("img");
-
-        images.forEach((img) => {
-            img.addEventListener("click", this.emitImgClickEvent);
-            this.applyCenteringStyles(img);
-        });
-    }
-
-    /**
-     * Makes div parents (up to contentElem) of the provided image tag to center their content
-     */
-    applyCenteringStyles(imgElement: HTMLImageElement) {
-        const isDecorativeImage =
-            imgElement.alt === "" ||
-            imgElement.role === "presentation" ||
-            imgElement.role === "none";
-
-        if (!isDecorativeImage) {
-            let imgContainer = imgElement.parentNode as HTMLElement;
-            while (imgContainer !== this.contentElem && imgContainer.children.length === 1) {
-                imgContainer.style.display = "flex";
-                imgContainer.style.justifyContent = "center";
-                imgContainer.style.alignItems = "center";
-                imgContainer.style.height = "100%";
-                imgContainer.style.margin = "auto";
-
-                imgContainer = imgContainer.parentNode as HTMLElement;
-            }
-        }
-    }
-
-    /**
-     * Emits "imgClickEvent" for when the img tag is clicked
-     */
-    emitImgClickEvent(e: MouseEvent) {
-        const target = e.target as HTMLImageElement;
-        const imgClickEvent = new CustomEvent("imgClickEvent", {
-            bubbles: true,
-            cancelable: false,
-            composed: true,
-            detail: { src: target.src },
-        });
-
-        this.dispatchEvent(imgClickEvent);
     }
 
     // /**

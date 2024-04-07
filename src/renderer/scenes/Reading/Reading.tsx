@@ -14,8 +14,10 @@ export const Reading = () => {
     const { bookTitle, uiState, setBookComponentRef } = useBookComponent(bookKey);
 
     return (
-        <BookUi title={bookTitle} uiState={uiState}>
-            <book-web-component class={classes.bookWebComponent} ref={setBookComponentRef} />
-        </BookUi>
+        <>
+            <BookUi title={bookTitle} uiState={uiState}>
+                <book-web-component class={classes.bookWebComponent} ref={setBookComponentRef} />
+            </BookUi>
+        </>
     );
 };

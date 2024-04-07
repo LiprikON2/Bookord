@@ -1,16 +1,23 @@
+import { IconCopy, IconSpeakerphone } from "@tabler/icons-react";
 import { useContext, useEffect, useState } from "react";
 import { useHotkeys } from "@mantine/hooks";
+import { useContextMenu } from "mantine-contextmenu";
 
 import { BookComponentContext } from "~/renderer/contexts";
 import { BookKey, useBookContent, useBookMetadata } from "~/renderer/stores";
 import BookWebComponent, { BookWebComponentEventMap } from "../components/BookWebComponent";
 import { useWebComponent } from "./useWebComponent";
+import classes from "./useBookComponent.module.css";
+import React from "react";
 
 export const useBookComponent = (bookKey: BookKey) => {
     const metadata = useBookMetadata(bookKey);
     const { content, contentState } = useBookContent(bookKey, 0);
 
-    const { setContextRef, contextUiState, setContextUiState } = useContext(BookComponentContext);
+    const { setContextRef, contextUiState, setContextUiState, setTtsTarget } =
+        useContext(BookComponentContext);
+
+    const { showContextMenu } = useContextMenu();
 
     const [bookComponentRef, setBookComponentRef, refReadyDecorator] = useWebComponent<
         BookWebComponentEventMap,
@@ -24,6 +31,27 @@ export const useBookComponent = (bookKey: BookKey) => {
             {
                 type: "uiStateUpdate",
                 listener: (e) => setContextUiState(e.detail),
+            },
+            {
+                type: "contextMenuEvent",
+                listener: (e) => {
+                    showContextMenu([
+                        {
+                            key: "copy",
+                            icon: <IconCopy className={classes.icon} />,
+                            onClick: () => navigator.clipboard.writeText(e.detail.selectedText),
+                        },
+                        {
+                            key: "tts",
+                            icon: <IconSpeakerphone className={classes.icon} />,
+                            title: "Text-to-Speech",
+                            onClick: () => {
+                                const { startElement, startElementSelectedText } = e.detail;
+                                setTtsTarget({ startElement, startElementSelectedText });
+                            },
+                        },
+                    ])(e.detail.event);
+                },
             },
         ],
         (webComponent) => setContextRef(webComponent)

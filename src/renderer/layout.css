@@ -1,0 +1,3 @@
+/* 👇 Apply Mantine core styles first, ContextMenu styles second */
+/*    ref: https://github.com/icflorescu/mantine-contextmenu */
+@layer mantine, mantine-contextmenu;

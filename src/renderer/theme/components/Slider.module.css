@@ -1,0 +1,5 @@
+.thumb {
+    @mixin dark {
+        border-color: var(--mantine-color-gray-4);
+    }
+}
