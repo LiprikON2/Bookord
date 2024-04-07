@@ -311,6 +311,7 @@ export default class BookWebComponent extends HTMLElement {
         const targetSection = Math.max(0, Math.min(sectionNum, this.totalSections - 1));
         const isFromBack = currentSection > targetSection;
 
+        if (targetSection === currentSection) return;
         this.loadSection(targetSection, { sectionPage: { value: 0, isFromBack } });
     }
 
@@ -388,26 +389,31 @@ export default class BookWebComponent extends HTMLElement {
     /**
      * Handles clicks on book navigation links and website links
      */
-    handleLink(e: Event, book: Book) {
+    handleLink(e: Event) {
         e.preventDefault();
         const target = e.currentTarget as HTMLAnchorElement;
-        let [sectionName, markerId] = target.href.split("#").pop().split(",");
+        let [sectionId, markerId] = target.href.split("#").pop().split(",");
         markerId = "#" + markerId;
 
-        const sectionIndex = book.sectionNames.findIndex((section) => section === sectionName);
+        const isLinkValid = this.navToLink(sectionId, markerId);
 
-        if (sectionIndex !== -1) {
-            const position = {
-                markerId,
-            };
+        // Opens link in external browser
+        if (!isLinkValid && target.href) window.open(target.href, "_blank");
+    }
+
+    navToLink(sectionId: string, markerId?: string) {
+        const sectionIndex = this.book.sectionNames.findIndex(
+            (sectionName) => sectionName === sectionId
+        );
+        const isLinkValid = sectionIndex !== -1;
+
+        if (isLinkValid) {
+            const position = { markerId };
 
             this.loadSection(sectionIndex, position);
-        } else {
-            // Opens link in external browser
-            if (target.href) {
-                window.open(target.href, "_blank");
-            }
         }
+
+        return isLinkValid;
     }
 
     /**
@@ -450,7 +456,7 @@ export default class BookWebComponent extends HTMLElement {
     processContentLinks() {
         const anchors = this.shadowRoot.querySelectorAll("a");
         anchors.forEach((a) => {
-            a.addEventListener("click", (e) => this.handleLink(e, this.book));
+            a.addEventListener("click", (e) => this.handleLink(e));
         });
     }
 

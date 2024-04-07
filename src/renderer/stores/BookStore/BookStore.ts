@@ -33,9 +33,18 @@ export type BookMetadata = {
     sources: string[];
 };
 
+export type Structure = {
+    name: string;
+    path: string;
+    playOrder: string;
+    sectionId: string;
+    nodeId?: string;
+    children: Structure[];
+};
+
 export type BookContent = {
     styles: object[];
-    structure: object[];
+    structure: Structure[];
     sections: { id: string; content: object[] | null }[];
 };
 

@@ -5,8 +5,14 @@ import { Box, Group, Stack, Text } from "@mantine/core";
 export const BookUi = forwardRef(
     (
         {
-            uiState,
             title,
+            uiState = {
+                currentSectionTitle: "",
+                currentSectionPage: 0,
+                totalSectionPages: 0,
+                currentBookPage: 0,
+                totalBookPages: 0,
+            },
             visible = true,
             children,
         }: {
