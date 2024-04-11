@@ -94,6 +94,9 @@ const provideFallbackTitle = (filename: string, title?: any): string => {
     return filename;
 };
 
+// TODO use root store
+// https://mobx.js.org/defining-data-stores.html#combining-multiple-stores
+
 /**
  * Domain store
  *

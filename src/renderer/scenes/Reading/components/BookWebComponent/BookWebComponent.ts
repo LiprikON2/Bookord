@@ -495,6 +495,7 @@ export default class BookWebComponent extends HTMLElement {
         // this.bookmarkManager.emitSaveBookmarks();
     }
 
+    // TODO shift only in increments of displayWidth
     /**
      * Shifts offset to the page with the given element.
      * Element can be passed either by `elementIndex`, `elementSelector` or `element`.

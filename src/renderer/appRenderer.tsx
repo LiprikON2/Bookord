@@ -84,6 +84,8 @@ export const bookKeyRoute = createRoute({
     component: Reading,
 });
 
+// TODO consider https://tanstack.com/router/latest/docs/framework/react/decisions-on-dx
+
 /* prettier-ignore */
 const routeTree = rootRoute.addChildren([
     redirectRoute,

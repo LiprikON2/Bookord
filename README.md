@@ -5,11 +5,31 @@
 
 ![](https://i.imgur.com/k8MDUEz.png)
 
-> Books are stored at `%APPDATA%/bookord/Books` (Windows)
+
+
+### [RU] Установка
+
+1. Скачать архив с [приложением для Windows](https://github.com/LiprikON2/bookord/releases/latest)
+2. Распаковать в удобное место
+3. Открыть `Bookord.exe`
+
+
+- Приложение хранит свои настройки по пути `%APPDATA%/Roaming/bookord`
+- Книги добавленные в приложение копируются по пути `%APPDATA%/Roaming/bookord/Books`
+
+
+___ 
+
+
 
 ### Download
+> Books are stored at `%APPDATA%/bookord/Books` (Windows)
 
 [Download link](https://github.com/LiprikON2/bookord/releases/latest)
+
+
+___
+
 
 
 ### Development

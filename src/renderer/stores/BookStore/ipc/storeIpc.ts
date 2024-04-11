@@ -1,20 +1,29 @@
-import { BrowserWindow, MessageChannelMain, ipcMain, utilityProcess } from "electron";
+import { BrowserWindow, MessageChannelMain, app, ipcMain, utilityProcess } from "electron";
 import path from "path";
 
 import io, { getResponse } from "~/main/utils";
 import { type BookContent } from "../..";
 
-const metadataParsingProcess = path.resolve(__dirname, "../forks/metadataParsingProcess.mjs");
-const contentsParsingProcess = path.resolve(__dirname, "../forks/contentsParsingProcess.mjs");
-
 export const registerStoreIpc = (
     mainWindow: BrowserWindow,
     validateSender: (e: Electron.IpcMainInvokeEvent) => boolean
 ) => {
-    ipcMain.handle("get-parsed-metadata", (e, fileNames: string[]) => {
+    ipcMain.handle("get-parsed-metadata", async (e, fileNames: string[]) => {
         if (!validateSender(e)) return null;
 
         const { port1, port2 } = new MessageChannelMain();
+        const metadataParsingProcess = path.resolve(
+            __dirname,
+            "../forks/metadataParsingProcess.mjs"
+        );
+
+        app.whenReady().then(() => {
+            console.log("ready");
+        });
+
+        await app.whenReady();
+
+        console.log("forking", metadataParsingProcess);
         const child = utilityProcess.fork(metadataParsingProcess, [], {
             serviceName: "Book metadata parsing utility process",
         });
@@ -30,6 +39,17 @@ export const registerStoreIpc = (
         if (!validateSender(e)) return null;
 
         const { port1, port2 } = new MessageChannelMain();
+        const contentsParsingProcess = path.resolve(
+            __dirname,
+            "../forks/contentsParsingProcess.mjs"
+        );
+        app.whenReady().then(() => {
+            console.log("ready");
+        });
+
+        await app.whenReady();
+
+        console.log("forking", contentsParsingProcess);
         const child = utilityProcess.fork(contentsParsingProcess, [], {
             serviceName: "Book content parsing utility process",
         });

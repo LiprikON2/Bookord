@@ -19,6 +19,7 @@ export const useWebComponent = <K, T extends HTMLElement = any>(
         webComponentRef.current = webComponent;
     }, []);
 
+    // ref (code): https://mantine.dev/hooks/use-event-listener/
     useEffect(() => {
         if (webComponentRef.current) {
             events.forEach(({ type, listener, options }) =>
@@ -34,7 +35,7 @@ export const useWebComponent = <K, T extends HTMLElement = any>(
                     )
                 );
         }
-        return undefined;
+        return;
     }, [events]);
 
     const refReadyDecorator = (callback: (bookComponent: HTMLElement) => void) => {

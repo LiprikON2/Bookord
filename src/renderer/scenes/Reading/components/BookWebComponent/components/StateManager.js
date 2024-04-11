@@ -133,8 +133,8 @@ export default class StateManager {
 
     /**
      * Recursively extracts section (chapter) title from book's TOC
-     * @param {InitBook | ParsedBook} book
-     * @param {HtmlObject} toc - Table of Contents
+     * @param {Book} book
+     * @param {Book['structure']} toc - Table of Contents
      * @param {number} sectionIndex - Section index
      * @param {boolean} [root] - A way to differentiate between recursive and non-recursive function call
      * @returns {string}

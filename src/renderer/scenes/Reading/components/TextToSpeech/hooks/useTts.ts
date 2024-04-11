@@ -55,6 +55,9 @@ export const useTts = (
         return parentElem;
     };
 
+    // TODO paragraphTts = (sentences: string[], nextElem: Element, selection: Selection)
+    //      <...>
+    //      paragraphTts(sentences.pop(), ...)
     const startTts = (text: string, nextElem: Element, selection: Selection) => {
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.pitch = selectedPitch;
