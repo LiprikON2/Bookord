@@ -22,6 +22,10 @@ ___
 
 ## [EN]
 
+
+Based on [Electron React Webpack Typescript](https://github.com/codesbiome/electron-react-webpack-typescript-2024) template by @codesbiome
+
+
 ### Download
 > Books are stored at `%APPDATA%/bookord/Books` (Windows)
 
