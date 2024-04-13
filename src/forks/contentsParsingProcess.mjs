@@ -1,7 +1,7 @@
 // @ts-check
 // JSDoc docs: https://stackoverflow.com/a/42898969/10744339
 
-import { mapInGroups, parseContent, parseSections } from "./common/io.mjs";
+import { parseContent } from "./common/io.mjs";
 
 console.info("[contentsParsingProcess] was created");
 

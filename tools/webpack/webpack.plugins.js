@@ -11,7 +11,7 @@ module.exports = [
     isDev() && new webpack.HotModuleReplacementPlugin(),
     isDev() && new ReactRefreshWebpackPlugin(),
     /* 
-        Utility processes requires a separate files: 
+        Each utility processes requires a separate file: 
         just copy them without bundling into index.js
         with the rest of the main process files 
     */

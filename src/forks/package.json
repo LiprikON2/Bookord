@@ -1,0 +1,33 @@
+{
+    "name": "bookord-utility",
+    "version": "1.0.0",
+    "description": "",
+    "main": "metadataParsingProcess.mjs",
+    "type": "module",
+    "license": "AGPL-version-3.0",
+    "private": false,
+    "engines": {
+        "node": ">= 14.0.0",
+        "npm": ">= 6.0.0"
+    },
+    "homepage": "",
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+    "bugs": "",
+    "keywords": [],
+    "author": {
+        "name": "LiprikON2",
+        "url": "https://github.com/LiprikON2"
+    },
+    "contributors": [],
+    "scripts": {
+        "dev": "",
+        "test": ""
+    },
+    "dependencies": {
+        "@liprikon/epub-parser": "^2.1.5",
+        "lodash": "^4.17.21"
+    }
+}

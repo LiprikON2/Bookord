@@ -1,27 +1,23 @@
 {
     "name": "bookord",
     "productName": "Bookord",
-    "version": "0.2.1",
-    "description": "Book reader",
+    "version": "0.2.2",
+    "description": "E-book reader electron app",
     "main": ".webpack/main",
     "scripts": {
+        "postinstall": "(cd src/forks && npm install)",
         "dev": "cross-env NODE_ENV=development electron-forge start",
         "//": "Packages into executable, then makes installer for it",
-        "package": "electron-forge package",
-        "make": "electron-forge make",
+        "package": "electron-forge package && npm run beep",
+        "make": "electron-forge make && npm run beep",
         "publish": "electron-forge publish",
         "lint": "eslint src/ --ext .ts,.js,.tsx,.jsx",
-        "update": "npx npm-check-updates -i"
+        "update": "npx npm-check-updates -i",
+        "beep": "(cd tools/beep && node .)"
     },
     "keywords": [
-        "electron boilerplate",
-        "minimal",
-        "electron-webpack",
-        "electron-react",
-        "electron-typescript",
-        "hmr",
-        "boilerplate",
-        "2023",
+        "electron",
+        "epub",
         "ERWT"
     ],
     "author": {
@@ -49,6 +45,7 @@
         "@typescript-eslint/eslint-plugin": "6.7.3",
         "@typescript-eslint/parser": "6.7.3",
         "@vercel/webpack-asset-relocator-loader": "1.7.3",
+        "audic": "^3.0.2",
         "copy-webpack-plugin": "^12.0.1",
         "cross-env": "7.0.3",
         "css-loader": "6.8.1",
@@ -77,7 +74,6 @@
         "webpack": "5.91.0"
     },
     "dependencies": {
-        "@liprikon/epub-parser": "^2.1.5",
         "@mantine/colors-generator": "7.7.1",
         "@mantine/core": "7.7.1",
         "@mantine/dropzone": "7.7.1",

@@ -9,7 +9,7 @@
 
 ### [RU] Установка
 
-1. Скачать архив с [приложением для Windows](https://github.com/LiprikON2/bookord/releases/latest)
+1. Скачать архив с [приложением под Windows](https://github.com/LiprikON2/bookord/releases/latest)
 2. Распаковать в удобное место
 3. Открыть `Bookord.exe`
 
