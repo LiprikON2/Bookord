@@ -2,7 +2,7 @@
     "name": "bookord-utility",
     "version": "1.0.0",
     "description": "",
-    "main": "metadataParsingProcess.mjs",
+    "main": "index.js",
     "type": "module",
     "license": "AGPL-version-3.0",
     "private": false,
