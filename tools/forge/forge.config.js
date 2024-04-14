@@ -29,7 +29,7 @@ module.exports = {
                 iconUrl:
                     "https://github.com/LiprikON2/Bookord/tree/master/assets/icons/platforms/bookord-fill_1x.ico",
                 // The ICO file to use as the icon for the generated Setup.exe
-                setupIcon: path.resolve("assets/icons/platforms/bookord-installer"),
+                setupIcon: path.resolve("assets/icons/platforms/bookord-installer@1x.ico"),
             },
         },
         {
