@@ -12,7 +12,10 @@ module.exports = {
         // Set application copyright
         appCopyright: "Copyright (C)",
         // Set application icon
-        icon: path.resolve("assets/images/appIcon.ico"),
+        // - No extension required
+        // - DPI suffix support: @1x, @1.25x, @1.33x, @1.4x, @1.5x, @1.8x, @2x, @2.5x, @3x, @4x, and @5x.
+        // ref: https://www.electronforge.io/guides/create-and-add-icons
+        icon: path.resolve("assets/icons/platforms/bookord-circle"),
     },
     // Forge Makers
     makers: [
@@ -22,6 +25,11 @@ module.exports = {
             name: "@electron-forge/maker-squirrel",
             config: {
                 name: "bookord",
+                // An URL to an ICO file to use as the application icon (displayed in Control Panel > Programs and Features).
+                iconUrl:
+                    "https://github.com/LiprikON2/Bookord/tree/master/assets/icons/platforms/bookord-fill_1x.ico",
+                // The ICO file to use as the icon for the generated Setup.exe
+                setupIcon: path.resolve("assets/icons/platforms/bookord-installer"),
             },
         },
         {
@@ -34,13 +42,21 @@ module.exports = {
             // The deb target builds .deb packages, which are the standard package format for Debian-based
             // Linux distributions such as Ubuntu.
             name: "@electron-forge/maker-deb",
-            config: {},
+            config: {
+                options: {
+                    icon: path.resolve("assets/icons/platforms/bookord-circle@4x.png"),
+                },
+            },
         },
         {
             // The RPM target builds .rpm files, which is the standard package format for
             // RedHat-based Linux distributions such as Fedora.
             name: "@electron-forge/maker-rpm",
-            config: {},
+            config: {
+                options: {
+                    icon: path.resolve("assets/icons/platforms/bookord-circle@4x.png"),
+                },
+            },
         },
     ],
     // Forge Plugins

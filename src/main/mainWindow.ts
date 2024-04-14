@@ -37,7 +37,7 @@ export const createMainWindow = (): BrowserWindow => {
         autoHideMenuBar: true,
         frame: false,
         titleBarStyle: "hidden",
-        icon: path.resolve("assets/images/appIcon.ico"),
+        icon: path.resolve("assets/icons/platforms/bookord-circle@4x.png"),
         webPreferences: {
             nodeIntegration: false,
             nodeIntegrationInWorker: false,
