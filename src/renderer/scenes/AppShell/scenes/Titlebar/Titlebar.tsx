@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, Burger, Group, Text, rem } from "@mantine/core";
+import { Image, Burger, Group } from "@mantine/core";
 import { IconClock, IconClockFilled } from "@tabler/icons-react";
 
 import { useFilterTags, useTags } from "~/renderer/stores";
@@ -42,10 +42,6 @@ export const Titlebar = ({
                 <Group wrap="nowrap">
                     <Image mx={4} h={24} src={icons.bookordStandalone} hiddenFrom="sm" />
                     <Image mx={4} h={24} src={icons.bookordLogoStandalone} visibleFrom="sm" />
-                    {/* <Image m={4} h={24} w={24} src={icons.bookord} />
-                    <Text size="xl" c="unset">
-                        Bookord
-                    </Text> */}
                 </Group>
             </Group>
             <Group className={classes.searchGroup} wrap="nowrap">

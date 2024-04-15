@@ -2,6 +2,9 @@
 const path = require("path");
 const rootDir = process.cwd();
 
+// TODO github actions
+// https://www.electronforge.io/core-concepts/build-lifecycle#cross-platform-build-systems
+
 module.exports = {
     // Packager Config
     packagerConfig: {

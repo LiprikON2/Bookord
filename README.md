@@ -1,5 +1,6 @@
 # Bookord
 
+![](assets/icons/brand/bookord-logo.svg)
 
 ![](https://i.imgur.com/I25O50n.png)
 
