@@ -27,9 +27,9 @@ module.exports = {
                 name: "bookord",
                 // An URL to an ICO file to use as the application icon (displayed in Control Panel > Programs and Features).
                 iconUrl:
-                    "https://github.com/LiprikON2/Bookord/tree/master/assets/icons/platforms/bookord-fill_1x.ico",
+                    "https://github.com/LiprikON2/Bookord/tree/master/assets/icons/platforms/bookord-fill.ico",
                 // The ICO file to use as the icon for the generated Setup.exe
-                setupIcon: path.resolve("assets/icons/platforms/bookord-installer@1x.ico"),
+                setupIcon: path.resolve("assets/icons/platforms/bookord-installer.ico"),
             },
         },
         {
