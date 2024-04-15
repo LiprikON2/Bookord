@@ -40,10 +40,12 @@ export const Titlebar = ({
             <Group p={0} wrap="nowrap">
                 <Burger opened={showBurger} onClick={toggleBurger} hiddenFrom="sm" size="sm" />
                 <Group wrap="nowrap">
-                    <Image m={4} h={24} w={24} src={icons.bookord} />
+                    <Image mx={4} h={24} src={icons.bookordStandalone} hiddenFrom="sm" />
+                    <Image mx={4} h={24} src={icons.bookordLogoStandalone} visibleFrom="sm" />
+                    {/* <Image m={4} h={24} w={24} src={icons.bookord} />
                     <Text size="xl" c="unset">
                         Bookord
-                    </Text>
+                    </Text> */}
                 </Group>
             </Group>
             <Group className={classes.searchGroup} wrap="nowrap">
