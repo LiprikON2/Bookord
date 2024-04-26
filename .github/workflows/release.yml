@@ -24,7 +24,6 @@ jobs:
                   node-version: 20
                   #   cache: npm
 
-            - run: npm install
             # ref: https://github.com/LinusU/node-appdmg/issues/234#issuecomment-2002410428
             - name: Fix appdmg GHA mac runner error 1
               if: matrix.os.name == 'macos'
@@ -37,6 +36,7 @@ jobs:
               run: |
                   python3 -m pip install setuptools --break-system-packages
                   npm install -g appdmg@0.6.6
+            - run: npm install
             - name: Publish app
               env:
                   GITHUB_TOKEN: ${{ secrets.GH_BOOKORD_RELEASE_TOKEN }}
