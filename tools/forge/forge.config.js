@@ -77,6 +77,7 @@ module.exports = {
                     name: "Bookord",
                 },
                 prerelease: false,
+                force: true,
             },
         },
     ],
