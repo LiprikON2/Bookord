@@ -11,7 +11,7 @@ jobs:
                 os: [
                         # { name: "windows", image: "windows-latest" },
                         # { name: "linux", image: "ubuntu-latest" },
-                        { name: "macos", image: "macos-13" },
+                        { name: "macos", image: "macos-11" },
                     ]
             fail-fast: true
         runs-on: ${{ matrix.os.image }}
@@ -22,7 +22,7 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: 20
-                  cache: npm
+                  #   cache: npm
 
             - run: npm install
             # ref: https://github.com/LinusU/node-appdmg/issues/234#issuecomment-2002410428
@@ -30,7 +30,7 @@ jobs:
               if: matrix.os.name == 'macos'
               uses: actions/setup-python@v5
               with:
-                  python-version: 3.12
+                  python-version: 3.11
 
             - name: Fix appdmg GHA mac runner error 2
               if: matrix.os.name == 'macos'
