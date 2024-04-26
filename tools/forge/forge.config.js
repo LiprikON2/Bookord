@@ -11,6 +11,7 @@ module.exports = {
         // Create asar archive for main, renderer process files
         asar: true,
         // Set executable name
+        name: "Bookord",
         executableName: "Bookord",
         // Set application copyright
         appCopyright: "Copyright (C)",
