@@ -11,7 +11,7 @@ module.exports = {
         // Create asar archive for main, renderer process files
         asar: true,
         // Set executable name
-        name: "Bookord",
+        name: "bookord",
         executableName: "Bookord",
         // Set application copyright
         appCopyright: "Copyright (C)",
@@ -49,6 +49,10 @@ module.exports = {
             config: {
                 options: {
                     icon: path.resolve("assets/icons/platforms/bookord-circle@4x.png"),
+
+                    // Same as productName
+                    // ref: https://github.com/electron-userland/electron-installer-debian/issues/175#issuecomment-1558131497
+                    bin: "Bookord",
                 },
             },
         },
