@@ -24,5 +24,5 @@ jobs:
             - run: npm ci
             - name: Publish app
               env:
-                  GITHUB_TOKEN: ${{ secrets.GH_BOOKORD_RELEASE }}
+                  GITHUB_TOKEN: ${{ secrets.GH_BOOKORD_RELEASE_TOKEN }}
               run: npm run publish
