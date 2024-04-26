@@ -8,10 +8,9 @@ jobs:
         environment: CI
         strategy:
             matrix:
-                os:
-                    [
-                        { name: "windows", image: "windows-latest" },
-                        { name: "linux", image: "ubuntu-latest" },
+                os: [
+                        # { name: "windows", image: "windows-latest" },
+                        # { name: "linux", image: "ubuntu-latest" },
                         { name: "macos", image: "macos-13" },
                     ]
             fail-fast: true

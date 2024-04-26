@@ -36,12 +36,12 @@ module.exports = {
                 setupIcon: path.resolve("assets/icons/platforms/bookord-installer.ico"),
             },
         },
-        {
-            // The Zip target builds basic .zip files containing your packaged application.
-            // There are no platform specific dependencies for using this maker and it will run on any platform.
-            name: "@electron-forge/maker-zip",
-            platforms: ["darwin", "linux"],
-        },
+        // {
+        //     // The Zip target builds basic .zip files containing your packaged application.
+        //     // There are no platform specific dependencies for using this maker and it will run on any platform.
+        //     name: "@electron-forge/maker-zip",
+        //     platforms: ["darwin", "linux"],
+        // },
         {
             name: "@electron-forge/maker-dmg",
             config: {
@@ -94,10 +94,10 @@ module.exports = {
     ],
     // Forge Plugins
     plugins: [
-        {
-            name: "@electron-forge/plugin-auto-unpack-natives",
-            config: {},
-        },
+        // {
+        //     name: "@electron-forge/plugin-auto-unpack-natives",
+        //     config: {},
+        // },
         {
             name: "@electron-forge/plugin-webpack",
             config: {
