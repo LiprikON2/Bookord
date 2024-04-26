@@ -22,6 +22,8 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: 20
+                  cache: npm
+
             - run: npm ci
             # ref: https://github.com/LinusU/node-appdmg/issues/234#issuecomment-2002410428
             - name: Fix appdmg GHA mac runner error 1
