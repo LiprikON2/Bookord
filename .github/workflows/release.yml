@@ -21,7 +21,7 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: 18
-            - run: npm install
+            - run: npm ci
             - name: Publish app
               env:
                   GITHUB_TOKEN: ${{ secrets.GH_BOOKORD_RELEASE_TOKEN }}
