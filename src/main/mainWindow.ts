@@ -44,7 +44,7 @@ export const createMainWindow = (): BrowserWindow => {
             nodeIntegrationInSubFrames: false,
             contextIsolation: true,
             preload: APP_WINDOW_PRELOAD_WEBPACK_ENTRY,
-            // TODO process sandboxing
+            // TODO consider process sandboxing
             // https://www.electronjs.org/docs/latest/tutorial/sandbox
             sandbox: false,
         },
@@ -70,8 +70,8 @@ export const createMainWindow = (): BrowserWindow => {
                 permCallback(false); // Deny
             }
         });
-    // TODO i18nextMainBackend
-    // TODO electronegativity
+    // TODO consider i18nextMainBackend
+    // TODO consider electronegativity
 
     // Load the index.html of the app window.
     mainWindow.loadURL(APP_WINDOW_WEBPACK_ENTRY);

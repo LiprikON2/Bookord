@@ -1,10 +1,11 @@
 import { app, BrowserWindow } from "electron";
 import { createMainWindow } from "./mainWindow";
 
+// Continue the cargo cult!
+// ref: https://github.com/desktop/desktop/blob/development/app/src/main-process/main.ts
+
 /** Handle creating/removing shortcuts on Windows when installing/uninstalling. */
-if (require("electron-squirrel-startup")) {
-    app.quit();
-}
+if (require("electron-squirrel-startup")) app.quit();
 
 /**
  * This method will be called when Electron has finished
@@ -24,7 +25,7 @@ app.on("activate", () => {
      * On OS X it's common to re-create a window in the app when the
      * dock icon is clicked and there are no other windows open.
      */
-    if (BrowserWindow.getAllWindows().length === 0) {
+    if (process.platform === "darwin" && BrowserWindow.getAllWindows().length === 0) {
         createMainWindow();
     }
 });

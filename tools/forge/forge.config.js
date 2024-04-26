@@ -39,7 +39,7 @@ module.exports = {
             // The Zip target builds basic .zip files containing your packaged application.
             // There are no platform specific dependencies for using this maker and it will run on any platform.
             name: "@electron-forge/maker-zip",
-            platforms: ["darwin"],
+            platforms: ["darwin", "linux"],
         },
         {
             // The deb target builds .deb packages, which are the standard package format for Debian-based
@@ -59,6 +59,19 @@ module.exports = {
                 options: {
                     icon: path.resolve("assets/icons/platforms/bookord-circle@4x.png"),
                 },
+            },
+        },
+    ],
+
+    publishers: [
+        {
+            name: "@electron-forge/publisher-github",
+            config: {
+                repository: {
+                    owner: "LiprikON2",
+                    name: "Bookord",
+                },
+                prerelease: false,
             },
         },
     ],
