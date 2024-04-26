@@ -43,8 +43,15 @@ module.exports = {
             platforms: ["darwin", "linux"],
         },
         {
+            name: "@electron-forge/maker-dmg",
+            config: {
+                bin: "Bookord",
+            },
+        },
+        {
             // The deb target builds .deb packages, which are the standard package format for Debian-based
             // Linux distributions such as Ubuntu.
+            // https://js.electronforge.io/interfaces/_electron_forge_maker_deb.InternalOptions.MakerDebConfigOptions.html
             name: "@electron-forge/maker-deb",
             config: {
                 options: {
@@ -63,6 +70,7 @@ module.exports = {
             config: {
                 options: {
                     icon: path.resolve("assets/icons/platforms/bookord-circle@4x.png"),
+                    bin: "Bookord",
                 },
             },
         },
@@ -71,11 +79,14 @@ module.exports = {
     publishers: [
         {
             name: "@electron-forge/publisher-github",
+            // https://js.electronforge.io/interfaces/_electron_forge_publisher_github.PublisherGitHubConfig.html
             config: {
                 repository: {
                     owner: "LiprikON2",
                     name: "Bookord",
                 },
+                tagPrefix: "v",
+                draft: true,
                 prerelease: false,
                 force: true,
             },
@@ -83,6 +94,10 @@ module.exports = {
     ],
     // Forge Plugins
     plugins: [
+        {
+            name: "@electron-forge/plugin-auto-unpack-natives",
+            config: {},
+        },
         {
             name: "@electron-forge/plugin-webpack",
             config: {
