@@ -8,9 +8,10 @@ jobs:
         environment: CI
         strategy:
             matrix:
-                os: [
-                        # { name: "windows", image: "windows-latest" },
-                        # { name: "linux", image: "ubuntu-latest" },
+                os:
+                    [
+                        { name: "windows", image: "windows-latest" },
+                        { name: "linux", image: "ubuntu-latest" },
                         { name: "macos", image: "macos-11" },
                     ]
             fail-fast: true
@@ -22,6 +23,20 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: 20
+
+            # ref: https://github.com/LinusU/node-appdmg/issues/234#issuecomment-2002410428
+            - name: Fix appdmg GHA mac runner error 1
+              if: matrix.os.name == 'macos'
+              uses: actions/setup-python@v5
+              with:
+                  python-version: 3.11
+
+            - name: Fix appdmg GHA mac runner error 2
+              if: matrix.os.name == 'macos'
+              run: |
+                  python3 -m pip install setuptools --break-system-packages
+                  npm install -g appdmg@0.6.6
+
             - run: npm install
             - name: Publish app
               env:
