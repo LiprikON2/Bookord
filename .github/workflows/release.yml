@@ -5,6 +5,7 @@ on:
     workflow_dispatch:
 jobs:
     build:
+        environment: CI
         strategy:
             matrix:
                 os:
