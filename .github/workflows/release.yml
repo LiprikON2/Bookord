@@ -24,6 +24,9 @@ jobs:
               with:
                   node-version: 16
             - run: npm ci
+            - name: Fix appdmg GHA mac runner error
+              if: matrix.os.name == 'macos'
+              run: python3 -m pip install setuptools
             - name: Publish app
               env:
                   GITHUB_TOKEN: ${{ secrets.GH_BOOKORD_RELEASE_TOKEN }}

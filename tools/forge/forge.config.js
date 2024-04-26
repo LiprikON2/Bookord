@@ -45,7 +45,7 @@ module.exports = {
         {
             name: "@electron-forge/maker-dmg",
             config: {
-                bin: "Bookord",
+                name: "Bookord",
             },
         },
         {
