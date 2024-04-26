@@ -3,7 +3,7 @@ import electronDebug from "electron-debug";
 import path from "path";
 
 import { isDev } from "~/common/helpers";
-import { registerMainIpc } from "~/main/mainIpc";
+import { registerMainIpc } from "./mainIpc";
 import {
     registerThirdPartyApiIpc,
     registerWindowControlsIpc,
