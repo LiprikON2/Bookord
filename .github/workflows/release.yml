@@ -9,10 +9,11 @@ jobs:
             matrix:
                 os:
                     [
-                        { name: "windows", image: "windows-latest" },
-                        { name: "linux", image: "ubuntu-latest" },
-                        { name: "macos", image: "macos-latest" },
+                        { name: "windows", image: "windows-latest", identifier: 1 },
+                        { name: "linux", image: "ubuntu-latest", identifier: 2 },
+                        { name: "macos", image: "macos-latest", identifier: 3 },
                     ]
+            fail-fast: false
         runs-on: ${{ matrix.os.image }}
         steps:
             - name: Github checkout
