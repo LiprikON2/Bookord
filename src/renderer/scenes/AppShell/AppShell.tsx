@@ -28,7 +28,6 @@ export type LayoutMarkup = {
     getAsideMarkup: () => SidebarMarkup;
     asideTopSection: React.ReactNode;
     scrollArea: boolean;
-    mainBoxProps: BoxProps;
 };
 
 export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
@@ -75,15 +74,15 @@ export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
             <MantineAppShell.Main>
                 {openedNavbar && <Overlay onClick={mobileCloseNavbar} backgroundOpacity={0.25} />}
 
-                {/* TODO scroll area isn't showing anymore */}
-
-                <Box className={classes.mainBox} {...layoutMarkup.mainBoxProps}>
+                <Box className={classes.mainBox} px={layoutMarkup.scrollArea ? 0 : "md"}>
                     {layoutMarkup.scrollArea ? (
                         <ScrollArea
                             h="100%"
                             type="auto"
+                            scrollbarSize={8}
                             styles={{
                                 scrollbar: { margin: "-1px", marginTop: rem(8) },
+                                viewport: { paddingInline: "var(--mantine-spacing-md)" },
                             }}
                         >
                             {children}

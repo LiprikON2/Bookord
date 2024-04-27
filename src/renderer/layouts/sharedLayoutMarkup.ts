@@ -26,9 +26,10 @@ export const getHomeMarkup = (
                     navParams: { to: "/layout-library/about" },
                 },
             ],
+            dynamicHeight: false,
         },
         {
-            tabHeading: "Books",
+            tabHeading: "Opened Books",
             tabs: openedBookRecords.map((openedBook) => ({
                 id: `/layout-reading/reading/${openedBook.bookKey}`,
                 name: openedBook.title,
@@ -40,6 +41,7 @@ export const getHomeMarkup = (
                     },
                 },
             })),
+            dynamicHeight: true,
         },
     ],
 });

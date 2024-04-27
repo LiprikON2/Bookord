@@ -3,6 +3,7 @@ import { NavLink } from "@mantine/core";
 
 import { type BookKey, Structure } from "~/renderer/stores";
 import { useTocNav } from "../hooks";
+import classes from "./TocChild.module.css";
 
 export const TocChild = ({
     recDepth = 0,
@@ -24,6 +25,7 @@ export const TocChild = ({
 
     return (
         <NavLink
+            className={classes.navLink}
             label={toc.name}
             active={isActive}
             onClick={onClick}

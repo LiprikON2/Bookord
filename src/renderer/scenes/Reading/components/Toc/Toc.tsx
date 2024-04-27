@@ -1,5 +1,4 @@
 import React from "react";
-import { Text } from "@mantine/core";
 
 import { useBookContent, type BookKey } from "~/renderer/stores";
 import { useTocNav } from "./hooks";
@@ -16,21 +15,14 @@ export const Toc = ({ bookKey }: TocProps) => {
 
     const { handleTocNav } = useTocNav();
 
-    return (
-        <>
-            <Text c="dimmed" size="sm" px="sm" mb="xs">
-                Table of contents
-            </Text>
-            {tocChildren.map((tocChild, index) => (
-                <TocChild
-                    isFirst={index === 0}
-                    key={`${tocChild.sectionId}-${index}`}
-                    toc={tocChild}
-                    onClick={() => {
-                        if (!tocChild?.children?.length) handleTocNav(tocChild.sectionId);
-                    }}
-                />
-            ))}
-        </>
-    );
+    return tocChildren.map((tocChild, index) => (
+        <TocChild
+            isFirst={index === 0}
+            key={`${tocChild.sectionId}-${index}`}
+            toc={tocChild}
+            onClick={() => {
+                if (!tocChild?.children?.length) handleTocNav(tocChild.sectionId);
+            }}
+        />
+    ));
 };

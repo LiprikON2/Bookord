@@ -25,12 +25,32 @@
     aspect-ratio: 1 / 1;
     padding: var(--mantine-spacing-xs);
 }
+.outerRoot {
+    height: unset;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    /* ref: https://stackoverflow.com/a/12198561/10744339 */
+    & > *:not(:first-child),
+    & > *:first-child:nth-last-child(1) {
+        height: unset;
+        min-height: 0;
+    }
+}
 
 .list {
     margin-right: 0.5px;
+
+    &[data-orientation="vertical"] {
+        height: unset;
+        min-height: 0;
+    }
 }
 
 .tab {
+    position: unset;
     max-width: 100%;
     padding-block: calc(var(--mantine-spacing-xs) / 2);
 
@@ -50,4 +70,20 @@
 
 .outerPanel {
     background-color: transparent !important;
+
+    display: flex;
+    flex-direction: column;
+    & > * {
+        height: unset !important;
+    }
+}
+
+.viewport {
+    & > div {
+        display: block !important;
+    }
+}
+
+.scrollbar {
+    margin: rem(2px);
 }

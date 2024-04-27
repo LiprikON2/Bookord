@@ -37,10 +37,7 @@ export const TextToSpeech = ({}: TextToSpeechProps) => {
 
     return (
         <>
-            <Text c="dimmed" size="sm" px="sm" mb="xs">
-                Text-to-Speech
-            </Text>
-            <Stack pl="sm">
+            <Stack pl="sm" pr="md">
                 <Combobox
                     disabled={ttsStatus !== "standby"}
                     size="xs"
@@ -149,9 +146,7 @@ export const TextToSpeech = ({}: TextToSpeechProps) => {
                     {ttsStatus === "standby" && (
                         <Box>
                             <Text size="sm" c="dimmed">
-                                Select text and click
-                            </Text>
-                            <Text size="sm" c="dimmed">
+                                Select text, right-click to open menu, then choose{" "}
                                 <Kbd>Text-to-Speech</Kbd> to start.
                             </Text>
                         </Box>

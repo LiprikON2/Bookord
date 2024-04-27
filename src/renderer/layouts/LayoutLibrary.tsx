@@ -18,7 +18,6 @@ const libraryLayoutMarkup: LayoutMarkup = {
     getAsideMarkup: () => [],
     asideTopSection: null,
     scrollArea: true,
-    mainBoxProps: { p: "md" },
 };
 
 export const LayoutLibrary = () => {

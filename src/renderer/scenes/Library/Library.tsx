@@ -12,7 +12,7 @@ export const Library = () => {
 
     return (
         <>
-            <Container p="lg" pt={0} h="100%">
+            <Container px="lg" py="md" h="100%">
                 <DetailedTitle size="lg">{filterTitle}</DetailedTitle>
                 <BookGrid bookGroups={bookGroups} isBookStorageEmpty={isBookStorageEmpty} />
             </Container>

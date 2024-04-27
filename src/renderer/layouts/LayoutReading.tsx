@@ -46,7 +46,6 @@ export const LayoutReading = () => {
         asideTopSection: null,
 
         scrollArea: false,
-        mainBoxProps: { px: "md", py: 0 },
     };
 
     return (

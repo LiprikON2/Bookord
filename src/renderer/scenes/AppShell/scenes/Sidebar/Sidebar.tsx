@@ -6,7 +6,7 @@ import { IconCirclePlus, type Icon } from "@tabler/icons-react";
 import context from "~/renderer/ipc/fileOperations";
 import { BookKey, BookStateOpened, bookStore, useOpenedBooks } from "~/renderer/stores";
 import { useHistory, useIsMobile } from "~/renderer/hooks";
-import { Bottom, SegmentedTabList } from "./components";
+import { Bottom, PanelContent, SegmentedTabList } from "./components";
 import classes from "./Sidebar.module.css";
 
 type Params = ToOptions["params"] & { bookKey?: BookKey };
@@ -26,6 +26,7 @@ export type SidebarTab = {
 export type SidebarInnerTab = {
     tabHeading: string;
     tabs: SidebarTab[];
+    dynamicHeight: boolean;
 };
 
 export type SidebarMarkup = {
@@ -40,7 +41,6 @@ const desktopProps = { variant: "outline" };
 const mobileProps = { variant: "pills" };
 
 // TODO use another router (<Outlet/>) to render Sidebar tabs' content
-// TODO tab panel scrollarea
 export const Sidebar = ({
     getMarkup,
     topSection,
@@ -104,6 +104,7 @@ export const Sidebar = ({
             <Tabs
                 variant="pills"
                 classNames={{
+                    root: classes.outerRoot,
                     tab: classes.outerTab,
                     panel: classes.outerPanel,
                 }}
@@ -120,9 +121,9 @@ export const Sidebar = ({
                 {markup.map((outerTab) => (
                     <Tabs.Panel key={outerTab.name} value={outerTab.name}>
                         {outerTab.Component && (
-                            <Box px="md" pl={0} py="sm">
+                            <PanelContent heading={outerTab.name}>
                                 <outerTab.Component {...outerTab.componentProps} />
-                            </Box>
+                            </PanelContent>
                         )}
                         {outerTab.innerTabs
                             .filter((innerTab) => innerTab.tabs.length)
@@ -136,39 +137,61 @@ export const Sidebar = ({
                                         tabLabel: classes.tabLabel,
                                         tabSection: classes.tabSection,
                                     }}
+                                    styles={{
+                                        root: {
+                                            ...(innerTab.dynamicHeight && {
+                                                minHeight: 0,
+                                            }),
+                                        },
+                                    }}
                                     value={activeInnerTab}
                                     onChange={(value) => changeTab(value, innerTab)}
                                     {...(isMobile ? mobileProps : desktopProps)}
                                 >
                                     <Stack p={0} m={0} gap={0} h="100%">
+                                        <Text className={classes.tabHeading} c="dimmed">
+                                            {innerTab.tabHeading}
+                                        </Text>
                                         <Tabs.List>
-                                            <Text className={classes.tabHeading} c="dimmed">
-                                                {innerTab.tabHeading}
-                                            </Text>
-
-                                            {innerTab.tabs.map((tab) => (
-                                                <Tabs.Tab
-                                                    component="div"
-                                                    key={tab.id}
-                                                    value={tab.id}
-                                                    role="link"
-                                                    leftSection={
-                                                        tab.Icon && (
-                                                            <tab.Icon className={classes.icon} />
-                                                        )
-                                                    }
-                                                    rightSection={
-                                                        tab.canBeClosed && (
-                                                            <CloseButton
-                                                                size="sm"
-                                                                onClick={(e) => closeBook(e, tab)}
-                                                            />
-                                                        )
-                                                    }
-                                                >
-                                                    {tab.name}
-                                                </Tabs.Tab>
-                                            ))}
+                                            <ScrollArea
+                                                h="100%"
+                                                w="100%"
+                                                scrollbars="y"
+                                                scrollbarSize={6}
+                                                type="hover"
+                                                classNames={{
+                                                    viewport: classes.viewport,
+                                                    scrollbar: classes.scrollbar,
+                                                }}
+                                            >
+                                                {innerTab.tabs.map((tab) => (
+                                                    <Tabs.Tab
+                                                        component="div"
+                                                        key={tab.id}
+                                                        value={tab.id}
+                                                        role="link"
+                                                        leftSection={
+                                                            tab.Icon && (
+                                                                <tab.Icon
+                                                                    className={classes.icon}
+                                                                />
+                                                            )
+                                                        }
+                                                        rightSection={
+                                                            tab.canBeClosed && (
+                                                                <CloseButton
+                                                                    size="sm"
+                                                                    onClick={(e) =>
+                                                                        closeBook(e, tab)
+                                                                    }
+                                                                />
+                                                            )
+                                                        }
+                                                    >
+                                                        {tab.name}
+                                                    </Tabs.Tab>
+                                                ))}
+                                            </ScrollArea>
                                         </Tabs.List>
                                     </Stack>
                                 </Tabs>

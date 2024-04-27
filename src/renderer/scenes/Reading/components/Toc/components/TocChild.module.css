@@ -1,0 +1,12 @@
+.navLink {
+    border-end-start-radius: var(--mantine-radius-md);
+    border-start-start-radius: var(--mantine-radius-md);
+
+    border: rem(1px) transparent solid;
+    &[data-active="true"] {
+        border-color: var(--nl-bg);
+        border-right: transparent;
+
+        background: linear-gradient(90deg, var(--nl-bg) 0%, var(--mantine-color-dark-6) 100%);
+    }
+}
