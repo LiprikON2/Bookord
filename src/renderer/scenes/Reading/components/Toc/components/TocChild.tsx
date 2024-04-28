@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import { NavLink } from "@mantine/core";
 
 import { Structure } from "~/renderer/stores";
 import { useTocNav } from "../hooks";
 import classes from "./TocChild.module.css";
-import { useMergedRef, useShallowEffect } from "@mantine/hooks";
 
 export const TocChild = ({
     recDepth = 0,

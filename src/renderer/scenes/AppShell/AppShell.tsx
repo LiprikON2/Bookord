@@ -2,7 +2,6 @@ import React from "react";
 import { useDisclosure } from "@mantine/hooks";
 import {
     Box,
-    BoxProps,
     AppShell as MantineAppShell,
     AppShellProps as MantineAppShellProps,
     Overlay,
@@ -10,10 +9,11 @@ import {
     rem,
 } from "@mantine/core";
 
-import { BookKey, type BookStateOpened } from "~/renderer/stores";
+import { type BookStateOpened } from "~/renderer/stores";
 import { ThemeToggle } from "~/renderer/components";
 import { SettingsModal, Sidebar, type SidebarMarkup, Titlebar } from "./scenes";
 import classes from "./AppShell.module.css";
+import { useIsMobile } from "~/renderer/hooks";
 
 interface AppShellProps {
     layoutMarkup: LayoutMarkup;
@@ -34,6 +34,8 @@ export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
     const [openedNavbar, { toggle: mobileToggleNavbar, close: mobileCloseNavbar }] =
         useDisclosure();
     const [openedAside, { toggle: mobileToggleAside, close: mobileCloseAside }] = useDisclosure();
+
+    const isMobile = useIsMobile();
     return (
         <MantineAppShell
             classNames={{
@@ -72,7 +74,9 @@ export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
                 ></Sidebar>
             </MantineAppShell.Aside>
             <MantineAppShell.Main>
-                {openedNavbar && <Overlay onClick={mobileCloseNavbar} backgroundOpacity={0.25} />}
+                {openedNavbar && isMobile && (
+                    <Overlay onClick={mobileCloseNavbar} backgroundOpacity={0.25} />
+                )}
 
                 <Box className={classes.mainBox} px={layoutMarkup.scrollArea ? 0 : "md"}>
                     {layoutMarkup.scrollArea ? (

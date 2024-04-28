@@ -1,5 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import { useMergedRef } from "@mantine/hooks";
+import { useContext } from "react";
 
 import { BookComponentContext } from "~/renderer/contexts";
 import { Structure } from "~/renderer/stores";

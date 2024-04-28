@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 import { useBookContent, type BookKey } from "~/renderer/stores";
 import { useTocNav } from "./hooks";
 import { TocChild } from "./components";
-import { useScrollIntoView } from "@mantine/hooks";
 
 interface TocProps {
     autoscrollTargetRef: (node: any) => void;
