@@ -1,9 +1,11 @@
-import React, { type CSSProperties } from "react";
+import React, { useCallback, type CSSProperties, useEffect } from "react";
 import { useState } from "react";
 import { FloatingIndicator, Tabs, UnstyledButton } from "@mantine/core";
 
 import classes from "./SegmentedTabList.module.css";
 import { type SidebarMarkup } from "../../Sidebar";
+import { randomId, useForceUpdate, useViewportSize } from "@mantine/hooks";
+import { useIsMobile } from "~/renderer/hooks";
 
 interface SegmentedTabListProps {
     markup: SidebarMarkup;
@@ -21,6 +23,14 @@ export const SegmentedTabList = ({ markup, showText = false, style }: SegmentedT
         controlsRefs[index] = node;
         setControlsRefs(controlsRefs);
     };
+
+    const { height, width } = useViewportSize();
+
+    // ref(bug): https://github.com/mantinedev/mantine/issues/6116#issuecomment-2071796202
+    const [key, setKey] = useState(randomId());
+    useEffect(() => {
+        setKey(randomId());
+    }, [height, width]);
 
     return (
         <Tabs.List className={classes.root} ref={setRootRef} style={style}>
@@ -40,6 +50,7 @@ export const SegmentedTabList = ({ markup, showText = false, style }: SegmentedT
                 </Tabs.Tab>
             ))}
             <FloatingIndicator
+                key={key}
                 target={controlsRefs[active]}
                 parent={rootRef}
                 className={classes.indicator}

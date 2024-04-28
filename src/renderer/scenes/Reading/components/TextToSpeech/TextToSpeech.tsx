@@ -144,7 +144,7 @@ export const TextToSpeech = ({}: TextToSpeechProps) => {
                         </>
                     )}
                     {ttsStatus === "standby" && (
-                        <Box>
+                        <Box mb="sm">
                             <Text size="sm" c="dimmed">
                                 Select text, right-click to open menu, then choose{" "}
                                 <Kbd>Text-to-Speech</Kbd> to start.
