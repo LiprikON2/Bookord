@@ -1,22 +1,25 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { NavLink } from "@mantine/core";
 
-import { type BookKey, Structure } from "~/renderer/stores";
+import { Structure } from "~/renderer/stores";
 import { useTocNav } from "../hooks";
 import classes from "./TocChild.module.css";
+import { useMergedRef, useShallowEffect } from "@mantine/hooks";
 
 export const TocChild = ({
     recDepth = 0,
     isFirst = false,
     toc,
     onClick,
+    autoscrollTargetRef,
 }: {
     recDepth?: number;
     isFirst?: boolean;
     toc?: Structure;
     onClick?: () => void;
+    autoscrollTargetRef?: (node: any) => void;
 }) => {
-    const { handleTocNav, currentSectionTitle } = useTocNav();
+    const { tocNavTo, currentSectionTitle } = useTocNav();
 
     const isOutermost = recDepth === 0;
 
@@ -28,6 +31,7 @@ export const TocChild = ({
             className={classes.navLink}
             label={toc.name}
             active={isActive}
+            ref={isActive ? autoscrollTargetRef : null}
             onClick={onClick}
             childrenOffset={16}
             defaultOpened={isOutermost}
@@ -38,7 +42,8 @@ export const TocChild = ({
                         recDepth={recDepth + 1}
                         key={`${tocChild.sectionId}-${index}`}
                         toc={tocChild}
-                        onClick={() => handleTocNav(tocChild.sectionId)}
+                        onClick={() => tocNavTo(tocChild.sectionId)}
+                        autoscrollTargetRef={autoscrollTargetRef}
                     />
                 ))}
         </NavLink>

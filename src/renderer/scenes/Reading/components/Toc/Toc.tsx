@@ -1,27 +1,30 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { useBookContent, type BookKey } from "~/renderer/stores";
 import { useTocNav } from "./hooks";
 import { TocChild } from "./components";
+import { useScrollIntoView } from "@mantine/hooks";
 
 interface TocProps {
+    autoscrollTargetRef: (node: any) => void;
     bookKey: BookKey;
 }
 
-// TODO consider https://ui.mantine.dev/category/toc/
-export const Toc = ({ bookKey }: TocProps) => {
+// TODO don't autoscroll on user clicks
+export const Toc = ({ autoscrollTargetRef, bookKey }: TocProps) => {
     const { content } = useBookContent(bookKey);
     const tocChildren = content?.structure;
 
-    const { handleTocNav } = useTocNav();
+    const { tocNavTo } = useTocNav();
 
     return tocChildren.map((tocChild, index) => (
         <TocChild
+            autoscrollTargetRef={autoscrollTargetRef}
             isFirst={index === 0}
             key={`${tocChild.sectionId}-${index}`}
             toc={tocChild}
             onClick={() => {
-                if (!tocChild?.children?.length) handleTocNav(tocChild.sectionId);
+                if (!tocChild?.children?.length) tocNavTo(tocChild.sectionId);
             }}
         />
     ));

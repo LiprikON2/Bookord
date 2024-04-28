@@ -7,3 +7,9 @@
 .scrollbar {
     margin: rem(2px);
 }
+
+.box {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}

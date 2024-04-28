@@ -122,7 +122,12 @@ export const Sidebar = ({
                     <Tabs.Panel key={outerTab.name} value={outerTab.name}>
                         {outerTab.Component && (
                             <PanelContent heading={outerTab.name}>
-                                <outerTab.Component {...outerTab.componentProps} />
+                                {(autoscrollTargetRef) => (
+                                    <outerTab.Component
+                                        autoscrollTargetRef={autoscrollTargetRef}
+                                        {...outerTab.componentProps}
+                                    />
+                                )}
                             </PanelContent>
                         )}
                         {outerTab.innerTabs
@@ -154,7 +159,6 @@ export const Sidebar = ({
                                         </Text>
                                         <Tabs.List>
                                             <ScrollArea
-                                                h="100%"
                                                 w="100%"
                                                 scrollbars="y"
                                                 scrollbarSize={6}
