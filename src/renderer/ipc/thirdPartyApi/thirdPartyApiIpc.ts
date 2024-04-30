@@ -1,8 +1,9 @@
-import { BrowserWindow, ipcMain } from "electron";
+import { ipcMain } from "electron";
 import axios from "axios";
+import { MainWindow } from "~/main/mainWindow";
 
 export const registerThirdPartyApiIpc = (
-    mainWindow: BrowserWindow,
+    mainWindow: MainWindow,
     validateSender: (e: Electron.IpcMainInvokeEvent) => boolean
 ) => {
     ipcMain.handle(

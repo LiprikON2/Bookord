@@ -321,12 +321,10 @@ export class BookStore {
         });
 
         context.getParsedContent(bookKey, initSectionIndex);
-        // TODO add types
-        //
-        // TODO probably triggers:
-        // (node:7320) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 message listeners
+        // TODO triggers warning:
+        // MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 message listeners
         // added to [ForkUtilityProcess]. Use emitter.setMaxListeners() to increase limit
-        const unsub = window.electron_window.events("parsed-content-init", (initEvent) => {
+        const unsub = context.handleParsedContentInit((initEvent) => {
             if (initEvent.bookKey !== bookKey) return;
 
             this.setBookContent(bookKey, initEvent.initContent);
@@ -338,29 +336,26 @@ export class BookStore {
             this.setBookContentState(bookKey, initContentState);
 
             const content = this.getBookContent(bookKey);
-            const unsub2 = window.electron_window.events(
-                "parsed-content-section",
-                (event: {
-                    bookKey: BookKey;
-                    sectionIndex: number;
-                    section: ArrayElement<BookContent["sections"]>;
-                }) => {
-                    if (event.bookKey !== bookKey) return;
+            const unsub2 = context.handleParsedContentSection((sectionContentEvent) => {
+                if (sectionContentEvent.bookKey !== bookKey) return;
 
-                    this.setBookContentSection(bookKey, event.sectionIndex, event.section);
+                this.setBookContentSection(
+                    bookKey,
+                    sectionContentEvent.sectionIndex,
+                    sectionContentEvent.section
+                );
 
-                    const updatedContentState = this.getContentStateFromContent(
-                        content,
-                        initSectionIndex
-                    );
-                    this.setBookContentState(bookKey, updatedContentState);
+                const updatedContentState = this.getContentStateFromContent(
+                    content,
+                    initSectionIndex
+                );
+                this.setBookContentState(bookKey, updatedContentState);
 
-                    if (updatedContentState.isFullyParsed) {
-                        unsub();
-                        unsub2();
-                    }
+                if (updatedContentState.isFullyParsed) {
+                    unsub();
+                    unsub2();
                 }
-            );
+            });
         });
     }
 

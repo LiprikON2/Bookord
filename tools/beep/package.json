@@ -26,5 +26,8 @@
     "scripts": {
         "dev": "",
         "test": ""
+    },
+    "dependencies": {
+        "audic": "^3.0.2"
     }
 }

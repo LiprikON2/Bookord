@@ -8,6 +8,9 @@ import "./components/BookWebComponent/BookWebComponent";
 import classes from "./Reading.module.css";
 
 // TODO https://eisenbergeffect.medium.com/web-components-2024-winter-update-445f27e7613a
+
+// TODO image display bug https://i.imgur.com/7nlOjZt.png
+
 export const Reading = () => {
     const { bookKey } = bookKeyRoute.useParams();
 

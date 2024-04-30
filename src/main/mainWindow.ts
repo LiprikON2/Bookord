@@ -10,22 +10,23 @@ import {
     registerStoreIpc,
     registerFileOperationsIpc,
 } from "~/renderer/appIpc";
-import io from "./utils";
+import io, { Watcher } from "./utils";
 
 export const appDir = path.resolve(app.getPath("userData"), "Books");
-console.log("[watcher]: appDir", appDir);
 
 // Electron Forge automatically creates these entry points
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
 declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-let mainWindow: BrowserWindow;
+export type MainWindow = BrowserWindow & { watcher?: Watcher };
+
+let mainWindow: MainWindow;
 
 /**
  * Create Application Window
- * @returns {BrowserWindow} Application Window Instance
+ * @returns {MainWindow} Application Window Instance
  */
-export const createMainWindow = (): BrowserWindow => {
+export const createMainWindow = (): MainWindow => {
     // Create new window instance
     mainWindow = new BrowserWindow({
         width: 1024,
@@ -98,16 +99,24 @@ export const createMainWindow = (): BrowserWindow => {
     // Register Inter Process Communication for main process
     registerAllIpc();
 
-    const watcher = io.initWatcher(mainWindow, validateSender);
+    mainWindow.watcher = new io.Watcher(appDir, mainWindow);
 
     // Close all windows when main window is closed
     mainWindow.on("close", async () => {
-        (await watcher).close().then(() => {
-            console.info("[watcher]: closed");
+        mainWindow.watcher.close().then(
+            () => {
+                console.info("[watcher]: closed");
 
-            mainWindow = null;
-            app.quit();
-        });
+                mainWindow = null;
+                app.quit();
+            },
+            () => {
+                console.error("[watcher]: failed to close");
+
+                mainWindow = null;
+                app.quit();
+            }
+        );
     });
 
     return mainWindow;

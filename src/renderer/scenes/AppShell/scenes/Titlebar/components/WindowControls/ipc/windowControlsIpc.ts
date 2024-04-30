@@ -1,7 +1,8 @@
-import { BrowserWindow, ipcMain, shell } from "electron";
+import { ipcMain, shell } from "electron";
+import { MainWindow } from "~/main/mainWindow";
 
 export const registerWindowControlsIpc = (
-    mainWindow: BrowserWindow,
+    mainWindow: MainWindow,
     validateSender: (e: Electron.IpcMainInvokeEvent) => boolean
 ) => {
     ipcMain.handle("window-minimize", (e) => {

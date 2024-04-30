@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import {
     ActionIcon,
     Box,
+    Code,
     Combobox,
+    Divider,
     Group,
+    Highlight,
     Input,
     InputBase,
     Kbd,
@@ -21,12 +24,19 @@ import {
 } from "@tabler/icons-react";
 import { useTts, useTtsVoices } from "./hooks";
 import { SliderInput } from "./components";
+import { usePlatform } from "~/renderer/hooks";
+import { useClipboard } from "@mantine/hooks";
 
 interface TextToSpeechProps {}
 
+// TODO fix dropdown overflow
+// TODO test tts on linux
+// TODO consider transforming TTS to AudioBuffer https://github.com/guest271314/SpeechSynthesisRecorder
 export const TextToSpeech = ({}: TextToSpeechProps) => {
     const [pitch, setPitch] = useState<number>(1);
     const [rate, setRate] = useState<number>(1.5);
+
+    const platform = usePlatform();
 
     const { selectedVoice, handleVoiceChange, voicesGroups } = useTtsVoices();
     const { ttsStatus, pauseTts, resumeTts, stopTts } = useTts(selectedVoice, pitch, rate);
@@ -37,6 +47,16 @@ export const TextToSpeech = ({}: TextToSpeechProps) => {
 
     return (
         <>
+            <button
+                onClick={() => {
+                    // responsiveVoice.speak("hello world");
+                    // responsiveVoice.speak("hello world", "Fallback UK Female");
+                    // responsiveVoice.speak("hello world", "Welsh Male");
+                    responsiveVoice.speak("Привет мир", "Russian Female");
+                }}
+            >
+                Test
+            </button>
             <Stack pl="sm" pr="md">
                 <Combobox
                     disabled={ttsStatus !== "standby"}
@@ -95,7 +115,10 @@ export const TextToSpeech = ({}: TextToSpeechProps) => {
                                     )
                                 )}
                                 {voicesGroups.length === 0 && (
-                                    <Combobox.Empty>No voices found</Combobox.Empty>
+                                    <Combobox.Empty>
+                                        <Text inherit>No voices found.</Text>
+                                        {platform === "linux" && <LinuxNoVoices />}
+                                    </Combobox.Empty>
                                 )}
                             </ScrollArea.Autosize>
                         </Combobox.Options>
@@ -154,5 +177,38 @@ export const TextToSpeech = ({}: TextToSpeechProps) => {
                 </Group>
             </Stack>
         </>
+    );
+};
+
+const LinuxNoVoices = () => {
+    const clipboard = useClipboard({ timeout: 500 });
+
+    const installCommand = "sudo apt install espeak speech-dispatcher";
+
+    return (
+        <Text fz={10}>
+            <Divider my="xs" />
+            <Text ta="start" inherit>
+                Do you have <Code fz={10}>espeak</Code> and <Code fz={10}>speech-dispatcher</Code>{" "}
+                installed?
+            </Text>
+            <Text mt={4} ta="start" inherit>
+                Try running: <br />
+                <Code
+                    fz={10}
+                    onClick={() => clipboard.copy(installCommand)}
+                    style={{ cursor: "pointer" }}
+                >
+                    <Highlight
+                        component="span"
+                        inherit
+                        highlight={clipboard.copied ? installCommand : ""}
+                    >
+                        {installCommand}
+                    </Highlight>
+                </Code>{" "}
+                and reopeing the app.
+            </Text>
+        </Text>
     );
 };

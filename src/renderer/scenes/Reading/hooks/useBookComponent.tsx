@@ -74,6 +74,8 @@ export const useBookComponent = (bookKey: BookKey) => {
             "Ctrl + ArrowLeft",
             () => refReadyDecorator((bookComponent: any) => bookComponent.flipNPages(-5)),
         ],
+        // TODO on linux this is workspace switching shortcut
+        // https://i.imgur.com/IzROIKD.png
         [
             "Ctrl + Alt + ArrowRight",
             () => refReadyDecorator((bookComponent: any) => bookComponent.sectionForward()),

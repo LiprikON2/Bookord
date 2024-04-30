@@ -1,9 +1,14 @@
 import { ipcRenderer } from "electron";
-import { type FSWatcher } from "chokidar";
+import type { WatcherState } from "./utils/io";
 
 const mainContext = {
     // test(): Promise<string> {
     //     return ipcRenderer.invoke("test");
+    // },
+    //
+    // for some reason ipcRenderer is undefined
+    // sendWatcherUpdate(watcherState: WatcherState): Promise<void> {
+    //     return ipcRenderer.invoke("send-watcher-update", watcherState);
     // },
 };
 

@@ -1,11 +1,11 @@
-import { BrowserWindow, dialog, ipcMain } from "electron";
+import { dialog, ipcMain } from "electron";
 import path from "path";
 
+import { MainWindow, appDir } from "~/main/mainWindow";
 import io from "~/main/utils";
-import { appDir } from "~/main/mainWindow";
 
 export const registerFileOperationsIpc = (
-    mainWindow: BrowserWindow,
+    mainWindow: MainWindow,
     validateSender: (e: Electron.IpcMainInvokeEvent) => boolean
 ) => {
     ipcMain.handle("upload-files", (e, files: FileObj[]) => {
@@ -17,6 +17,8 @@ export const registerFileOperationsIpc = (
         if (!validateSender(e)) return null;
         // TODO sync file dialog halts main process while it is opened,
         // meanwhile renderer process is responsive
+
+        // TODO doesn't go in focus on linux
         const filePaths = dialog.showOpenDialogSync({
             properties: ["openFile", "multiSelections"],
             filters: [
@@ -60,5 +62,12 @@ export const registerFileOperationsIpc = (
         if (!validateSender(e)) return null;
 
         return io.deleteFile(fileName);
+    });
+
+    ipcMain.handle("request-watcher-update", (e) => {
+        if (!validateSender(e)) return null;
+
+        const watcherState = mainWindow.watcher.getWatcherState();
+        mainWindow.webContents.send("watcher-update", watcherState);
     });
 };

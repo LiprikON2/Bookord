@@ -57,7 +57,7 @@ export const settingsMarkup: SettingsMarkup = [
     {
         label: "YandexGPT API IAM token",
         description: "IAM token for Yandex account",
-        placeholder: "t1.9euelZrInYuez5eckonHkJuZz5yZke...",
+        placeholder: "Enter your IAM token here",
         hoverDescription: "",
         tabHeading: "General",
         tab: "API",
@@ -71,7 +71,7 @@ export const settingsMarkup: SettingsMarkup = [
         label: "YandexGPT API folder ID",
         description:
             "ID of the folder for which your account has the ai.languageModels.user or higher role",
-        placeholder: "b1ggvd02ucrri...",
+        placeholder: "Enter your folder ID here",
         hoverDescription: "",
         tabHeading: "General",
         tab: "API",

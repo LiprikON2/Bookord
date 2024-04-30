@@ -1,5 +1,8 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, session } from "electron";
 import { createMainWindow } from "./mainWindow";
+
+// Electron Forge automatically creates it
+declare const APP_WINDOW_WEBPACK_ENTRY: string;
 
 // Continue the cargo cult!
 // ref: https://github.com/desktop/desktop/blob/development/app/src/main-process/main.ts
@@ -66,6 +69,21 @@ app.on("web-contents-created", (event, contents) => {
         console.log("Attempted to create webview");
         event.preventDefault();
     });
+
+    /**
+     * CORS whitelist
+     * https://stackoverflow.com/a/69762776/10744339
+     */
+    session.defaultSession.webRequest.onHeadersReceived(
+        // https://texttospeech.responsivevoice.org/
+        { urls: ["*://*.responsivevoice.org/*"] },
+        (details, callback) => {
+            details.responseHeaders["Access-Control-Allow-Origin"] = [
+                new URL(APP_WINDOW_WEBPACK_ENTRY).host,
+            ];
+            callback({ responseHeaders: details.responseHeaders });
+        }
+    );
 });
 
 /**
@@ -85,3 +103,11 @@ app.on("window-all-closed", () => {
  * In this file you can include the rest of your app's specific main process code.
  * You can also put them in separate files and import them here.
  */
+
+/**
+ * Text-to-Speech support on linux
+ *
+ * ref: https://github.com/electron/electron/issues/4452#issuecomment-183471146
+ */
+app.commandLine.appendSwitch("enable-speech-dispatcher");
+app.commandLine.appendSwitch("enable-speech-synthesis");

@@ -1,11 +1,12 @@
-import { BrowserWindow, MessageChannelMain, app, ipcMain, utilityProcess } from "electron";
+import { MessageChannelMain, app, ipcMain, utilityProcess } from "electron";
 import path from "path";
 
 import io, { getResponse } from "~/main/utils";
 import { type BookContent } from "../..";
+import { MainWindow } from "~/main/mainWindow";
 
 export const registerStoreIpc = (
-    mainWindow: BrowserWindow,
+    mainWindow: MainWindow,
     validateSender: (e: Electron.IpcMainInvokeEvent) => boolean
 ) => {
     ipcMain.handle("get-parsed-metadata", async (e, fileNames: string[]) => {
@@ -17,13 +18,6 @@ export const registerStoreIpc = (
             "../forks/metadataParsingProcess.mjs"
         );
 
-        app.whenReady().then(() => {
-            console.log("ready");
-        });
-
-        await app.whenReady();
-
-        console.log("forking", metadataParsingProcess);
         const child = utilityProcess.fork(metadataParsingProcess, [], {
             serviceName: "Book metadata parsing utility process",
         });
@@ -43,13 +37,7 @@ export const registerStoreIpc = (
             __dirname,
             "../forks/contentsParsingProcess.mjs"
         );
-        app.whenReady().then(() => {
-            console.log("ready");
-        });
 
-        await app.whenReady();
-
-        console.log("forking", contentsParsingProcess);
         const child = utilityProcess.fork(contentsParsingProcess, [], {
             serviceName: "Book content parsing utility process",
         });

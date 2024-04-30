@@ -1,16 +1,17 @@
 import chokidar from "chokidar";
 import path from "path";
 import fs from "fs-extra";
-import os from "os";
+import { MainWindow, appDir } from "../mainWindow";
 
-import { appDir } from "../mainWindow";
-import { ipcRenderer, type BrowserWindow, ipcMain } from "electron";
+export type WatcherState = {
+    bookKeys: string[];
+};
 
 export const addFiles = (appDir: string, files: FileObj[] = []) => {
     // Ensure `appDir` folder exists
     fs.ensureDirSync(appDir);
 
-    let distinctFilesCount = files.length;
+    let newFilesCount = files.length;
     // Copy `files` recursively (ignore duplicate file names)
     files.forEach((file) => {
         const filePath = path.resolve(appDir, file.name);
@@ -18,68 +19,14 @@ export const addFiles = (appDir: string, files: FileObj[] = []) => {
         if (!fs.existsSync(filePath)) {
             fs.copyFileSync(file.path, filePath);
         } else {
-            distinctFilesCount--;
+            newFilesCount--;
         }
     });
     // Don't display notification if all files are duplicates
-    if (distinctFilesCount !== 0) {
+    if (newFilesCount !== 0) {
         // notification.filesAdded(newFilesCount);
     }
-    return distinctFilesCount;
-};
-
-export const initWatcher = (
-    mainWindow: BrowserWindow,
-    validateSender: (e: Electron.IpcMainInvokeEvent) => boolean
-) => {
-    const watcher = chokidar.watch(appDir);
-
-    ipcMain.handle("watcher-send-update", async (e) => {
-        if (!validateSender(e)) return null;
-
-        const watcherEvent = {
-            bookKeys: watcher.getWatched()[appDir],
-            update: {
-                action: "get-list",
-            },
-        };
-
-        mainWindow.webContents.send("watcher-update", watcherEvent);
-        return;
-    });
-
-    watcher.on("add", (filePath) => {
-        const fileName = path.parse(filePath).base;
-        console.info("[watcher]: was added:", fileName);
-
-        const watcherEvent = {
-            bookKeys: watcher.getWatched()[appDir],
-            update: {
-                action: "add",
-                fileName,
-            },
-        };
-
-        mainWindow.webContents.send("watcher-add", watcherEvent);
-        // TODO add types
-        mainWindow.webContents.send("watcher-update", watcherEvent);
-    });
-    watcher.on("unlink", (filePath) => {
-        const fileName = path.parse(filePath).base;
-        console.info("[watcher]: was deleted:", fileName);
-
-        const watcherEvent = {
-            bookKeys: watcher.getWatched()[appDir],
-            update: {
-                action: "remove",
-                fileName,
-            },
-        };
-        mainWindow.webContents.send("watcher-delete", watcherEvent);
-        mainWindow.webContents.send("watcher-update", watcherEvent);
-    });
-
-    return watcher;
+    return newFilesCount;
 };
 
 export const namesToPaths = (fileNames: string[]) => {
@@ -95,4 +42,77 @@ export const deleteFile = (fileName: string) => {
     }
 };
 
-export default { initWatcher, addFiles, namesToPaths, deleteFile };
+export class Watcher {
+    appDir;
+    watcher;
+    constructor(appDir: string, mainWindow: MainWindow) {
+        this.appDir = appDir;
+        this.watcher = chokidar.watch(appDir);
+        console.info("[watcher]: appDir", appDir);
+
+        // Added file event
+        this.watcher.on("add", (filePath) => {
+            const fileName = path.parse(filePath).base;
+            console.info("[watcher]: was added:", fileName);
+
+            const watcherState = this.getWatcherState();
+            mainWindow.webContents.send("watcher-update", watcherState);
+        });
+        // Removed file event
+        this.watcher.on("unlink", (filePath) => {
+            const fileName = path.parse(filePath).base;
+            console.info("[watcher]: was deleted:", fileName);
+
+            const watcherState = this.getWatcherState();
+            mainWindow.webContents.send("watcher-update", watcherState);
+        });
+    }
+
+    getWatcherState = (): WatcherState => {
+        const watcherState = {
+            bookKeys: this.watcher.getWatched()[this.appDir],
+        };
+        return watcherState;
+    };
+
+    close() {
+        return this.watcher.close();
+    }
+}
+
+// export const watcher = chokidar.watch(appDir);
+
+// export const getWatcherState = (): WatcherState => {
+//     const watcherState = {
+//         bookKeys: watcher.getWatched()[appDir],
+//     };
+//     return watcherState;
+// };
+
+// app.on("ready", () => {
+//     // Added file event
+//     watcher.on("add", (filePath) => {
+//         const fileName = path.parse(filePath).base;
+//         console.info("[watcher]: was added:", fileName);
+
+//         const watcherState = getWatcherState();
+//         context.sendWatcherUpdate(watcherState);
+//     });
+//     // Removed file event
+//     watcher.on("unlink", (filePath) => {
+//         const fileName = path.parse(filePath).base;
+//         console.info("[watcher]: was deleted:", fileName);
+
+//         const watcherState = getWatcherState();
+//         context.sendWatcherUpdate(watcherState);
+//     });
+// });
+
+export default {
+    // getWatcherState,
+    // watcher,
+    Watcher,
+    addFiles,
+    namesToPaths,
+    deleteFile,
+};

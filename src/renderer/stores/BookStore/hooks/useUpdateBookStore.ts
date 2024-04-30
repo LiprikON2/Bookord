@@ -1,21 +1,18 @@
 import { useEffect } from "react";
 
-import context from "../ipc";
-import { bookStore, type BookKey } from "..";
+import context from "~/renderer/ipc/fileOperations";
+import { bookStore } from "..";
 
 export const useUpdateBookStore = () => {
     /* Requests initial watcher update */
     useEffect(() => {
-        context.watcherSendUpdate();
+        context.requestWatcherUpdate();
     }, []);
-    /* Handles updating store when watcher updates are received  */
+    /* Updates store when watcher updates are received  */
     useEffect(() => {
-        // TODO move in a separate context file; add types
-        const unsub = window.electron_window.events("watcher-update", (({
-            bookKeys,
-        }: {
-            bookKeys: BookKey[];
-        }) => bookStore.updateStore(bookKeys)) as any);
+        const unsub = context.handleWatcherUpdate(({ bookKeys }) =>
+            bookStore.updateStore(bookKeys)
+        );
 
         return () => unsub();
     }, []);

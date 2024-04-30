@@ -1,10 +1,12 @@
-import { type BrowserWindow, ipcMain, shell } from "electron";
+import { ipcMain } from "electron";
+
+import { type WatcherState } from "./utils/io";
+import { MainWindow } from "./mainWindow";
 
 export const registerMainIpc = (
-    mainWindow: BrowserWindow,
+    mainWindow: MainWindow,
     validateSender: (e: Electron.IpcMainInvokeEvent) => boolean
 ) => {
-    console.log("");
     // ipcMain.handle("test", async (e) => {
     //     if (!validateSender(e)) return null;
     //     // const res = fetch("https://google.com");
@@ -12,5 +14,10 @@ export const registerMainIpc = (
     //         resolve("HUUUH!");
     //     });
     //     return res;
+    // });
+    //
+    // ipcMain.handle("send-watcher-update", async (e, watcherState: WatcherState) => {
+    //     if (!validateSender(e)) return null;
+    //     mainWindow.webContents.send("watcher-update", watcherState);
     // });
 };

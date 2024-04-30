@@ -140,14 +140,14 @@ export default class BookWebComponent extends HTMLElement {
     loadSection(sectionIndex: number, position?: Position) {
         const mergedPosition = { ...this.initPosition, ...position };
 
-        console.log("loadSection>", sectionIndex, mergedPosition);
+        // console.log("loadSection>", sectionIndex, mergedPosition);
 
         const sectionContent = this.getSection(sectionIndex);
         if (!sectionContent) return;
 
         this.stateManager.updateState(this.book, sectionIndex);
 
-        console.log("book>", sectionIndex, mergedPosition, this.book.sectionNames[sectionIndex]);
+        // console.log("book>", sectionIndex, mergedPosition, this.book.sectionNames[sectionIndex]);
 
         // this.bookLoader.loadStyles(this.book.styles, sectionContent);
         this.loadContent(sectionContent);
