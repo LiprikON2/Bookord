@@ -111,6 +111,7 @@ const getTocProps = (
 
 // TODO fix Structure's `sectionId` (e.g. Warlock.epub structure has duplicate a1Title.xhtml, a1Credits.xhtml)
 export const useTocNav = (tocChildren: Structure[]) => {
+    // TODO split ref and uiState contexts
     const { contextRef } = useContext(BookComponentContext);
     const { tocState } = useContext(BookComponentTocContext);
 
