@@ -6,7 +6,7 @@ import { AppShell, LayoutMarkup, TextToSpeech } from "~/renderer/scenes";
 import { getHomeMarkup } from "./sharedLayoutMarkup";
 import { Toc } from "../scenes/Reading/components/Toc";
 import { bookKeyRoute } from "../appRenderer";
-import { BookComponentContextProvider } from "../contexts";
+import { BookComponentContextProvider, BookComponentTocContextProvider } from "../contexts";
 
 export const LayoutReading = () => {
     const { bookKey } = bookKeyRoute.useParams();
@@ -50,9 +50,11 @@ export const LayoutReading = () => {
 
     return (
         <BookComponentContextProvider>
-            <AppShell layoutMarkup={readingLayoutMarkup}>
-                <Outlet />
-            </AppShell>
+            <BookComponentTocContextProvider>
+                <AppShell layoutMarkup={readingLayoutMarkup}>
+                    <Outlet />
+                </AppShell>
+            </BookComponentTocContextProvider>
         </BookComponentContextProvider>
     );
 };

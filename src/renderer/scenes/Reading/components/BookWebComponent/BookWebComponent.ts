@@ -20,9 +20,16 @@ type Book = BookContent & {
     metadata: BookMetadata;
 };
 
+export type TocState = {
+    currentSectionName: string | null;
+    currentSection: number | null;
+    currentSectionTitle: string | null;
+    sectionNames: string[] | null;
+};
 export interface BookWebComponentEventMap extends HTMLElementEventMap {
     imgClickEvent: MouseEvent;
     uiStateUpdate: Event & { detail: UiState };
+    tocStateUpdate: Event & { detail: TocState };
     contextMenuEvent: MouseEvent & {
         detail: {
             e: MouseEvent;
@@ -134,6 +141,14 @@ export default class BookWebComponent extends HTMLElement {
         };
     }
 
+    get currentSectionName(): TocState["currentSectionName"] {
+        if (!this.book?.sectionNames) return null;
+
+        const { currentSection } = this.stateManager.book;
+        const currentSectionName = this.book.sectionNames[currentSection];
+        return currentSectionName;
+    }
+
     /**
      * Loads specified book section along with its styles, sets event listeners, updates UI and saves interaction progress
      */
@@ -168,6 +183,13 @@ export default class BookWebComponent extends HTMLElement {
         this.processContentImages();
         this.processContentLinks();
         this.processContentElements();
+
+        this.emitTocStateUpdate({
+            currentSectionName: this.currentSectionName,
+            sectionNames: this.book.sectionNames,
+            currentSection: this.stateManager.book.currentSection,
+            currentSectionTitle: this.stateManager.section.title,
+        });
     }
 
     /**
@@ -254,10 +276,10 @@ export default class BookWebComponent extends HTMLElement {
     handleLink(e: Event) {
         e.preventDefault();
         const target = e.currentTarget as HTMLAnchorElement;
-        let [sectionId, markerId] = target.href.split("#").pop().split(",");
+        let [sectionName, markerId] = target.href.split("#").pop().split(",");
         markerId = "#" + markerId;
 
-        const isLinkValid = this.navToLink(sectionId, markerId);
+        const isLinkValid = this.navToLink(sectionName, markerId);
 
         // Opens link in external browser
         if (!isLinkValid && target.href) window.open(target.href, "_blank");
@@ -559,6 +581,19 @@ export default class BookWebComponent extends HTMLElement {
         });
 
         this.dispatchEvent(uiStateUpdateEvent);
+    }
+    /**
+     * Emits "tocStateUpdate"
+     */
+    emitTocStateUpdate(tocState: TocState) {
+        const tocStateUpdateEvent = new CustomEvent("tocStateUpdate", {
+            bubbles: true,
+            cancelable: false,
+            composed: true,
+            detail: tocState,
+        });
+
+        this.dispatchEvent(tocStateUpdateEvent);
     }
 
     /**

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import { useBookContent, type BookKey, bookStore } from "~/renderer/stores";
 import { useTocNav } from "./hooks";
@@ -15,21 +15,9 @@ export const Toc = ({ autoscrollTargetRef, bookKey }: TocProps) => {
     const { content } = useBookContent(bookKey);
     const tocChildren = content?.structure;
 
-    const { tocNavTo } = useTocNav();
+    const { tocProps } = useTocNav(tocChildren);
 
-    console.log("\n\nTOC rerender");
-
-    return tocChildren.map((tocChild, index) => (
-        <TocChild
-            // TODO uncomment
-            // autoscrollTargetRef={autoscrollTargetRef}
-            autoscrollTargetRef={null}
-            isFirst={index === 0}
-            key={`${tocChild.sectionId}-${index}`}
-            toc={tocChild}
-            onClick={() => {
-                if (!tocChild?.children?.length) tocNavTo(tocChild.sectionId);
-            }}
-        />
+    return tocProps.map((tocProp) => (
+        <TocChild {...tocProp} autoscrollTargetRef={autoscrollTargetRef} />
     ));
 };

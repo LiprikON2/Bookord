@@ -1,55 +1,90 @@
-import React, { memo } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { NavLink } from "@mantine/core";
 
 import { Structure } from "~/renderer/stores";
-import { useTocNav } from "../hooks";
 import classes from "./TocChild.module.css";
+
+export interface TocChildProps {
+    key?: string;
+    recDepth: number;
+    isSelected: boolean;
+    toc: Omit<Structure, "children">;
+    onClick: () => void;
+    tocProps: TocChildProps[] | null;
+    hasSelectedChild?: boolean;
+    autoscrollTargetRef?: (node: any) => void;
+    isVisible?: boolean;
+    onSelected?: () => void;
+}
+
+const propsAreEqual = (
+    prevProps: Readonly<TocChildProps>,
+    nextProps: Readonly<TocChildProps>
+): boolean => {
+    const areCurrentPropsEqual =
+        prevProps.isSelected === nextProps.isSelected &&
+        prevProps.hasSelectedChild === nextProps.hasSelectedChild;
+    if (!areCurrentPropsEqual) return areCurrentPropsEqual;
+
+    const areChildPropsNull = prevProps.tocProps === nextProps.tocProps;
+    if (areChildPropsNull) return areCurrentPropsEqual;
+
+    const areChildPropsSameLength = prevProps?.tocProps?.length !== nextProps?.tocProps?.length;
+    if (areChildPropsSameLength) return false;
+
+    return prevProps.tocProps.every((prevChildProps, index) =>
+        propsAreEqual(prevChildProps, nextProps.tocProps[index])
+    );
+};
 
 // ref: https://github.com/facebook/react/issues/15156#issuecomment-474590693
 export const TocChild = memo(
     ({
-        recDepth = 0,
-        isFirst = false,
+        isSelected,
+        onSelected,
+        hasSelectedChild,
         toc,
         onClick,
         autoscrollTargetRef,
-    }: {
-        recDepth?: number;
-        isFirst?: boolean;
-        toc?: Structure;
-        onClick?: () => void;
-        autoscrollTargetRef?: (node: any) => void;
-    }) => {
-        // TODO perfomance issue
-        // const { tocNavTo, currentSectionTitle } = useTocNav();
+        tocProps,
+        isVisible = true,
+    }: TocChildProps) => {
+        const [unfolded, setUnfolded] = useState(hasSelectedChild);
 
-        const isOutermost = recDepth === 0;
+        useEffect(() => {
+            if (isSelected && onSelected) onSelected();
+        }, [isSelected]);
 
-        // const isActive =
-        //     toc.name === currentSectionTitle || (isFirst && isOutermost && !currentSectionTitle);
-        const isActive = false;
-        console.log("\t rerender");
+        const getRef = () => {
+            if (isSelected && isVisible) return autoscrollTargetRef;
+            return null;
+        };
+
         return (
             <NavLink
+                my={2}
+                childrenOffset={16}
                 className={classes.navLink}
                 label={toc.name}
-                active={isActive}
-                ref={isActive ? autoscrollTargetRef : null}
+                active={isSelected || hasSelectedChild}
+                ref={getRef()}
                 onClick={onClick}
-                childrenOffset={16}
-                defaultOpened={isOutermost}
+                opened={unfolded}
+                onChange={setUnfolded}
             >
-                {toc?.children?.length &&
-                    toc.children.map((tocChild, index) => (
-                        <TocChild
-                            recDepth={recDepth + 1}
-                            key={`${tocChild.sectionId}-${index}`}
-                            toc={tocChild}
-                            autoscrollTargetRef={autoscrollTargetRef}
-                            // onClick={() => tocNavTo(tocChild.sectionId)}
-                        />
-                    ))}
+                {tocProps?.map((tocProp) => (
+                    <TocChild
+                        {...tocProp}
+                        onSelected={() => {
+                            if (onSelected) onSelected();
+                            setUnfolded(true);
+                        }}
+                        autoscrollTargetRef={autoscrollTargetRef}
+                        isVisible={isVisible && unfolded}
+                    />
+                ))}
             </NavLink>
         );
-    }
+    },
+    propsAreEqual
 );

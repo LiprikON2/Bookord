@@ -99,11 +99,12 @@ export const createMainWindow = (): MainWindow => {
     // Register Inter Process Communication for main process
     registerAllIpc();
 
-    mainWindow.watcher = new io.Watcher(appDir, mainWindow);
+    const watcher = new io.Watcher(appDir, mainWindow);
+    mainWindow.watcher = watcher;
 
     // Close all windows when main window is closed
     mainWindow.on("close", async () => {
-        mainWindow.watcher.close().then(
+        watcher.close().then(
             () => {
                 console.info("[watcher]: closed");
 

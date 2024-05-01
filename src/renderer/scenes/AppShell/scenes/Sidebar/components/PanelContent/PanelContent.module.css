@@ -1,6 +1,7 @@
 .viewport {
     & > div {
         display: block !important;
+        height: unset !important;
     }
 }
 

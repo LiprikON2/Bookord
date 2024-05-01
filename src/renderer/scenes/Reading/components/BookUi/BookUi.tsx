@@ -2,21 +2,15 @@ import React, { forwardRef } from "react";
 
 import { Box, Group, Stack, Text } from "@mantine/core";
 
+interface BookUiProps {
+    title: string;
+    uiState: UiState;
+    visible?: boolean;
+    children?: React.ReactNode;
+}
+
 export const BookUi = forwardRef(
-    (
-        {
-            title,
-            uiState,
-            visible = true,
-            children,
-        }: {
-            title: string;
-            uiState: UiState;
-            visible?: boolean;
-            children?: React.ReactNode;
-        },
-        ref
-    ) => {
+    ({ title, uiState, visible = true, children }: BookUiProps, ref) => {
         return (
             <Stack h="100%" gap={4} ref={ref as any}>
                 <Group justify="center" px={4}>

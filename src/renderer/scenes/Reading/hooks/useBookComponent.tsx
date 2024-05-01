@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { useHotkeys } from "@mantine/hooks";
 import { useContextMenu } from "mantine-contextmenu";
 
-import { BookComponentContext } from "~/renderer/contexts";
+import { BookComponentContext, BookComponentTocContext } from "~/renderer/contexts";
 import { BookKey, useBookContent, useBookMetadata } from "~/renderer/stores";
 import BookWebComponent, { BookWebComponentEventMap } from "../components/BookWebComponent";
 import { useWebComponent } from "./useWebComponent";
@@ -16,6 +16,8 @@ export const useBookComponent = (bookKey: BookKey) => {
 
     const { setContextRef, contextUiState, setContextUiState, setTtsTarget } =
         useContext(BookComponentContext);
+
+    const { setTocState } = useContext(BookComponentTocContext);
 
     const { showContextMenu } = useContextMenu();
 
@@ -31,6 +33,10 @@ export const useBookComponent = (bookKey: BookKey) => {
             {
                 type: "uiStateUpdate",
                 listener: (e) => setContextUiState(e.detail),
+            },
+            {
+                type: "tocStateUpdate",
+                listener: (e) => setTocState(e.detail),
             },
             {
                 type: "contextMenuEvent",
