@@ -57,8 +57,8 @@ export default class PageCounter {
         // TODO start counting pages near where user left off (0th bookmark)
         await this.#asyncForEach(book.sectionNames, async (sectionName, sectionIndex) => {
             const section = childComponent.getSection(sectionIndex);
-            await childComponent.bookLoader.loadStyles(section);
-            await childComponent.bookLoader.loadContent(section);
+            await childComponent.styleLoader.loadStyles(section);
+            await childComponent.styleLoader.loadContent(section);
 
             const totalSectionPages = childComponent.countSectionPages();
 

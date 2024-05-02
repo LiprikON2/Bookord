@@ -42,10 +42,48 @@ export type Structure = {
     children: Structure[];
 };
 
+export interface SectionContent {
+    children: {
+        tag: string;
+        attrs?: {
+            href?: string;
+            alt?: string;
+            class?: string;
+            hidden?: any;
+            id?: string;
+            style?: string;
+            title?: string;
+        };
+        children: { text?: string; type: number }[];
+    }[];
+}
+
+export interface BookStyles {
+    comment: string | null;
+    date: Date;
+    dir: boolean;
+    dosPermissions: null;
+    options: any;
+    unixPermissions: number;
+
+    href: string | null;
+    /**
+     * Raw CSS code string
+     */
+    _data?: string;
+    _initialMetadata?: {
+        date: Date;
+        dir: boolean;
+    };
+}
+
 export type BookContent = {
-    styles: object[];
+    styles: BookStyles[];
     structure: Structure[];
-    sections: { id: string; content: object[] | null }[];
+    sections: {
+        id: string;
+        content: SectionContent[] | null;
+    }[];
 };
 
 export type BookStoreState = {

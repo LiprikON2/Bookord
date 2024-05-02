@@ -1,7 +1,7 @@
 import debounce from "lodash/debounce";
 
 import PageCounter from "./components/PageCounter";
-import BookLoader from "./components/BookLoader";
+import StyleLoader from "./components/StyleLoader";
 import BookmarkManager from "./components/BookmarkManager";
 import StateManager from "./components/StateManager";
 import { template } from "./components/Template";
@@ -47,7 +47,7 @@ export default class BookWebComponent extends HTMLElement {
     rootElem: HTMLElement;
     contentElem: HTMLElement;
     componentStyle: CSSStyleDeclaration;
-    bookLoader: BookLoader;
+    styleLoader: StyleLoader;
     stateManager: StateManager;
     book: Book;
 
@@ -64,9 +64,9 @@ export default class BookWebComponent extends HTMLElement {
         this.componentStyle = getComputedStyle(this.rootElem);
 
         // this.pageCounter = new PageCounter(this);
-        this.bookLoader = new BookLoader(this);
-        // this.bookmarkManager = new BookmarkManager(this);
+        this.styleLoader = new StyleLoader(this);
         this.stateManager = new StateManager(this);
+        // this.bookmarkManager = new BookmarkManager(this);
 
         // this.isQuitting = false;
         // this.pageTopMostElem = null;
@@ -164,7 +164,7 @@ export default class BookWebComponent extends HTMLElement {
 
         // console.log("book>", sectionIndex, mergedPosition, this.book.sectionNames[sectionIndex]);
 
-        // this.bookLoader.loadStyles(this.book.styles, sectionContent);
+        this.styleLoader.loadStyles(this.book.styles, sectionContent);
         this.loadContent(sectionContent);
 
         this.navigateToPosition(mergedPosition);
