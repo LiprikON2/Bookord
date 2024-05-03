@@ -79,9 +79,11 @@ export const createMainWindow = (): MainWindow => {
 
     // Show window when its ready to
     mainWindow.on("ready-to-show", () => {
-        mainWindow.maximize();
-        mainWindow.focus();
-        !isDev() && mainWindow.show();
+        mainWindow.show();
+        if (!isDev()) {
+            mainWindow.maximize();
+            mainWindow.focus();
+        }
     });
 
     // Only do these things when in development

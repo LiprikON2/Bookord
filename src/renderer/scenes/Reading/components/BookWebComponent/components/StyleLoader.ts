@@ -1,12 +1,7 @@
-import { BookContent } from "~/renderer/stores";
-import BookWebComponent from "../BookWebComponent";
+import type { BookContent } from "~/renderer/stores";
 
 export default class StyleLoader {
-    private shadowRoot;
-
-    constructor(private bookComponent: BookWebComponent) {
-        this.shadowRoot = this.bookComponent.shadowRoot;
-    }
+    constructor(private styleElem: HTMLElement) {}
 
     /**
      * Collects book's styles and adds them to the book component
@@ -15,17 +10,15 @@ export default class StyleLoader {
         styles: BookContent["styles"],
         sectionContent: ArrayElement<BookContent["sections"]>["content"]
     ) {
-        const styleElem = this.shadowRoot.getElementById("book-style");
-
         const sectionStyles = this.getSectionStyleReferences(sectionContent);
         const inlineStyles = this.getSectionInlineStyles(sectionContent);
 
-        styleElem.innerHTML = inlineStyles;
+        this.styleElem.innerHTML += inlineStyles;
 
         // Appends all of the referenced styles to the style element
         Object.values(styles).forEach((style) => {
             if (sectionStyles.includes(style.href)) {
-                styleElem.innerHTML += style._data;
+                this.styleElem.innerHTML += style._data;
             }
         });
     }

@@ -24,20 +24,20 @@ class SectionState {
     get currentPage() {
         const displayWidth = this.#parentComponent.displayWidth;
         const currentOffset = this.#parentComponent.currentOffset;
-        const currentPage = currentOffset / displayWidth;
-        return currentPage;
+
+        const unroundedCurrentPage = currentOffset / displayWidth;
+        const roundedCurrentPage = Math.round(unroundedCurrentPage);
+
+        return roundedCurrentPage;
     }
     get totalPages() {
         const totalWidth = this.#parentComponent.totalDisplayWidth;
         const displayWidth = this.#parentComponent.displayWidth;
 
-        const sectionPages = totalWidth / displayWidth;
-        const rounded = Math.round(sectionPages);
+        const unroundedSectionPages = totalWidth / displayWidth;
+        const roundedSectionPages = Math.round(unroundedSectionPages);
 
-        if (Math.abs(rounded - sectionPages) > 0.01)
-            console.log("Warning! countSectionPages rounding error", rounded, sectionPages);
-
-        return rounded;
+        return roundedSectionPages;
     }
     get firstPage() {
         return 0;
@@ -79,13 +79,6 @@ export default class StateManager {
         throw new Error("Couldn't get section book page belonged to.");
     }
 
-    getCurrentSectionPage() {
-        const displayWidth = this.#parentComponent.displayWidth;
-        const currentOffset = this.#parentComponent.currentOffset;
-
-        const currentPage = currentOffset / displayWidth;
-        return currentPage;
-    }
     getTotalSectionPages(sectionIndex) {
         return this.sectionPagesArr[sectionIndex];
     }
