@@ -1,18 +1,22 @@
+import React from "react";
 import { IconCopy, IconSpeakerphone } from "@tabler/icons-react";
 import { useContext, useEffect, useState } from "react";
 import { useHotkeys } from "@mantine/hooks";
 import { useContextMenu } from "mantine-contextmenu";
+import { toJS } from "mobx";
 
 import { BookComponentContext, BookComponentTocContext } from "~/renderer/contexts";
-import { BookKey, useBookContent, useBookMetadata } from "~/renderer/stores";
+import { BookKey, useBookContent, useBookInteractions, useBookMetadata } from "~/renderer/stores";
 import BookWebComponent, { BookWebComponentEventMap } from "../components/BookWebComponent";
 import { useWebComponent } from "./useWebComponent";
 import classes from "./useBookComponent.module.css";
-import React from "react";
 
 export const useBookComponent = (bookKey: BookKey) => {
     const metadata = useBookMetadata(bookKey);
-    const { content, contentState } = useBookContent(bookKey, 0);
+    const { autobookmark, setAutobookmark } = useBookInteractions(bookKey);
+    console.log("autobookmark", toJS(autobookmark), bookKey);
+
+    const { content, contentState } = useBookContent(bookKey, autobookmark?.elementSection ?? 0);
 
     const { setContextRef, contextUiState, setContextUiState, setTtsTarget } =
         useContext(BookComponentContext);
@@ -21,6 +25,7 @@ export const useBookComponent = (bookKey: BookKey) => {
 
     const { showContextMenu } = useContextMenu();
 
+    // prettier-ignore
     const [bookComponentRef, setBookComponentRef, refReadyDecorator] = useWebComponent<
         BookWebComponentEventMap,
         BookWebComponent
@@ -28,15 +33,23 @@ export const useBookComponent = (bookKey: BookKey) => {
         [
             {
                 type: "imgClickEvent",
-                listener: () => console.log("click"),
+                listener: (e: BookWebComponentEventMap["imgClickEvent"]) => console.log("click"),
             },
             {
-                type: "uiStateUpdate",
-                listener: (e) => setContextUiState(e.detail),
+                type: "uiStateUpdateEvent",
+                listener: (e: BookWebComponentEventMap["uiStateUpdateEvent"]) =>
+                    setContextUiState(e.detail),
             },
             {
-                type: "tocStateUpdate",
-                listener: (e) => setTocState(e.detail),
+                type: "tocStateUpdateEvent",
+                listener: (e: BookWebComponentEventMap["tocStateUpdateEvent"]) =>
+                    setTocState(e.detail),
+            },
+            {
+                type: "autobookmarkPositionEvent",
+                listener: (e: BookWebComponentEventMap["autobookmarkPositionEvent"]) => 
+                    setAutobookmark(e.detail.bookmark)
+                ,
             },
             {
                 type: "contextMenuEvent",
@@ -96,6 +109,7 @@ export const useBookComponent = (bookKey: BookKey) => {
     const isReadyToDisplay = Boolean(bookComponentRef.current && contentState.isInitSectionParsed);
 
     useEffect(() => {
+        console.log("loading book", isReadyToDisplay);
         if (isReadyToDisplay) bookComponentRef.current.loadBook(contentState, content, metadata);
     }, [isReadyToDisplay]);
 

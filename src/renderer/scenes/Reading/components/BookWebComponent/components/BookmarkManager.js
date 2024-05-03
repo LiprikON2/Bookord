@@ -76,7 +76,7 @@ export default class BookmarkManager {
      * @listens Event
      * @return {void}
      */
-    emitSaveBookmarks = debounce((e) => {
+    emitSaveBookmarks(e) {
         let book;
         if (this.#parentComponent.status !== "sectionReady") {
             book = this.#parentComponent.book;
@@ -98,7 +98,7 @@ export default class BookmarkManager {
 
             this.#parentComponent.dispatchEvent(saveBookmarksEvent); // todo uncomment
         });
-    }, 500);
+    }
 
     /**
      * Returns true if bookmark object has "sectionIndex" and "elementIndex" keys, throws error otherwise

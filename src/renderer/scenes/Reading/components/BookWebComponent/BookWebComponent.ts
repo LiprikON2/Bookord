@@ -5,7 +5,7 @@ import StyleLoader from "./components/StyleLoader";
 import BookmarkManager from "./components/BookmarkManager";
 import StateManager from "./components/StateManager";
 import { template } from "./components/Template";
-import { BookContent, BookContentState, BookMetadata } from "~/renderer/stores";
+import { BookContent, BookContentState, BookMetadata, Bookmark } from "~/renderer/stores";
 import { isDev } from "~/common/helpers";
 
 type Position = {
@@ -29,8 +29,8 @@ export type TocState = {
 };
 export interface BookWebComponentEventMap extends HTMLElementEventMap {
     imgClickEvent: MouseEvent;
-    uiStateUpdate: Event & { detail: UiState };
-    tocStateUpdate: Event & { detail: TocState };
+    uiStateUpdateEvent: Event & { detail: UiState };
+    tocStateUpdateEvent: Event & { detail: TocState };
     contextMenuEvent: MouseEvent & {
         detail: {
             e: MouseEvent;
@@ -39,9 +39,13 @@ export interface BookWebComponentEventMap extends HTMLElementEventMap {
             selectedText: string;
         };
     };
+
+    autobookmarkPositionEvent: Event & {
+        detail: { bookmark: Bookmark };
+    };
 }
 
-interface VisibleContentElem {
+interface BookmarkableContentElement {
     element: Element | null;
     intersectionRatio: number | null;
 }
@@ -58,11 +62,19 @@ export default class BookWebComponent extends HTMLElement {
     private styleLoader: StyleLoader;
     private state: StateManager;
     private resizeObserver: ResizeObserver;
+    /**
+     * Updates `bookmarkElem`, which is used to keep track of the first visible content element
+     * as a "current position", therefore negating influence of page width
+     */
     private bookmarkObserver: IntersectionObserver;
-    private bookmarkElem: VisibleContentElem = {
+    private bookmarkableElement: BookmarkableContentElement = {
         element: null,
         intersectionRatio: null,
     };
+    /**
+     * Hides focusabel elements (mainly links) on another pages so they can't be tabbed onto without being visible
+     */
+    private focusableObserver: IntersectionObserver;
 
     constructor() {
         super();
@@ -86,35 +98,66 @@ export default class BookWebComponent extends HTMLElement {
         this.resizeObserver.observe(this.rootElem);
 
         this.bookmarkObserver = new IntersectionObserver((entries) => {
-            entries.forEach(
-                (entry) => {
-                    const isVisible = entry.isIntersecting;
-                    if (!isVisible) return;
+            entries.forEach((entry) => {
+                const isVisible = entry.isIntersecting;
+                if (!isVisible) return;
 
-                    if (this.bookmarkElem.intersectionRatio < entry.intersectionRatio) {
-                        this.setVisibleContentElem(entry.intersectionRatio, entry.target);
+                if (this.bookmarkableElement.intersectionRatio < entry.intersectionRatio) {
+                    this.setBookmarkableElement(entry.intersectionRatio, entry.target);
+                }
+            });
+        });
+        this.focusableObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                const isVisible = entry.isIntersecting;
+
+                if (!isVisible) {
+                    if (entry.target instanceof HTMLElement) {
+                        entry.target.style.visibility = "hidden";
+                    }
+                } else {
+                    if (entry.target instanceof HTMLElement) {
+                        entry.target.style.visibility = "";
                     }
                 }
-                // { threshold: [0, 0.01, 0.25, 0.5, 0.75, 1] }
-                // { threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1] }
-            );
+            });
+        });
+    }
+
+    /**
+     * Emits "autobookmarkPositionEvent" with a new or updated bookmark
+     */
+    emitAutobookmarkPosition() {
+        const elementSection = this.state.book.currentSection;
+        const elementIndex = this.contentChildren.indexOf(this.bookmarkableElement.element);
+
+        const bookmarkEvent = new CustomEvent("autobookmarkPositionEvent", {
+            bubbles: true,
+            cancelable: false,
+            composed: true,
+            detail: {
+                bookmark: { elementIndex, elementSection },
+            },
         });
 
-        if (isDev()) {
-            // @ts-ignore
-            window["bookWebComponent"] = this;
-        }
+        this.dispatchEvent(bookmarkEvent);
     }
 
-    private setVisibleContentElem(intersectionRatio: number, element = this.bookmarkElem.element) {
-        const prevElem = this.bookmarkElem;
+    private setBookmarkableElement(
+        intersectionRatio: number,
+        element = this.bookmarkableElement.element
+    ) {
+        const prevElem = this.bookmarkableElement;
         const nextElem = { element, intersectionRatio };
-        this.bookmarkElem = nextElem;
+        this.bookmarkableElement = nextElem;
 
-        this.onVisibleContentElemChange(prevElem, nextElem);
+        this.onBookmarkableElemChange(prevElem, nextElem);
     }
 
-    private onVisibleContentElemChange(prevElem: VisibleContentElem, nextElem: VisibleContentElem) {
+    private onBookmarkableElemChange(
+        prevElem: BookmarkableContentElement,
+        nextElem: BookmarkableContentElement
+    ) {
         // TODO make a debug setting within UI
         if (isDev()) {
             if (prevElem.element instanceof HTMLElement) {
@@ -125,21 +168,32 @@ export default class BookWebComponent extends HTMLElement {
                 nextElem.element.style.outline = "3px solid pink";
                 nextElem.element.style.outlineOffset = "-3px";
             }
-            // @ts-ignore
-            window["visibleContentElem"] = this.bookmarkElem;
         }
+
+        this.emitAutobookmarkPosition();
+    }
+    private updateObservers() {
+        this.updateBookmarkObserver();
+        this.updateFocusableObserver();
     }
 
     private updateBookmarkObserver() {
         this.bookmarkObserver.disconnect();
-        this.setVisibleContentElem(null);
+        this.setBookmarkableElement(null);
 
-        const contentChildren = [...this.contentElem.children];
-        contentChildren.forEach((childElem) => this.bookmarkObserver.observe(childElem));
+        this.contentChildren.forEach((childElem) => this.bookmarkObserver.observe(childElem));
+    }
+
+    private updateFocusableObserver() {
+        this.focusableObserver.disconnect();
+        this.focusableElements.forEach((focusableElem) =>
+            this.focusableObserver.observe(focusableElem)
+        );
     }
 
     private onSectionLoad(currentPos: Position) {
         console.log("onSectionLoad");
+        this.setBookmarkableElement(null, null);
         this.navigateToPosition(currentPos);
 
         this.emitTocState({
@@ -148,12 +202,11 @@ export default class BookWebComponent extends HTMLElement {
             currentSection: this.state.book.currentSection,
             currentSectionTitle: this.state.section.title,
         });
-        this.setVisibleContentElem(null, null);
     }
 
     async onResize() {
         console.log("onResize");
-        const { element } = this.bookmarkElem;
+        const { element } = this.bookmarkableElement;
 
         if (element instanceof HTMLElement) this.shiftToElement({ element }, null);
         else {
@@ -167,49 +220,26 @@ export default class BookWebComponent extends HTMLElement {
 
     async onSectionShift() {
         console.log("onSectionShift");
+        this.updateObservers();
+
         const uiState = this.getBookUiState();
         this.emitUiState(uiState);
-        this.updateBookmarkObserver();
-        this.updateFocusableElementsVisibility();
-
-        // this.bookmarkManager.emitSaveBookmarks();
-    }
-
-    /**
-     * Hides links' on another pages so they can't be navigated to with keyboard without flipping the page
-     *
-     * TODO improve with https://stackoverflow.com/a/1600194
-     * and https://stackoverflow.com/a/30753870
-     *
-     * TODO what if the half of the link is on one page and the other half on another?
-     * Will it screw up the offset on tabbing? https://stackoverflow.com/a/36603605
-     *
-     */
-    private updateFocusableElementsVisibility() {
-        // const anchors = this.shadowRoot.querySelectorAll("a");
-        // anchors.forEach((a) => {
-        //     const [_, isAtLeastPartiallyVisible] = this.checkVisibilities(a);
-        //     if (isAtLeastPartiallyVisible) {
-        //         a.style.visibility = "initial";
-        //         // a.removeAttribute("tabindex");
-        //     } else {
-        //         a.style.visibility = "hidden";
-        //         // a.setAttribute("tabindex", "-1");
-        //     }
-        // });
-
-        console.log("focusableElements", this.focusableElements);
     }
 
     /**
      * Returns list of elements that can be tabbed onto
+     * ref: https://stackoverflow.com/a/30753870/10744339
      */
     private get focusableElements() {
         return [
             ...this.contentElem.querySelectorAll(
-                'a, input, button, select, textarea, [tabindex]:not([tabindex="-1"])'
+                "a[href]:not([tabindex='-1']), area[href]:not([tabindex='-1']), input:not([disabled]):not([tabindex='-1']), select:not([disabled]):not([tabindex='-1']), textarea:not([disabled]):not([tabindex='-1']), button:not([disabled]):not([tabindex='-1']), iframe:not([tabindex='-1']), [tabindex]:not([tabindex='-1']), [contentEditable=true]:not([tabindex='-1'])"
             ),
         ];
+    }
+
+    private get contentChildren() {
+        return [...this.contentElem.children];
     }
 
     get totalSections() {
@@ -258,7 +288,7 @@ export default class BookWebComponent extends HTMLElement {
         // this.styleLoader.loadStyles(this.book.styles, sectionContent);
         this.loadContent(sectionContent);
 
-        // console.log("loadSection>", sectionIndex, mergedPosition);
+        console.log("loadSection>", sectionIndex, currentPos);
         // console.log("book>", sectionIndex, mergedPosition, this.book.sectionNames[sectionIndex]);
 
         this.onSectionLoad(currentPos);
@@ -306,9 +336,7 @@ export default class BookWebComponent extends HTMLElement {
     }
 
     private processContentElements() {
-        const elems = this.contentElem.querySelectorAll("*");
-
-        elems.forEach((elem) => {
+        this.contentChildren.forEach((elem) => {
             elem.addEventListener("contextmenu", (e: MouseEvent) => {
                 // @ts-ignore
                 const selection: Selection = this.shadowRoot.getSelection();
@@ -359,8 +387,11 @@ export default class BookWebComponent extends HTMLElement {
      * Handles clicks on book navigation links and website links
      */
     private handleLink(e: Event) {
+        const target = e.currentTarget;
+        if (!(target instanceof HTMLAnchorElement)) return;
+
         e.preventDefault();
-        const target = e.currentTarget as HTMLAnchorElement;
+
         let [sectionName, markerId] = target.href.split("#").pop().split(",");
         markerId = "#" + markerId;
 
@@ -408,7 +439,9 @@ export default class BookWebComponent extends HTMLElement {
             imgElement.role === "none";
 
         if (!isDecorativeImage) {
-            let imgContainer = imgElement.parentNode as HTMLElement;
+            let imgContainer = imgElement.parentNode;
+            if (!(imgContainer instanceof HTMLElement)) return;
+
             while (imgContainer !== this.contentElem && imgContainer.children.length === 1) {
                 imgContainer.style.display = "flex";
                 imgContainer.style.justifyContent = "center";
@@ -416,7 +449,8 @@ export default class BookWebComponent extends HTMLElement {
                 imgContainer.style.height = "100%";
                 imgContainer.style.margin = "auto";
 
-                imgContainer = imgContainer.parentNode as HTMLElement;
+                imgContainer = imgContainer.parentNode;
+                if (!(imgContainer instanceof HTMLElement)) return;
             }
         }
     }
@@ -425,7 +459,9 @@ export default class BookWebComponent extends HTMLElement {
      * Emits "imgClickEvent" for when the img tag is clicked
      */
     private emitImgClickEvent(e: MouseEvent) {
-        const target = e.target as HTMLImageElement;
+        const target = e.target;
+        if (!(target instanceof HTMLImageElement)) return;
+
         const imgClickEvent = new CustomEvent("imgClickEvent", {
             bubbles: true,
             cancelable: false,
@@ -595,7 +631,7 @@ export default class BookWebComponent extends HTMLElement {
         if (elementIndex) {
             element = this.getElementByIndex(elementIndex);
         } else if (elementSelector) {
-            element = this.shadowRoot.querySelector(elementSelector);
+            element = this.contentElem.querySelector(elementSelector);
         }
 
         if (element) {
@@ -641,10 +677,10 @@ export default class BookWebComponent extends HTMLElement {
     }
 
     /**
-     * Emits "uiStateUpdate"
+     * Emits "uiStateUpdateEvent"
      */
     private emitUiState(uiState: UiState) {
-        const uiStateUpdateEvent = new CustomEvent("uiStateUpdate", {
+        const uiStateUpdateEvent = new CustomEvent("uiStateUpdateEvent", {
             bubbles: true,
             cancelable: false,
             composed: true,
@@ -654,10 +690,10 @@ export default class BookWebComponent extends HTMLElement {
         this.dispatchEvent(uiStateUpdateEvent);
     }
     /**
-     * Emits "tocStateUpdate"
+     * Emits "tocStateUpdateEvent"
      */
     private emitTocState(tocState: TocState) {
-        const tocStateUpdateEvent = new CustomEvent("tocStateUpdate", {
+        const tocStateUpdateEvent = new CustomEvent("tocStateUpdateEvent", {
             bubbles: true,
             cancelable: false,
             composed: true,
@@ -666,30 +702,6 @@ export default class BookWebComponent extends HTMLElement {
 
         this.dispatchEvent(tocStateUpdateEvent);
     }
-
-    // /**
-    //  * Checks visibility of the element
-    //  */
-    // private checkVisibilities(elem: HTMLElement) {
-    //     const { currentOffset, displayWidth, columnGap } = this;
-
-    //     const elemOffset = this.getElementOffset(elem);
-    //     const elemWidth = elem.getBoundingClientRect().width;
-
-    //     const elemStart = elemOffset;
-    //     const elemEnd = elemOffset + elemWidth + columnGap;
-    //     const visibleStart = currentOffset;
-    //     const visibleEnd = currentOffset + displayWidth;
-
-    //     const isFullyVisible = elemStart >= visibleStart && elemEnd <= visibleEnd;
-
-    //     const partialVisibleStart = visibleStart - elemWidth - columnGap;
-    //     const partialVisibleEnd = visibleEnd + elemWidth + columnGap;
-
-    //     const isAtLeastPartiallyVisible =
-    //         elemStart > partialVisibleStart && elemEnd < partialVisibleEnd;
-    //     return [isFullyVisible, isAtLeastPartiallyVisible];
-    // }
 
     /**
      * Returns element's offset
@@ -827,8 +839,7 @@ export default class BookWebComponent extends HTMLElement {
      * @returns {Element}
      */
     private getElementByIndex(index: number) {
-        const allElems = this.contentElem.querySelectorAll("*");
-        return allElems[index] as HTMLElement;
+        return this.contentChildren[index] as HTMLElement;
     }
 
     // /**
@@ -852,13 +863,6 @@ export default class BookWebComponent extends HTMLElement {
     //     500,
     //     { trailing: true }
     // );
-
-    // /**
-    //  * Recalculates content translate position and total pages
-    //  */
-    // resize() {
-    //     // this.recount();
-    // }
 
     disconnectedCallback() {
         // Cancel debounces

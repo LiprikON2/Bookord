@@ -74,7 +74,7 @@
  */
 
 /** A bookmark, used to indicate a specific part of the specific section of the book
- * @typedef {Object} Bookmark
+ * @typedef {Object} BookmarkOld
  * @property {number} sectionIndex - Index of the book's section
  * @property {number} elementIndex - Index of descendant elements of contentElem, which is used to mark a specific part of a section
  */

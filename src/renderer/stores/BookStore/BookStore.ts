@@ -114,16 +114,19 @@ export type BookStateOpened = BookStoreState & {
     title: BookKey | string;
 };
 
-/* TODO move:
+export interface Bookmark {
+    elementIndex: number;
+    elementSection: number;
+}
 
-store/hooks
-store/ipc
+export interface BookInteractionState {
+    bookmarks: {
+        auto: Bookmark | null;
+        manual: Bookmark[];
+    };
+}
 
-and
-
-fix BookCard context import
-
-*/
+type BookmarkTypes = keyof BookInteractionState["bookmarks"];
 
 // TODO Do metadata fallbacks in `setBookMetadata`
 const provideFallbackTitle = (filename: string, title?: any): string => {
@@ -147,10 +150,14 @@ export class BookStore {
     contentRecords = new Map<BookKey, BookContent>();
     contentStateRecords = new Map<BookKey, BookContentState>();
 
+    /**
+     * User interaction state records
+     */
+    interactionRecords = new Map<BookKey, BookInteractionState>();
+
     // TODO consider using WeakMap
 
-    // TODO add:
-    // userContentRecords = new Map<BookKey, any>();
+    // TODO split:
     //
     // fileMetadataRecords = new Map<BookKey, BookMetadata>();
     // apiMetadataRecords = new Map<BookKey, any>();
@@ -169,12 +176,19 @@ export class BookStore {
         this.metadataRecords.delete(bookKey);
     }
 
-    getBookContent(bookKey: BookKey) {
-        const content = this.contentRecords.get(bookKey) ?? {
-            styles: [],
-            structure: [],
-            sections: [],
-        };
+    getBookContent(bookKey: BookKey): BookContent {
+        const content = this.contentRecords.get(bookKey);
+        if (!content) {
+            const defaultContent: BookContent = {
+                styles: [],
+                structure: [],
+                sections: [],
+            };
+
+            this.setBookContent(bookKey, defaultContent);
+
+            return this.getBookContent(bookKey);
+        }
 
         return content;
     }
@@ -198,6 +212,45 @@ export class BookStore {
             parsedSections: [],
             sectionNames: [],
         });
+    }
+
+    getBookInteraction(bookKey: BookKey): BookInteractionState {
+        const interactionState = this.interactionRecords.get(bookKey);
+        if (!interactionState) {
+            const defaultInteractionState: BookInteractionState = {
+                bookmarks: {
+                    auto: null,
+                    manual: [],
+                },
+            };
+
+            this.setBookInteraction(bookKey, defaultInteractionState);
+
+            return this.getBookInteraction(bookKey);
+        }
+
+        return interactionState;
+    }
+    setBookInteraction(bookKey: BookKey, interactionState: BookInteractionState) {
+        this.interactionRecords.set(bookKey, interactionState);
+    }
+    addBookInteractionBookmark(bookKey: BookKey, bookmark: Bookmark, type: BookmarkTypes) {
+        const interactionState = this.getBookInteraction(bookKey);
+
+        if (type === "auto") interactionState.bookmarks[type] = bookmark;
+        if (type === "manual") {
+            // Ensures all bookmark objects have unique values
+            interactionState.bookmarks[type] = _.uniqWith(
+                [...interactionState.bookmarks[type], bookmark],
+                _.isEqual
+            );
+        }
+    }
+    removeBookInteractionBookmark(bookKey: BookKey, targetBookmark: Bookmark) {
+        const interactionState = this.getBookInteraction(bookKey);
+        _.remove(interactionState.bookmarks["manual"], (bookmark) =>
+            _.isEqual(bookmark, targetBookmark)
+        );
     }
 
     getBookStoreState(bookKey: BookKey) {
@@ -339,6 +392,7 @@ export class BookStore {
     }
 
     openBook(bookKey: BookKey, initSectionIndex: number = 0) {
+        console.log("parse initially", initSectionIndex);
         const state = this.getBookState(bookKey);
 
         const shouldNotBeOpened = !state.isInStorage || state.isContentRequested;
