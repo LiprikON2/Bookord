@@ -11,7 +11,6 @@ interface TocProps {
 }
 
 // TODO don't autoscroll on user clicks
-// TODO autounfold when chapter (that is inside folded heading chapter) becomes active (e.g. Warlock.epub)
 export const Toc = observer(({ autoscrollTargetRef, bookKey }: TocProps) => {
     const { content } = useBookContent(bookKey);
     const tocChildren = content?.structure;

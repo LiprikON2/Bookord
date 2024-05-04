@@ -10,7 +10,7 @@ interface BookGroupsProps {
     bookGroups: ViewItemGroup<BookMetadata>[];
 }
 
-// TODO make a BookGroup component https://mobx.js.org/react-optimizations.html#render-lists-in-dedicated-components
+// TODO refactor into a BookGroup component https://mobx.js.org/react-optimizations.html#render-lists-in-dedicated-components
 export const BookGroups = observer(({ bookGroups }: BookGroupsProps) => {
     const [selectedBookKey, setSelectedBookKey] = useState<string>(null);
 

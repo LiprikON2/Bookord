@@ -28,8 +28,6 @@ import { SliderInput } from "./components";
 import { usePlatform } from "~/renderer/hooks";
 import { useClipboard } from "@mantine/hooks";
 
-// TODO fix dropdown overflow
-// TODO test tts on linux
 // TODO consider transforming TTS to AudioBuffer https://github.com/guest271314/SpeechSynthesisRecorder
 export const TextToSpeech = observer(() => {
     const [pitch, setPitch] = useState<number>(1);

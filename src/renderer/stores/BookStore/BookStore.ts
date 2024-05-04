@@ -166,8 +166,6 @@ const provideFallbackAuthors = (authors?: any): string => {
     } else if (typeof authors === "string" && authors) return authors;
     return authors;
 };
-// TODO use root store
-// https://mobx.js.org/defining-data-stores.html#combining-multiple-stores
 
 /**
  * Domain store

@@ -9,7 +9,7 @@ import { observer } from "mobx-react-lite";
 
 // TODO https://eisenbergeffect.medium.com/web-components-2024-winter-update-445f27e7613a
 
-// TODO image display bug https://i.imgur.com/7nlOjZt.png
+// TODO fix images displaying over text https://i.imgur.com/7nlOjZt.png
 
 export const Reading = observer(() => {
     const { bookKey } = bookKeyRoute.useParams();
