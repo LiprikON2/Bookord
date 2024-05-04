@@ -5,6 +5,7 @@ import { AddBooksButton, AppShell, LayoutMarkup } from "~/renderer/scenes";
 import { getHomeMarkup } from "./sharedLayoutMarkup";
 import { useStorageBooks } from "../stores";
 import { BookViewStoreContextProvider } from "../contexts";
+import { observer } from "mobx-react-lite";
 
 const libraryLayoutMarkup: LayoutMarkup = {
     showFilterMenu: true,
@@ -20,7 +21,7 @@ const libraryLayoutMarkup: LayoutMarkup = {
     scrollArea: true,
 };
 
-export const LayoutLibrary = () => {
+export const LayoutLibrary = observer(() => {
     const { metaBookRecords } = useStorageBooks();
 
     return (
@@ -30,4 +31,4 @@ export const LayoutLibrary = () => {
             </BookViewStoreContextProvider>
         </AppShell>
     );
-};
+});

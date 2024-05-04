@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useDebouncedValue, useFocusWithin, useWindowEvent } from "@mantine/hooks";
 import { CloseButton, Pill, TextInput } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
+import { observer } from "mobx-react-lite";
 
 import classes from "./SearchInput.module.css";
 import { useFilterTags } from "~/renderer/stores";
 
-export const SearchInput = () => {
+export const SearchInput = observer(() => {
     const { ref, focused } = useFocusWithin<HTMLInputElement>();
     const [searchTermValue, setSearchTermValue] = useState("");
     const [debouncedSearchTerm] = useDebouncedValue(searchTermValue, 100, { leading: true });
@@ -50,4 +51,4 @@ export const SearchInput = () => {
             }
         />
     );
-};
+});

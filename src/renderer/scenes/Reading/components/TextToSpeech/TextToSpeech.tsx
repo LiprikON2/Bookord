@@ -15,6 +15,7 @@ import {
     Text,
     useCombobox,
 } from "@mantine/core";
+import { observer } from "mobx-react-lite";
 
 import classes from "./TextToSpeech.module.css";
 import {
@@ -27,12 +28,10 @@ import { SliderInput } from "./components";
 import { usePlatform } from "~/renderer/hooks";
 import { useClipboard } from "@mantine/hooks";
 
-interface TextToSpeechProps {}
-
 // TODO fix dropdown overflow
 // TODO test tts on linux
 // TODO consider transforming TTS to AudioBuffer https://github.com/guest271314/SpeechSynthesisRecorder
-export const TextToSpeech = ({}: TextToSpeechProps) => {
+export const TextToSpeech = observer(() => {
     const [pitch, setPitch] = useState<number>(1);
     const [rate, setRate] = useState<number>(1.5);
 
@@ -178,9 +177,9 @@ export const TextToSpeech = ({}: TextToSpeechProps) => {
             </Stack>
         </>
     );
-};
+});
 
-const LinuxNoVoices = () => {
+const LinuxNoVoices = observer(() => {
     const clipboard = useClipboard({ timeout: 500 });
 
     const installCommand = "sudo apt install espeak speech-dispatcher";
@@ -211,4 +210,4 @@ const LinuxNoVoices = () => {
             </Text>
         </Text>
     );
-};
+});

@@ -1,32 +1,30 @@
 import React, { useState } from "react";
 import { UnstyledButton, Menu, Image, Group } from "@mantine/core";
 import { type Icon, IconChevronDown } from "@tabler/icons-react";
-import classes from "./LanguagePicker.module.css";
 import { useDisclosure } from "@mantine/hooks";
+import { observer } from "mobx-react-lite";
+
+import classes from "./LanguagePicker.module.css";
 
 type Selection = { label: string; image: string; Icon?: Icon };
 
-const ImageOrIcon = ({
-    Icon,
-    image,
-    className,
-}: {
+interface ImageOrIconProps {
     image: Selection["image"];
     Icon: Selection["Icon"] | undefined;
     className?: string;
-}) => {
+}
+
+const ImageOrIcon = observer(({ Icon, image, className }: ImageOrIconProps) => {
     if (Icon) return <Icon className={className} />;
     else return <Image className={className} src={image} />;
-};
-export const LanguagePicker = ({
-    data,
-    selected,
-    setSelected,
-}: {
+});
+
+interface LanguagePickerProps {
     data: Selection[];
     selected: Selection;
     setSelected: (...args: any[]) => void;
-}) => {
+}
+export const LanguagePicker = observer(({ data, selected, setSelected }: LanguagePickerProps) => {
     const [opened, { open, close }] = useDisclosure(false);
 
     const items = data.map((item) => (
@@ -64,4 +62,4 @@ export const LanguagePicker = ({
             <Menu.Dropdown>{items}</Menu.Dropdown>
         </Menu>
     );
-};
+});

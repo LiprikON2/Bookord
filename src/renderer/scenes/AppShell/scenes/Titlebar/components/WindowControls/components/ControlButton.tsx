@@ -1,4 +1,5 @@
 import React from "react";
+import { observer } from "mobx-react-lite";
 
 interface IControlButtonProps {
     readonly name: string;
@@ -7,17 +8,17 @@ interface IControlButtonProps {
     className: string;
 }
 
-export const ControlButton = (
-    props: IControlButtonProps & React.HTMLAttributes<HTMLDivElement>
-) => {
-    const { name, path, title, className, ...rest } = props;
-    const { onClick } = rest;
+export const ControlButton = observer(
+    (props: IControlButtonProps & React.HTMLAttributes<HTMLDivElement>) => {
+        const { name, path, title, className, ...rest } = props;
+        const { onClick } = rest;
 
-    return (
-        <div aria-label={name} className={className} onClick={onClick} title={title} {...rest}>
-            <svg aria-hidden="true" version="1.1" width="10" height="10">
-                <path fill="currentColor" d={path} />
-            </svg>
-        </div>
-    );
-};
+        return (
+            <div aria-label={name} className={className} onClick={onClick} title={title} {...rest}>
+                <svg aria-hidden="true" version="1.1" width="10" height="10">
+                    <path fill="currentColor" d={path} />
+                </svg>
+            </div>
+        );
+    }
+);

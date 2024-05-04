@@ -1,8 +1,9 @@
 import React from "react";
 
 import { Versions } from "./components/Versions";
+import { observer } from "mobx-react-lite";
 
-export const About = () => {
+export const About = observer(() => {
     return (
         <Versions>
             <Versions.Item type="bookordSquare" />
@@ -11,4 +12,4 @@ export const About = () => {
             <Versions.Item type="license" />
         </Versions>
     );
-};
+});

@@ -2,7 +2,7 @@ import { BookMetadata, BookStore } from "./BookStore";
 import { BookViewStore } from "./BookViewStore";
 
 export class RootStore {
-    bookViewStore: BookViewStore<BookMetadata>;
+    bookViewStore: BookViewStore;
     bookStore: BookStore;
 
     constructor() {

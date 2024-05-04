@@ -3,10 +3,10 @@ import { reaction } from "mobx";
 
 import { BookViewStoreContext } from "~/renderer/contexts";
 import { useStorageBooks } from "../../BookStore";
-import { RootStoreContext } from "../../RootStoreContext";
+import { useBookViewStore } from "../../hooks";
 
 export const useFilteredBooks = () => {
-    const { bookViewStore } = useContext(RootStoreContext);
+    const bookViewStore = useBookViewStore();
     const { activeCollectionKey } = useContext(BookViewStoreContext);
 
     const { metaBookRecords, isBookStorageEmpty, inStorageBookCount } = useStorageBooks();

@@ -2,11 +2,12 @@ import { Button } from "@mantine/core";
 import { IconCirclePlus } from "@tabler/icons-react";
 import React from "react";
 import context from "~/renderer/ipc/fileOperations";
+import { observer } from "mobx-react-lite";
 
 import classes from "./AddBooksButton.module.css";
 interface AddBooksButtonProps {}
 
-export const AddBooksButton = ({}: AddBooksButtonProps) => {
+export const AddBooksButton = observer(({}: AddBooksButtonProps) => {
     const openFileDialog = async () => {
         const distinctFileCount = await context.openFileDialog();
     };
@@ -20,4 +21,4 @@ export const AddBooksButton = ({}: AddBooksButtonProps) => {
             Add books
         </Button>
     );
-};
+});

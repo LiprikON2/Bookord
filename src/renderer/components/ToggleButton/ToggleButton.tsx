@@ -1,6 +1,8 @@
+/* eslint-disable react/display-name */
 import React, { forwardRef, useEffect } from "react";
 import { Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { observer } from "mobx-react-lite";
 
 type ToggleButtonProps = {
     onClick?: (on: boolean) => void;
@@ -18,44 +20,49 @@ const defaultVariants = {
     off: "default-subtle",
 };
 
-export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
-    (
-        {
-            onClick,
-            onAction,
-            offAction,
-            on,
-            variants = defaultVariants,
-            ...rest
-        }: ToggleButtonProps,
-        ref
-    ) => {
-        const [toggled, { toggle, open, close }] = useDisclosure(on ?? false);
+const ToggleButton = observer(
+    forwardRef(
+        (
+            {
+                onClick,
+                onAction,
+                offAction,
+                on,
+                variants = defaultVariants,
+                ...rest
+            }: ToggleButtonProps,
+            ref: React.ForwardedRef<HTMLButtonElement>
+        ) => {
+            const [toggled, { toggle, open, close }] = useDisclosure(on ?? false);
 
-        const handleToggle = () => {
-            if (offAction && toggled) offAction();
-            if (onAction && !toggled) onAction();
-            toggle();
-        };
+            const handleToggle = () => {
+                if (offAction && toggled) offAction();
+                if (onAction && !toggled) onAction();
+                toggle();
+            };
 
-        useEffect(() => {
-            if (on === undefined) return;
+            useEffect(() => {
+                if (on === undefined) return;
 
-            if (on) open();
-            else close();
-        }, [on]);
+                if (on) open();
+                else close();
+            }, [on]);
 
-        return (
-            <Button
-                styles={{ inner: { maxWidth: "100%" } }}
-                ref={ref}
-                onClick={() => {
-                    onClick(!toggled);
-                    handleToggle();
-                }}
-                variant={toggled ? variants.on : variants.off}
-                {...rest}
-            />
-        );
-    }
+            return (
+                <Button
+                    styles={{ inner: { maxWidth: "100%" } }}
+                    ref={ref}
+                    onClick={() => {
+                        onClick(!toggled);
+                        handleToggle();
+                    }}
+                    variant={toggled ? variants.on : variants.off}
+                    {...rest}
+                />
+            );
+        }
+    )
 );
+
+ToggleButton.displayName = "ToggleButton";
+export { ToggleButton };

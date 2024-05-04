@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { IconCopy, IconSpeakerphone } from "@tabler/icons-react";
-import { useContext, useEffect, useState } from "react";
 import { useHotkeys } from "@mantine/hooks";
 import { useContextMenu } from "mantine-contextmenu";
 import { toJS } from "mobx";

@@ -2,6 +2,7 @@ import { makeAutoObservable } from "mobx";
 import _ from "lodash";
 
 import context from "./ipc";
+import sampleCover from "~/assets/images/sampleBookCover.webp";
 import { RootStore } from "../RootStore";
 
 export type BookState = {
@@ -17,12 +18,29 @@ export type BookContentState = {
     sectionNames: string[];
 };
 
-export type BookMetadata = {
+export type BookMetadataRaw = {
     title: string | object | null;
+    cover: string | object | null;
+    author: string | object | null;
+    description: string;
+    date: string;
+    indentifiers: string[];
+    languages: string[];
+    relations: string[];
+    subjects: string[];
+    publishers: string[];
+    contributors: string[];
+    coverages: string[];
+    rights: string[];
+    sources: string[];
+};
+
+export type BookMetadata = {
+    title: string;
     description: string;
     date: string;
     cover: string;
-    author: string | object | null;
+    author: string;
     indentifiers: string[];
     languages: string[];
     relations: string[];
@@ -129,13 +147,25 @@ export interface BookInteractionState {
 
 type BookmarkTypes = keyof BookInteractionState["bookmarks"];
 
-// TODO Do metadata fallbacks in `setBookMetadata`
+const provideFallbackCover = (cover?: any): string => {
+    if (!cover || cover === "unkown") return sampleCover;
+    return cover;
+};
+
 const provideFallbackTitle = (filename: string, title?: any): string => {
     if (typeof title === "object" && "_" in title) return title?._ ?? filename;
     if (typeof title === "string" && title) return title;
     return filename;
 };
 
+const provideFallbackAuthors = (authors?: any): string => {
+    if (typeof authors === "object") {
+        if ("_" in authors && typeof authors?._ === "string") {
+            return authors._;
+        } else return "Unknown";
+    } else if (typeof authors === "string" && authors) return authors;
+    return authors;
+};
 // TODO use root store
 // https://mobx.js.org/defining-data-stores.html#combining-multiple-stores
 
@@ -164,15 +194,42 @@ export class BookStore {
     // apiMetadataRecords = new Map<BookKey, any>();
 
     constructor(rootStore: RootStore) {
-        makeAutoObservable(this, { contentRecords: false });
+        makeAutoObservable(this, { contentRecords: false, rootStore: false });
         this.rootStore = rootStore;
     }
 
-    getBookMetadata(bookKey: BookKey) {
-        return this.metadataRecords.get(bookKey);
+    getBookMetadata(bookKey: BookKey, fallbacks = false) {
+        const metadata = this.metadataRecords.get(bookKey);
+        if (!fallbacks) return metadata;
+
+        const fallbackedMetadata: BookMetadata = {
+            description: "",
+            date: "",
+            indentifiers: [],
+            languages: [],
+            relations: [],
+            subjects: [],
+            publishers: [],
+            contributors: [],
+            coverages: [],
+            rights: [],
+            sources: [],
+            cover: provideFallbackCover(metadata?.cover),
+            title: provideFallbackTitle(bookKey, metadata?.title),
+            author: provideFallbackAuthors(metadata?.author),
+            ...metadata,
+        };
+        return fallbackedMetadata;
     }
-    setBookMetadata(bookKey: BookKey, metadata: BookMetadata) {
-        this.metadataRecords.set(bookKey, metadata);
+    setBookMetadata(bookKey: BookKey, metadata: BookMetadata | BookMetadataRaw) {
+        const fallbackedMetadata: BookMetadata = {
+            ...metadata,
+            cover: provideFallbackCover(metadata.cover),
+            title: provideFallbackTitle(bookKey, metadata.title),
+            author: provideFallbackAuthors(metadata.author),
+        };
+
+        this.metadataRecords.set(bookKey, fallbackedMetadata);
     }
     removeBookMetadata(bookKey: BookKey) {
         this.metadataRecords.delete(bookKey);

@@ -4,7 +4,7 @@
         "es6": true,
         "node": true
     },
-    "indent": ["error", 4],
+    // "indent": ["error", 4],
     "extends": [
         "eslint:recommended",
         "plugin:react/recommended",
@@ -36,13 +36,31 @@
             }
         },
         "react": {
-            "version": "latest"
+            "version": "detect"
         }
+
+        // "componentWrapperFunctions": [
+        //     // The name of any function used to wrap components, e.g. Mobx `observer` function. If this isn't set, components wrapped by these functions will be skipped.
+        //     "observer", // `property`
+        //     { "property": "styled" }, // `object` is optional
+        //     { "property": "observer", "object": "Mobx" },
+        //     { "property": "observer", "object": "<pragma>" } // sets `object` to whatever value `settings.react.pragma` is set to
+        // ]
     },
     "rules": {
         "react/prop-types": "off",
         "@typescript-eslint/no-var-requires": "off",
         // Annoyances
-        "@typescript-eslint/no-unused-vars": "off"
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
+        "no-empty-pattern": "off",
+        "prefer-const": [
+            "warn",
+            {
+                "destructuring": "all",
+                "ignoreReadBeforeAssign": false
+            }
+        ]
     }
 }

@@ -1,5 +1,6 @@
 import React, { memo, useEffect, useState } from "react";
 import { NavLink } from "@mantine/core";
+import { observer } from "mobx-react-lite";
 
 import { Structure } from "~/renderer/stores";
 import classes from "./TocChild.module.css";
@@ -17,6 +18,7 @@ export interface TocChildProps {
     onSelected?: () => void;
 }
 
+// TODO ensure it is perfomant without propsAreEqual ― just with an observer  https://mobx.js.org/react-optimizations.html#render-lists-in-dedicated-components
 const propsAreEqual = (
     prevProps: Readonly<TocChildProps>,
     nextProps: Readonly<TocChildProps>
@@ -37,8 +39,9 @@ const propsAreEqual = (
     );
 };
 
-// ref: https://github.com/facebook/react/issues/15156#issuecomment-474590693
-export const TocChild = memo(
+// // ref: https://github.com/facebook/react/issues/15156#issuecomment-474590693
+// const TocChild = memo(
+export const TocChild = observer(
     ({
         isSelected,
         onSelected,
@@ -74,6 +77,7 @@ export const TocChild = memo(
             >
                 {tocProps?.map((tocProp) => (
                     <TocChild
+                        key={tocProp.key}
                         {...tocProp}
                         onSelected={() => {
                             if (onSelected) onSelected();
@@ -85,6 +89,9 @@ export const TocChild = memo(
                 ))}
             </NavLink>
         );
-    },
-    propsAreEqual
+    }
+    // propsAreEqual
 );
+
+// TocChild.displayName = "TocChild";
+// export { TocChild };

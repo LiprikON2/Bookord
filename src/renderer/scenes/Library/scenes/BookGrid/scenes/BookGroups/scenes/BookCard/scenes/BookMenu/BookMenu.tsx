@@ -1,12 +1,13 @@
 import React from "react";
 import { Menu, ActionIcon } from "@mantine/core";
 import { IconMenu2, IconRobot, IconTrash } from "@tabler/icons-react";
+import { observer } from "mobx-react-lite";
 
 interface BookMenu {
     openModal: () => void;
     handleDelete: () => void;
 }
-export const BookMenu = ({ openModal, handleDelete }: BookMenu) => {
+export const BookMenu = observer(({ openModal, handleDelete }: BookMenu) => {
     return (
         <Menu shadow="md" width={180} position="top-end" closeOnItemClick>
             <Menu.Target>
@@ -34,4 +35,4 @@ export const BookMenu = ({ openModal, handleDelete }: BookMenu) => {
             </Menu.Dropdown>
         </Menu>
     );
-};
+});

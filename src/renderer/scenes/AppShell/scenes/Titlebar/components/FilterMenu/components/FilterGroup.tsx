@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Badge, CloseButton, Menu, ScrollArea, Stack, TextInput, rem } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
+import { observer } from "mobx-react-lite";
 
 import { ToggleButton } from "~/renderer/components";
 import { FilterTags, useTags } from "~/renderer/stores";
@@ -11,7 +12,7 @@ export type FilterGroupProps = {
     tagCategory: keyof FilterTags;
 };
 
-export const FilterGroup = ({ tagCategory }: FilterGroupProps) => {
+export const FilterGroup = observer(({ tagCategory }: FilterGroupProps) => {
     const { setActiveTag, tags, setTagsSearchTerm, tagCategoryName } = useTags(tagCategory);
 
     const [searchTermValue, setSearchTermValue] = useState("");
@@ -89,4 +90,4 @@ export const FilterGroup = ({ tagCategory }: FilterGroupProps) => {
             </ScrollArea>
         </Stack>
     );
-};
+});

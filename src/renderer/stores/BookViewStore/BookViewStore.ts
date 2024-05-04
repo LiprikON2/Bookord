@@ -13,7 +13,6 @@ import type {
     Tags,
     ViewItem,
     ViewItemGroup,
-    ViewStore,
 } from "./interfaces";
 import { BookFilter } from "./filters";
 import { BookMetadataGetter } from "./metadataGetters";
@@ -24,7 +23,8 @@ import { RootStore } from "../RootStore";
  *
  * ref: https://mobx.js.org/defining-data-stores.html#ui-stores
  */
-export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
+export class BookViewStore {
+    activeCollectionKey: CollectionKey | undefined;
     rootStore: RootStore;
 
     metadataGetter = new BookMetadataGetter();
@@ -33,7 +33,7 @@ export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
     userCollections = new Map<CollectionKey, Collection>();
 
     constructor(rootStore: RootStore) {
-        makeAutoObservable(this);
+        makeAutoObservable(this, { rootStore: false });
         this.rootStore = rootStore;
     }
 
@@ -75,8 +75,8 @@ export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
         };
     }
 
-    newFilter(items: ViewItem<T>[], collection: Collection) {
-        return new BookFilter<T>(items, collection, this.metadataGetter);
+    newFilter(items: ViewItem<BookMetadata>[], collection: Collection) {
+        return new BookFilter<BookMetadata>(items, collection, this.metadataGetter);
     }
 
     getTagCategoryName(tagCategory: keyof FilterTags): string;
@@ -227,11 +227,11 @@ export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
         if (tagCategory === undefined) {
             Object.keys(collection.filterTags).forEach((tagCategory: keyof FilterTags) => {
                 const { tagsActive } = collection.filterTags[tagCategory];
-                for (let tag of tagsActive.keys()) tagsActive.set(tag, false);
+                for (const tag of tagsActive.keys()) tagsActive.set(tag, false);
             });
         } else {
             const { tagsActive } = collection.filterTags[tagCategory];
-            for (let tag of tagsActive.keys()) tagsActive.set(tag, false);
+            for (const tag of tagsActive.keys()) tagsActive.set(tag, false);
         }
     }
 
@@ -248,17 +248,23 @@ export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
         return collection;
     }
 
-    apply(items: ViewItem<T>[]): ViewItemGroup<T>[];
-    apply(items: ViewItem<T>[], collectionKey?: CollectionKey): ViewItemGroup<T>[];
-    apply(items: ViewItem<T>[], collectionKey?: CollectionKey): ViewItemGroup<T>[] {
+    apply(items: ViewItem<BookMetadata>[]): ViewItemGroup<BookMetadata>[];
+    apply(
+        items: ViewItem<BookMetadata>[],
+        collectionKey?: CollectionKey
+    ): ViewItemGroup<BookMetadata>[];
+    apply(
+        items: ViewItem<BookMetadata>[],
+        collectionKey?: CollectionKey
+    ): ViewItemGroup<BookMetadata>[] {
         const collection = this.get(collectionKey);
 
         return this.newFilter(items, collection).applyFilterTags().results();
     }
 
-    populateFilterTags(items: ViewItem<T>[]): void;
-    populateFilterTags(items: ViewItem<T>[], collectionKey?: CollectionKey): void;
-    populateFilterTags(items: ViewItem<T>[], collectionKey?: CollectionKey) {
+    populateFilterTags(items: ViewItem<BookMetadata>[]): void;
+    populateFilterTags(items: ViewItem<BookMetadata>[], collectionKey?: CollectionKey): void;
+    populateFilterTags(items: ViewItem<BookMetadata>[], collectionKey?: CollectionKey) {
         const itemsWithMetadata = items.filter((item) => item.metadata);
         if (!itemsWithMetadata.length) return;
 
@@ -281,21 +287,60 @@ export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
             const tagsActive = collection.filterTags[categoryKey].tagsActive;
 
             // Remove tags from collection's tagsActive Map not present in items' metadata
-            for (let tagActive of tagsActive.keys()) {
+            for (const tagActive of tagsActive.keys()) {
                 if (!tagsCountKeys.includes(tagActive)) tagsActive.delete(tagActive);
             }
 
             // Add tags to collection's tagsActive Map which are not present in items' metadata
-            for (let tagCountKey of tagsCountKeys) {
+            for (const tagCountKey of tagsCountKeys) {
                 if (!tagsActive.has(tagCountKey)) tagsActive.set(tagCountKey, false);
             }
         });
     }
 
-    populateFilterTagsAll(items: ViewItem<T>[]) {
+    populateFilterTagsAll(items: ViewItem<BookMetadata>[]) {
         this.populateFilterTags(items);
 
         const userCollections = Array.from(this.userCollections.keys());
         userCollections.forEach((collection) => this.populateFilterTags(items, collection));
+    }
+
+    get filterTitle() {
+        const searchTerm = this.getSearchTerm(this.activeCollectionKey);
+        const categoriesHaveActiveTag = this.hasActiveTag(["recent"], this.activeCollectionKey);
+        const metaBookRecords = this.rootStore.bookStore.getBookMetadataInStorage();
+        const bookGroups = this.apply(metaBookRecords, this.activeCollectionKey);
+        const visibleBookCount = bookGroups.reduce(
+            (acc, cur) => cur.items.filter((item) => item.visible).length,
+            0
+        );
+
+        const areBooksBeingSearched = searchTerm;
+        const areBooksBeingTagFiltered = categoriesHaveActiveTag;
+        const areBooksBeingFiltered = areBooksBeingSearched || areBooksBeingTagFiltered;
+
+        if (areBooksBeingFiltered) {
+            if (areBooksBeingSearched && !areBooksBeingTagFiltered) {
+                if (visibleBookCount > 0) {
+                    return `Results for '${searchTerm}' (${visibleBookCount})`;
+                } else {
+                    return `No results for '${searchTerm}'`;
+                }
+            } else if (!areBooksBeingSearched && areBooksBeingTagFiltered) {
+                if (visibleBookCount > 0) {
+                    return `Results for the tags filter (${visibleBookCount})`;
+                } else {
+                    return `No results for the tags filter '${searchTerm}'`;
+                }
+            } else if (areBooksBeingSearched && areBooksBeingTagFiltered) {
+                if (visibleBookCount > 0) {
+                    return `Results for the tags filter and '${searchTerm}' (${visibleBookCount})`;
+                } else {
+                    return `No results for the tags filter and '${searchTerm}'`;
+                }
+            }
+        } else {
+            return `All books (${visibleBookCount})`;
+        }
     }
 }

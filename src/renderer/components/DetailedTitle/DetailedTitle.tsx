@@ -1,9 +1,10 @@
 import React from "react";
 import { Flex, Stack, Title, Text, type MantineSize, TitleProps } from "@mantine/core";
 import type { Icon } from "@tabler/icons-react";
+import { observer } from "mobx-react-lite";
 
 interface DetailedTitleProps {
-    children: React.ReactNode;
+    getTitle: () => string;
     description?: string;
     Icon?: Icon;
     size?: MantineSize;
@@ -47,16 +48,18 @@ const sizeObj = {
     },
 };
 
-export const DetailedTitle = ({ children, description, Icon, size = "md" }: DetailedTitleProps) => {
-    const titleProps = sizeObj[size].Title as TitleProps;
+export const DetailedTitle = observer(
+    ({ getTitle, description, Icon, size = "md" }: DetailedTitleProps) => {
+        const titleProps = sizeObj[size].Title as TitleProps;
 
-    return (
-        <Flex justify="flex-start" align="center" gap="sm">
-            {Icon && <Icon />}
-            <Stack justify="center" gap={0}>
-                <Title {...titleProps}>{children}</Title>
-                {description && <Text c="dimmed">{description}</Text>}
-            </Stack>
-        </Flex>
-    );
-};
+        return (
+            <Flex justify="flex-start" align="center" gap="sm">
+                {Icon && <Icon />}
+                <Stack justify="center" gap={0}>
+                    <Title {...titleProps}>{getTitle()}</Title>
+                    {description && <Text c="dimmed">{description}</Text>}
+                </Stack>
+            </Flex>
+        );
+    }
+);

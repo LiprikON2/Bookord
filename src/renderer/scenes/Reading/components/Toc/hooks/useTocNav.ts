@@ -39,7 +39,7 @@ const getTocPropExtractor = (
             isSelectedFound = isSelected;
         }
 
-        let { children, ...toc } = tocChild;
+        const { children, ...toc } = tocChild;
 
         const tocPropsExtractor = getTocPropExtractor(
             sectionName,

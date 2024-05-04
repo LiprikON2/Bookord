@@ -8,12 +8,13 @@ import {
     ScrollArea,
     rem,
 } from "@mantine/core";
+import { observer } from "mobx-react-lite";
 
 import { type BookStateOpened } from "~/renderer/stores";
 import { ThemeToggle } from "~/renderer/components";
+import { useIsMobile } from "~/renderer/hooks";
 import { SettingsModal, Sidebar, type SidebarMarkup, Titlebar } from "./scenes";
 import classes from "./AppShell.module.css";
-import { useIsMobile } from "~/renderer/hooks";
 
 interface AppShellProps {
     layoutMarkup: LayoutMarkup;
@@ -30,7 +31,7 @@ export type LayoutMarkup = {
     scrollArea: boolean;
 };
 
-export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
+export const AppShell = observer(({ layoutMarkup, children }: AppShellProps) => {
     const [openedNavbar, { toggle: mobileToggleNavbar, close: mobileCloseNavbar }] =
         useDisclosure();
     const [openedAside, { toggle: mobileToggleAside, close: mobileCloseAside }] = useDisclosure();
@@ -98,4 +99,4 @@ export const AppShell = ({ layoutMarkup, children }: AppShellProps) => {
             </MantineAppShell.Main>
         </MantineAppShell>
     );
-};
+});

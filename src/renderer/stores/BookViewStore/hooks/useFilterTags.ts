@@ -4,16 +4,19 @@ import { useContext, useEffect, useState } from "react";
 import { BookViewStoreContext } from "~/renderer/contexts";
 import { FilterTags } from "..";
 import { RootStoreContext } from "../../RootStoreContext";
+import { useBookViewStore } from "../../hooks";
 
 export const useFilterTags = (specialTagCategory: keyof FilterTags = "recent") => {
-    const { bookViewStore } = useContext(RootStoreContext);
+    const bookViewStore = useBookViewStore();
 
     const { activeCollectionKey } = useContext(BookViewStoreContext);
 
     const [categoriesHaveActiveTag, setCategoriesHaveActiveTag] = useState(() =>
         bookViewStore.hasActiveTag([specialTagCategory], activeCollectionKey)
     );
-    const [searchTerm, setSearchTermValue] = useState(() => bookViewStore.getSearchTerm());
+    const [searchTerm, setSearchTermValue] = useState(() =>
+        bookViewStore.getSearchTerm(activeCollectionKey)
+    );
 
     useEffect(() => {
         const unsub1 = reaction(

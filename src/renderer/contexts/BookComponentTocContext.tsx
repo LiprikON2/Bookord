@@ -1,5 +1,6 @@
 import React, { createContext, useState } from "react";
 import { TocState } from "../scenes/Reading/components/BookWebComponent";
+import { observer } from "mobx-react-lite";
 
 type BookComponentContextTocType = {
     tocState: TocState;
@@ -19,16 +20,19 @@ export const BookComponentTocContext = createContext<BookComponentContextTocType
 });
 
 // ref: https://stackoverflow.com/a/65440349/10744339
-export const BookComponentTocContextProvider = ({ children }: { children?: React.ReactNode }) => {
-    const [tocState, setTocState] = useState<TocState>(defaultTocState);
+export const BookComponentTocContextProvider = observer(
+    ({ children }: { children?: React.ReactNode }) => {
+        const [tocState, setTocState] = useState<TocState>(defaultTocState);
 
-    return (
-        <BookComponentTocContext.Provider
-            value={{
-                tocState,
-                setTocState,
-            }}
-            children={children}
-        />
-    );
-};
+        return (
+            <BookComponentTocContext.Provider
+                value={{
+                    tocState,
+                    setTocState,
+                }}
+            >
+                {children}
+            </BookComponentTocContext.Provider>
+        );
+    }
+);

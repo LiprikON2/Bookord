@@ -1,3 +1,4 @@
+import { observer } from "mobx-react-lite";
 import React, { createContext, useState } from "react";
 
 type BookComponentContextType = {
@@ -39,25 +40,28 @@ export const BookComponentContext = createContext<BookComponentContextType>({
 });
 
 // ref: https://stackoverflow.com/a/65440349/10744339
-export const BookComponentContextProvider = ({ children }: { children?: React.ReactNode }) => {
-    const [contextRef, setContextRef] = useState<any>(null);
-    const [contextUiState, setContextUiState] = useState<UiState>(defaultUiState);
-    const [ttsTarget, setTtsTarget] = useState<TtsTarget>();
+export const BookComponentContextProvider = observer(
+    ({ children }: { children?: React.ReactNode }) => {
+        const [contextRef, setContextRef] = useState<any>(null);
+        const [contextUiState, setContextUiState] = useState<UiState>(defaultUiState);
+        const [ttsTarget, setTtsTarget] = useState<TtsTarget>();
 
-    const resetTtsTarget = () => setTtsTarget(defaultTtsTarget);
+        const resetTtsTarget = () => setTtsTarget(defaultTtsTarget);
 
-    return (
-        <BookComponentContext.Provider
-            value={{
-                contextRef,
-                setContextRef,
-                contextUiState,
-                setContextUiState,
-                ttsTarget,
-                setTtsTarget,
-                resetTtsTarget,
-            }}
-            children={children}
-        />
-    );
-};
+        return (
+            <BookComponentContext.Provider
+                value={{
+                    contextRef,
+                    setContextRef,
+                    contextUiState,
+                    setContextUiState,
+                    ttsTarget,
+                    setTtsTarget,
+                    resetTtsTarget,
+                }}
+            >
+                {children}
+            </BookComponentContext.Provider>
+        );
+    }
+);

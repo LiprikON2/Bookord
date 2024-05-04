@@ -1,6 +1,7 @@
 import React from "react";
 import { Outlet } from "@tanstack/react-router";
 import { IconList, IconSpeakerphone } from "@tabler/icons-react";
+import { observer } from "mobx-react-lite";
 
 import { AppShell, LayoutMarkup, TextToSpeech } from "~/renderer/scenes";
 import { getHomeMarkup } from "./sharedLayoutMarkup";
@@ -8,7 +9,7 @@ import { Toc } from "../scenes/Reading/components/Toc";
 import { bookKeyRoute } from "../appRenderer";
 import { BookComponentContextProvider, BookComponentTocContextProvider } from "../contexts";
 
-export const LayoutReading = () => {
+export const LayoutReading = observer(() => {
     const { bookKey } = bookKeyRoute.useParams();
 
     const readingLayoutMarkup: LayoutMarkup = {
@@ -57,4 +58,4 @@ export const LayoutReading = () => {
             </BookComponentTocContextProvider>
         </BookComponentContextProvider>
     );
-};
+});

@@ -4,8 +4,9 @@ import { Text, Image } from "@mantine/core";
 import { icons, type Icon } from "~/components/Icons";
 import { useVersions } from "./hooks";
 import classes from "./Item.module.css";
+import { observer } from "mobx-react-lite";
 
-export const Item = ({ type }: { type: Icon }) => {
+export const Item = observer(({ type }: { type: Icon }) => {
     const [versions] = useVersions();
 
     return (
@@ -19,4 +20,4 @@ export const Item = ({ type }: { type: Icon }) => {
             </Text>
         </div>
     );
-};
+});

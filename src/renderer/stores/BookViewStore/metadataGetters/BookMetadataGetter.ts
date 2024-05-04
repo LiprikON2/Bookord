@@ -1,7 +1,7 @@
-import { BookMetadata } from "../../BookStore/BookStore";
+import { BookMetadata, BookMetadataRaw } from "../../BookStore/BookStore";
 import type { FilterTags, MetadataGetter, RecentTagName } from "../interfaces";
 
-export class BookMetadataGetter<T extends BookMetadata> implements MetadataGetter<T> {
+export class BookMetadataGetter<T extends BookMetadataRaw> implements MetadataGetter<T> {
     getPublishYears(metadata: T) {
         const year = new Date(metadata.date).getFullYear();
         const yearString = Number.isNaN(year) ? "Unknown" : year.toString();

@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, Menu, rem } from "@mantine/core";
 import { IconFilter, IconFilterFilled } from "@tabler/icons-react";
+import { observer } from "mobx-react-lite";
 
-import { FilterGroup } from "./components";
-import { ToggleActionIcon } from "~/components/ToggleActionIcon";
-import classes from "./FilterMenu.modules.css";
 import { useFilterTags, useTags } from "~/renderer/stores";
+import { ToggleActionIcon } from "~/renderer/components";
+import { FilterGroup } from "./components";
+import classes from "./FilterMenu.modules.css";
 
-export const FilterMenu = () => {
+export const FilterMenu = observer(() => {
     const { resetActiveTags, categoriesHaveActiveTag } = useFilterTags();
     const { resetTagCategory } = useTags("recent");
 
@@ -55,4 +56,4 @@ export const FilterMenu = () => {
             </Menu.Dropdown>
         </Menu>
     );
-};
+});

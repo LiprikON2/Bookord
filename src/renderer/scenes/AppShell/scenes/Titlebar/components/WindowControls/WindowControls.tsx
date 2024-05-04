@@ -1,4 +1,5 @@
 import React from "react";
+import { observer } from "mobx-react-lite";
 import clsx from "clsx";
 
 import context from "./ipc";
@@ -15,7 +16,7 @@ const closePath =
 const maximizePath = "M 0,0 0,10 10,10 10,0 Z M 1,1 9,1 9,9 1,9 Z";
 const minimizePath = "M 0,5 10,5 10,6 0,6 Z";
 
-export const WindowControls = (props: Props) => {
+export const WindowControls = observer((props: Props) => {
     return (
         <section className={classes.windowTitlebarControls}>
             <ControlButton
@@ -50,4 +51,4 @@ export const WindowControls = (props: Props) => {
             />
         </section>
     );
-};
+});

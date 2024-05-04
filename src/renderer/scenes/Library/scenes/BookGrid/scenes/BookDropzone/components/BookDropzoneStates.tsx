@@ -2,8 +2,12 @@ import React from "react";
 import { Group, rem, Text } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import { IconBook2, IconBookUpload, IconX } from "@tabler/icons-react";
+import { observer } from "mobx-react-lite";
 
-export const BookDropzoneStates = ({ fullscreen = false }) => {
+interface BookDropzoneStatesProps {
+    fullscreen?: boolean;
+}
+export const BookDropzoneStates = observer(({ fullscreen = false }: BookDropzoneStatesProps) => {
     return (
         <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: "none" }}>
             <Dropzone.Accept>
@@ -43,4 +47,4 @@ export const BookDropzoneStates = ({ fullscreen = false }) => {
             </div>
         </Group>
     );
-};
+});

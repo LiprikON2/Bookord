@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { Box, Text, ScrollArea } from "@mantine/core";
+import { observer } from "mobx-react-lite";
 
 import classes from "./PanelContent.module.css";
 import { useMergedRef, useScrollIntoView } from "@mantine/hooks";
@@ -10,7 +11,7 @@ interface PanelContentProps {
     children?: (autoscrollTargetRef: (node: any) => void) => React.ReactNode;
 }
 
-export const PanelContent = ({ heading, children }: PanelContentProps) => {
+export const PanelContent = observer(({ heading, children }: PanelContentProps) => {
     const { scrollableRef, autoscrollTargetRef } = useAutoscrollIntoView({
         offset: 42,
         duration: 300,
@@ -45,4 +46,4 @@ export const PanelContent = ({ heading, children }: PanelContentProps) => {
             </ScrollArea>
         </Box>
     );
-};
+});

@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from "react";
 
-import { useBookContent, type BookKey, bookStore } from "~/renderer/stores";
+import { useBookContent, type BookKey } from "~/renderer/stores";
 import { useTocNav } from "./hooks";
 import { TocChild } from "./components";
+import { observer } from "mobx-react-lite";
 
 interface TocProps {
     autoscrollTargetRef: (node: any) => void;
@@ -11,13 +12,13 @@ interface TocProps {
 
 // TODO don't autoscroll on user clicks
 // TODO autounfold when chapter (that is inside folded heading chapter) becomes active (e.g. Warlock.epub)
-export const Toc = ({ autoscrollTargetRef, bookKey }: TocProps) => {
+export const Toc = observer(({ autoscrollTargetRef, bookKey }: TocProps) => {
     const { content } = useBookContent(bookKey);
     const tocChildren = content?.structure;
 
     const { tocProps } = useTocNav(tocChildren);
 
     return tocProps.map((tocProp) => (
-        <TocChild {...tocProp} autoscrollTargetRef={autoscrollTargetRef} />
+        <TocChild key={tocProp.key} {...tocProp} autoscrollTargetRef={autoscrollTargetRef} />
     ));
-};
+});

@@ -1,0 +1,4 @@
+{
+    "github-actions.workflows.pinned.workflows": [],
+    "exportall.config.folderListener": ["/src/renderer/components"]
+}

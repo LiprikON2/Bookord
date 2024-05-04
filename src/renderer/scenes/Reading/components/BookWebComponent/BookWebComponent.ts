@@ -871,4 +871,16 @@ export default class BookWebComponent extends HTMLElement {
     }
 }
 
+declare global {
+    // eslint-disable-next-line @typescript-eslint/no-namespace
+    namespace React.JSX {
+        interface IntrinsicElements {
+            "book-web-component": React.DetailedHTMLProps<
+                React.HTMLAttributes<HTMLElement> & { class?: string },
+                HTMLElement
+            >;
+        }
+    }
+}
+
 window.customElements.define("book-web-component", BookWebComponent);

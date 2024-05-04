@@ -3,25 +3,26 @@ import { Paper, Text, Title, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
+import { observer } from "mobx-react-lite";
 
 import context from "~/renderer/ipc/fileOperations";
-import { BookKey, useBookMetadata } from "~/renderer/stores";
+import { TitleObserver, TextObserver } from "~/renderer/components";
+import { BookKey, useBookMetadata, useBookStore } from "~/renderer/stores";
 import { bookKeyRoute } from "~/renderer/appRenderer";
-import { BookMenu, SummaryModal } from "./components";
+import { BookMenu, SummaryModal } from "./scenes";
 import classes from "./BookCard.module.css";
 
-export const BookCard = ({
-    bookKey,
-    onClick,
-    visible = true,
-}: {
+interface BookCardProps {
     bookKey: BookKey;
     onClick?: () => void;
     visible?: boolean;
-}) => {
+}
+
+export const BookCard = observer(({ bookKey, onClick, visible = true }: BookCardProps) => {
     const [openedModal, { open: openModal, close: closeModal }] = useDisclosure(false);
 
-    const metadata = useBookMetadata(bookKey);
+    const bookStore = useBookStore();
+    const metadata = bookStore.getBookMetadata(bookKey, true);
 
     const handleDelete = () => context.deleteFile(bookKey);
 
@@ -52,9 +53,9 @@ export const BookCard = ({
                     style={{ backgroundImage: `url(${metadata.cover})` }}
                 >
                     <div>
-                        <Text className={classes.category} size="xs">
-                            {metadata.authors}
-                        </Text>
+                        <TextObserver className={classes.category} size="xs">
+                            {() => metadata.author}
+                        </TextObserver>
                     </div>
                     <Group
                         justify="space-between"
@@ -70,20 +71,20 @@ export const BookCard = ({
                             p="0.5rem"
                             styles={{ root: { display: "flex" } }}
                         >
-                            <Title order={3} className={classes.title}>
-                                {metadata.title}
-                            </Title>
+                            <TitleObserver order={3} className={classes.title}>
+                                {() => metadata.title}
+                            </TitleObserver>
                         </Paper>
                         <BookMenu handleDelete={handleDelete} openModal={openModal} />
                     </Group>
                 </Paper>
-                <SummaryModal
-                    title={metadata.title}
-                    authors={metadata.authors}
-                    opened={openedModal}
-                    onClose={closeModal}
-                />
             </Link>
+            <SummaryModal
+                getTitle={() => metadata.title}
+                getAuthor={() => metadata.author}
+                opened={openedModal}
+                onClose={closeModal}
+            />
         </motion.div>
     );
-};
+});

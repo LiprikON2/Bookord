@@ -6,10 +6,10 @@ class BookState {
     currentSection;
 
     get currentPage() {
-        return;
+        return 0;
     }
     get totalPages() {
-        return;
+        return 0;
     }
 
     constructor(bookComponent) {
@@ -134,7 +134,7 @@ export default class StateManager {
      */
     #recGetSectionTitle(book, toc, sectionIndex, root = true) {
         let descendantSectionTitle;
-        for (let tocEntry of toc) {
+        for (const tocEntry of toc) {
             const tocEntryChildren = tocEntry?.children;
             if (tocEntryChildren) {
                 descendantSectionTitle = this.#recGetSectionTitle(

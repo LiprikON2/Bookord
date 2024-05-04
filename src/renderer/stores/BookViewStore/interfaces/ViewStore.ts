@@ -52,60 +52,60 @@ export interface Collection {
     groupBy: keyof FilterTags | null;
 }
 
-export interface ViewStore<T> {
-    metadataGetter: MetadataGetter<T>;
-    mainCollection: Collection;
-    userCollections: Map<CollectionKey, Collection>;
+// export interface ViewStore<T> {
+//     metadataGetter: MetadataGetter<T>;
+//     mainCollection: Collection;
+//     userCollections: Map<CollectionKey, Collection>;
 
-    newFilter(...args: any[]): Filter<T>;
+//     newFilter(...args: any[]): Filter<T>;
 
-    sortTags(tags: Tag[], sortBy: TagCategory["sortBy"]): Tag[];
+//     sortTags(tags: Tag[], sortBy: TagCategory["sortBy"]): Tag[];
 
-    getTagCategoryName(tagCategory: keyof FilterTags): string;
-    getTagCategoryName(tagCategory: keyof FilterTags, collectionKey?: CollectionKey): string;
+//     getTagCategoryName(tagCategory: keyof FilterTags): string;
+//     getTagCategoryName(tagCategory: keyof FilterTags, collectionKey?: CollectionKey): string;
 
-    categoryHasActiveTag(tagCategory: keyof FilterTags): boolean;
-    categoryHasActiveTag(tagCategory: keyof FilterTags, collectionKey?: CollectionKey): boolean;
+//     categoryHasActiveTag(tagCategory: keyof FilterTags): boolean;
+//     categoryHasActiveTag(tagCategory: keyof FilterTags, collectionKey?: CollectionKey): boolean;
 
-    getSearchTerm(): string;
-    getSearchTerm(collectionKey?: CollectionKey): string;
+//     getSearchTerm(): string;
+//     getSearchTerm(collectionKey?: CollectionKey): string;
 
-    setSearchTerm(searchTerm: string): void;
-    setSearchTerm(searchTerm: string, collectionKey?: CollectionKey): void;
+//     setSearchTerm(searchTerm: string): void;
+//     setSearchTerm(searchTerm: string, collectionKey?: CollectionKey): void;
 
-    setTagsSearchTerm(searchTerm: string, tagCategory: keyof FilterTags): void;
-    setTagsSearchTerm(
-        searchTerm: string,
-        tagCategory: keyof FilterTags,
-        collectionKey?: CollectionKey
-    ): void;
+//     setTagsSearchTerm(searchTerm: string, tagCategory: keyof FilterTags): void;
+//     setTagsSearchTerm(
+//         searchTerm: string,
+//         tagCategory: keyof FilterTags,
+//         collectionKey?: CollectionKey
+//     ): void;
 
-    getTags(tagCategory: keyof FilterTags): Tag[];
-    getTags(tagCategory: keyof FilterTags, collectionKey?: CollectionKey): Tag[];
+//     getTags(tagCategory: keyof FilterTags): Tag[];
+//     getTags(tagCategory: keyof FilterTags, collectionKey?: CollectionKey): Tag[];
 
-    getTagsAll(): Tags;
-    getTagsAll(collectionKey?: CollectionKey): Tags;
+//     getTagsAll(): Tags;
+//     getTagsAll(collectionKey?: CollectionKey): Tags;
 
-    setActiveTag(tagCategory: keyof FilterTags, tag: TagName, active: boolean): void;
-    setActiveTag(
-        tagCategory: keyof FilterTags,
-        tag: TagName,
-        active: boolean,
-        collectionKey?: CollectionKey
-    ): void;
+//     setActiveTag(tagCategory: keyof FilterTags, tag: TagName, active: boolean): void;
+//     setActiveTag(
+//         tagCategory: keyof FilterTags,
+//         tag: TagName,
+//         active: boolean,
+//         collectionKey?: CollectionKey
+//     ): void;
 
-    resetActiveTags(tagCategory: keyof FilterTags): void;
-    resetActiveTags(tagCategory: keyof FilterTags, collectionKey?: CollectionKey): void;
+//     resetActiveTags(tagCategory: keyof FilterTags): void;
+//     resetActiveTags(tagCategory: keyof FilterTags, collectionKey?: CollectionKey): void;
 
-    hasActiveTag(excludedTagCategories: (keyof FilterTags)[]): boolean;
-    hasActiveTag(
-        excludedTagCategories: (keyof FilterTags)[],
-        collectionKey?: CollectionKey
-    ): boolean;
+//     hasActiveTag(excludedTagCategories: (keyof FilterTags)[]): boolean;
+//     hasActiveTag(
+//         excludedTagCategories: (keyof FilterTags)[],
+//         collectionKey?: CollectionKey
+//     ): boolean;
 
-    get(): Collection;
-    get(collectionKey?: CollectionKey): Collection;
+//     get(): Collection;
+//     get(collectionKey?: CollectionKey): Collection;
 
-    apply(items: ViewItem<T>[]): ViewItemGroup<T>[];
-    apply(items: ViewItem<T>[], collectionKey?: CollectionKey): ViewItemGroup<T>[];
-}
+//     apply(items: ViewItem<T>[]): ViewItemGroup<T>[];
+//     apply(items: ViewItem<T>[], collectionKey?: CollectionKey): ViewItemGroup<T>[];
+// }

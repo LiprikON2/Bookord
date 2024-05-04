@@ -3,6 +3,7 @@ import React, { createContext, useState } from "react";
 import { CollectionKey, ViewItem } from "../stores/BookViewStore/interfaces";
 import { BookMetadata } from "../stores/BookStore";
 import { useUpdateBookViewStore } from "../stores/BookViewStore/hooks";
+import { observer } from "mobx-react-lite";
 
 type MainOrUserCollectionKey = CollectionKey | undefined;
 
@@ -17,21 +18,22 @@ export const BookViewStoreContext = createContext<BookViewStoreContextType>({
 });
 
 // ref: https://stackoverflow.com/a/65440349/10744339
-export const BookViewStoreContextProvider = ({
-    metaBookRecords,
-    children,
-}: {
-    metaBookRecords: ViewItem<BookMetadata>[];
-    children?: React.ReactNode;
-}) => {
-    const [activeCollectionKey, setActiveCollectionKey] = useState<MainOrUserCollectionKey>();
+export const BookViewStoreContextProvider = observer(
+    ({
+        metaBookRecords,
+        children,
+    }: {
+        metaBookRecords: ViewItem<BookMetadata>[];
+        children?: React.ReactNode;
+    }) => {
+        const [activeCollectionKey, setActiveCollectionKey] = useState<MainOrUserCollectionKey>();
 
-    useUpdateBookViewStore(metaBookRecords);
+        useUpdateBookViewStore(metaBookRecords);
 
-    return (
-        <BookViewStoreContext.Provider
-            value={{ activeCollectionKey, setActiveCollectionKey }}
-            children={children}
-        />
-    );
-};
+        return (
+            <BookViewStoreContext.Provider value={{ activeCollectionKey, setActiveCollectionKey }}>
+                {children}
+            </BookViewStoreContext.Provider>
+        );
+    }
+);

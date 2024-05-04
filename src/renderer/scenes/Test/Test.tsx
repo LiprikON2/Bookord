@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
 import { Button, Center, Container, Skeleton, Space } from "@mantine/core";
+import { observer } from "mobx-react-lite";
 
 import { useColorScheme } from "~/renderer/hooks";
 import { About } from "./About";
 
-export const Test = () => {
+export const Test = observer(() => {
     const { dark, setColorScheme } = useColorScheme();
     /**
      * Toggle Theme
@@ -28,4 +29,4 @@ export const Test = () => {
                 ))} */}
         </Container>
     );
-};
+});

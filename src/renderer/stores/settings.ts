@@ -11,7 +11,7 @@ declare global {
     }
 }
 
-let settingsStore = observable<SettingsState>({});
+const settingsStore = observable<SettingsState>({});
 let isInitialized = false;
 const settingsStoreKey = "settingsStore";
 

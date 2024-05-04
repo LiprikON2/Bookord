@@ -1,9 +1,10 @@
 import React from "react";
 import { Group } from "@mantine/core";
+import { observer } from "mobx-react-lite";
 
 import { Item } from "./components";
 
-const Versions = ({ children }: { children: React.ReactNode }) => {
+const Versions = observer(({ children }: { children: React.ReactNode }) => {
     return (
         <Group
             justify="center"
@@ -18,8 +19,16 @@ const Versions = ({ children }: { children: React.ReactNode }) => {
             {children}
         </Group>
     );
-};
+});
 
-Versions.Item = Item;
+type Versions = typeof Versions;
+interface VersionsCompositeOpt extends Versions {
+    Item?: typeof Item;
+}
 
-export { Versions };
+const VersionsComposite: VersionsCompositeOpt = Versions;
+
+VersionsComposite.Item = Item;
+type VersionsComposite = Required<VersionsCompositeOpt>;
+
+export { VersionsComposite as Versions };
