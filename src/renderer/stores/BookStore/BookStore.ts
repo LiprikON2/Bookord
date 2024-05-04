@@ -2,6 +2,7 @@ import { makeAutoObservable } from "mobx";
 import _ from "lodash";
 
 import context from "./ipc";
+import { RootStore } from "../RootStore";
 
 export type BookState = {
     isInStorage: boolean;
@@ -144,6 +145,8 @@ const provideFallbackTitle = (filename: string, title?: any): string => {
  * ref: https://mobx.js.org/defining-data-stores.html#domain-stores
  */
 export class BookStore {
+    rootStore: RootStore;
+
     // ref: https://www.zhenghao.io/posts/object-vs-map
     storeStateRecords = new Map<BookKey, BookStoreState>();
     metadataRecords = new Map<BookKey, BookMetadata>();
@@ -155,15 +158,14 @@ export class BookStore {
      */
     interactionRecords = new Map<BookKey, BookInteractionState>();
 
-    // TODO consider using WeakMap
-
     // TODO split:
     //
     // fileMetadataRecords = new Map<BookKey, BookMetadata>();
     // apiMetadataRecords = new Map<BookKey, any>();
 
-    constructor() {
+    constructor(rootStore: RootStore) {
         makeAutoObservable(this, { contentRecords: false });
+        this.rootStore = rootStore;
     }
 
     getBookMetadata(bookKey: BookKey) {

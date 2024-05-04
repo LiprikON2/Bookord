@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { reaction } from "mobx";
 
 import { BookKey } from "../BookStore";
-import { bookStore } from "../store";
+import { RootStoreContext } from "../../RootStoreContext";
 
 // TODO closing this tab while the book content is being streamed results in an infinite loop of errors
 // https://i.imgur.com/TTrm2fl.png
@@ -12,6 +12,8 @@ import { bookStore } from "../store";
  * @param initSectionIndex if provided, opens book on the specified section
  */
 export const useBookContent = (bookKey: BookKey, initSectionIndex?: number) => {
+    const { bookStore } = useContext(RootStoreContext);
+
     const [content, setContent] = useState(() => bookStore.getBookContent(bookKey));
     const [contentState, setContentState] = useState(() => bookStore.getBookContentState(bookKey));
 

@@ -2,9 +2,12 @@ import { reaction } from "mobx";
 import { useContext, useEffect, useState } from "react";
 
 import { BookViewStoreContext } from "~/renderer/contexts";
-import { bookViewStore, FilterTags } from "..";
+import { FilterTags } from "..";
+import { RootStoreContext } from "../../RootStoreContext";
 
 export const useFilterTags = (specialTagCategory: keyof FilterTags = "recent") => {
+    const { bookViewStore } = useContext(RootStoreContext);
+
     const { activeCollectionKey } = useContext(BookViewStoreContext);
 
     const [categoriesHaveActiveTag, setCategoriesHaveActiveTag] = useState(() =>

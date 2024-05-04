@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { CloseButton, ScrollArea, Stack, Tabs, Text } from "@mantine/core";
 import { useNavigate, useParams } from "@tanstack/react-router";
 
-import { bookStore } from "~/renderer/stores";
 import { useHistory, useIsMobile } from "~/renderer/hooks";
 import { Params, SidebarInnerTab, SidebarMarkup, SidebarTab } from "../../Sidebar";
 
 import classes from "./PanelTabsContent.module.css";
+import { RootStoreContext } from "~/renderer/stores/RootStoreContext";
 
 interface PanelTabsContentProps {
     markup: SidebarMarkup;
@@ -18,6 +18,8 @@ const desktopProps = { variant: "outline" };
 const mobileProps = { variant: "pills" };
 
 export const PanelTabsContent = ({ markup, outerTab, onChangeTab }: PanelTabsContentProps) => {
+    const { bookStore } = useContext(RootStoreContext);
+
     const isMobile = useIsMobile();
     const navigate = useNavigate();
     const { currentPath } = useHistory();

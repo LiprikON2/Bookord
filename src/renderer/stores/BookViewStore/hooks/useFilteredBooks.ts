@@ -2,10 +2,11 @@ import { useContext, useLayoutEffect, useState } from "react";
 import { reaction } from "mobx";
 
 import { BookViewStoreContext } from "~/renderer/contexts";
-import { bookViewStore } from "../store";
 import { useStorageBooks } from "../../BookStore";
+import { RootStoreContext } from "../../RootStoreContext";
 
 export const useFilteredBooks = () => {
+    const { bookViewStore } = useContext(RootStoreContext);
     const { activeCollectionKey } = useContext(BookViewStoreContext);
 
     const { metaBookRecords, isBookStorageEmpty, inStorageBookCount } = useStorageBooks();

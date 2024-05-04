@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { reaction } from "mobx";
 
-import { bookStore } from "..";
+import { RootStoreContext } from "../../RootStoreContext";
 
 // ref: https://github.com/mobxjs/mobx/discussions/3737#discussioncomment-6548377
 export const useStorageBooks = () => {
+    const { bookStore } = useContext(RootStoreContext);
+
     const [inStorageBookRecords, setInStorageBookRecords] = useState(() =>
         bookStore.getBookStateInStorage()
     );

@@ -1,13 +1,14 @@
 import { useEffect } from "react";
 
 import context from "~/renderer/ipc/fileOperations";
-import { bookStore } from "..";
+import { BookStore } from "..";
 
-export const useUpdateBookStore = () => {
+export const useUpdateBookStore = (bookStore: BookStore) => {
     /* Requests initial watcher update */
     useEffect(() => {
         context.requestWatcherUpdate();
-    }, []);
+    }, [bookStore]);
+
     /* Updates store when watcher updates are received  */
     useEffect(() => {
         const unsub = context.handleWatcherUpdate(({ bookKeys }) =>
@@ -15,5 +16,5 @@ export const useUpdateBookStore = () => {
         );
 
         return () => unsub();
-    }, []);
+    }, [bookStore]);
 };

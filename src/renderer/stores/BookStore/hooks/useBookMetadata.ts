@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { reaction } from "mobx";
 
 import { BookKey } from "../BookStore";
-import { bookStore } from "../store";
 import sampleCover from "~/assets/images/sampleBookCover.webp";
+import { RootStoreContext } from "../../RootStoreContext";
 
 const provideFallbackCover = (cover?: string): string => {
     if (!cover || cover === "unkown") return sampleCover;
@@ -26,6 +26,8 @@ const provideFallbackAuthors = (authors?: any): string => {
 };
 
 export const useBookMetadata = (bookKey: BookKey) => {
+    const { bookStore } = useContext(RootStoreContext);
+
     const [metadata, setMetadata] = useState(() => bookStore.getBookMetadata(bookKey));
 
     useEffect(() => {

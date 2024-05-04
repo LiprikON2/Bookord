@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { reaction } from "mobx";
 
 import { BookKey, Bookmark } from "../BookStore";
-import { bookStore } from "../store";
+import { RootStoreContext } from "../../RootStoreContext";
 
 export const useBookInteractions = (bookKey: BookKey) => {
+    const { bookStore } = useContext(RootStoreContext);
+
     const [autobookmarkState, setAutobookmarkState] = useState(
         () => bookStore.getBookInteraction(bookKey).bookmarks.auto
     );

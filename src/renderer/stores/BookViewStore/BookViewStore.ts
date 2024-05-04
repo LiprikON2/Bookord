@@ -17,6 +17,7 @@ import type {
 } from "./interfaces";
 import { BookFilter } from "./filters";
 import { BookMetadataGetter } from "./metadataGetters";
+import { RootStore } from "../RootStore";
 
 /**
  * UI store
@@ -24,13 +25,16 @@ import { BookMetadataGetter } from "./metadataGetters";
  * ref: https://mobx.js.org/defining-data-stores.html#ui-stores
  */
 export class BookViewStore<T extends BookMetadata> implements ViewStore<T> {
+    rootStore: RootStore;
+
     metadataGetter = new BookMetadataGetter();
     mainCollection = this.getInitCollection();
     // userTags = new Map<BookKey, UserTag>();
     userCollections = new Map<CollectionKey, Collection>();
 
-    constructor() {
+    constructor(rootStore: RootStore) {
         makeAutoObservable(this);
+        this.rootStore = rootStore;
     }
 
     private getInitCollection(): Collection {

@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { reaction } from "mobx";
-
-import { bookStore } from "../store";
+import { RootStoreContext } from "../../RootStoreContext";
 
 export const useOpenedBooks = () => {
+    const { bookStore } = useContext(RootStoreContext);
+
     const [openedBooks, setOpenedBooks] = useState(() => bookStore.getBookStateOpened());
 
     useEffect(() => {

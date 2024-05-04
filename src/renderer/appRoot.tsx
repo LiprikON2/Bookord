@@ -14,6 +14,7 @@ import "@mantine/notifications/styles.layer.css";
 import "@mantine/spotlight/styles.layer.css";
 import "mantine-contextmenu/styles.layer.css";
 import "./layout.css";
+import { RootStoreContextProvider } from "./stores/RootStoreContext";
 
 console.log("[Renderer]: Execution started");
 const queryClient = new QueryClient();
@@ -31,15 +32,15 @@ export const Root = () => {
     // TODO consider moving it to the route level
     // might be of use: https://tanstack.com/router/latest/docs/framework/react/guide/router-context#how-about-an-external-data-fetching-library
 
-    useUpdateBookStore();
-
     return (
         <>
             <ColorSchemeScript defaultColorScheme="dark" />
             <MantineProvider defaultColorScheme="dark" theme={baseTheme}>
                 <ContextMenuProvider>
                     <QueryClientProvider client={queryClient}>
-                        <Outlet />
+                        <RootStoreContextProvider>
+                            <Outlet />
+                        </RootStoreContextProvider>
                     </QueryClientProvider>
                 </ContextMenuProvider>
             </MantineProvider>

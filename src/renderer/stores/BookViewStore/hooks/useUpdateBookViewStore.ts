@@ -1,10 +1,12 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 
 import { ViewItem } from "../interfaces";
-import { bookViewStore } from "../store";
 import { BookMetadata } from "../../BookStore";
+import { RootStoreContext } from "../../RootStoreContext";
 
 export const useUpdateBookViewStore = (metaBookRecords: ViewItem<BookMetadata>[]) => {
+    const { bookViewStore } = useContext(RootStoreContext);
+
     useEffect(() => {
         bookViewStore.populateFilterTagsAll(metaBookRecords);
     }, [metaBookRecords]);
