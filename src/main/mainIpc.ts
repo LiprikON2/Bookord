@@ -1,4 +1,4 @@
-import { ipcMain } from "electron";
+import { app, ipcMain } from "electron";
 
 import { type WatcherState } from "./utils/io";
 import { MainWindow } from "./mainWindow";
@@ -20,4 +20,9 @@ export const registerMainIpc = (
     //     if (!validateSender(e)) return null;
     //     mainWindow.webContents.send("watcher-update", watcherState);
     // });
+
+    ipcMain.handle("version", (e) => {
+        if (!validateSender(e)) return null;
+        return app.getVersion();
+    });
 };

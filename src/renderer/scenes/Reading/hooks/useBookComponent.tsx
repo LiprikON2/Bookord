@@ -1,21 +1,24 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { IconCopy, IconSpeakerphone } from "@tabler/icons-react";
 import { useHotkeys } from "@mantine/hooks";
 import { useContextMenu } from "mantine-contextmenu";
 import { toJS } from "mobx";
 
 import { BookComponentContext, BookComponentTocContext } from "~/renderer/contexts";
-import { BookKey, useBookContent, useBookInteractions, useBookMetadata } from "~/renderer/stores";
+import { BookKey, useBookContent, useBookStore } from "~/renderer/stores";
 import BookWebComponent, { BookWebComponentEventMap } from "../components/BookWebComponent";
 import { useWebComponent } from "./useWebComponent";
 import classes from "./useBookComponent.module.css";
 
 export const useBookComponent = (bookKey: BookKey) => {
-    const metadata = useBookMetadata(bookKey);
-    const { autobookmark, setAutobookmark } = useBookInteractions(bookKey);
+    const bookStore = useBookStore();
+
+    const metadata = bookStore.getBookMetadata(bookKey, true);
+    const autobookmark = bookStore.getAutobookmark(bookKey);
+    const contentState = bookStore.getBookContentState(bookKey);
     // console.log("autobookmark", toJS(autobookmark), bookKey);
 
-    const { content, contentState } = useBookContent(bookKey, autobookmark?.elementSection ?? 0);
+    const { content } = useBookContent(bookKey, autobookmark?.elementSection ?? 0);
 
     const { setContextRef, contextUiState, setContextUiState, setTtsTarget } =
         useContext(BookComponentContext);
@@ -47,8 +50,7 @@ export const useBookComponent = (bookKey: BookKey) => {
             {
                 type: "autobookmarkPositionEvent",
                 listener: (e: BookWebComponentEventMap["autobookmarkPositionEvent"]) => 
-                    setAutobookmark(e.detail.bookmark)
-                ,
+                    bookStore.setAutobookmark(bookKey, e.detail.bookmark),
             },
             {
                 type: "contextMenuEvent",
@@ -109,7 +111,8 @@ export const useBookComponent = (bookKey: BookKey) => {
 
     useEffect(() => {
         // console.log("loading book", isReadyToDisplay);
-        if (isReadyToDisplay) bookComponentRef.current.loadBook(contentState, content, metadata);
+        if (isReadyToDisplay)
+            bookComponentRef.current.loadBook(toJS(contentState), content, toJS(metadata));
     }, [isReadyToDisplay]);
 
     return { uiState: contextUiState, setBookComponentRef, bookTitle, isReadyToDisplay };

@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 import _ from "lodash";
 
 import context from "./ipc";
@@ -290,7 +290,7 @@ export class BookStore {
                 },
             };
 
-            this.setBookInteraction(bookKey, defaultInteractionState);
+            runInAction(() => this.setBookInteraction(bookKey, defaultInteractionState));
 
             return this.getBookInteraction(bookKey);
         }
@@ -459,7 +459,6 @@ export class BookStore {
     }
 
     openBook(bookKey: BookKey, initSectionIndex: number = 0) {
-        console.log("parse initially", initSectionIndex);
         const state = this.getBookState(bookKey);
 
         const shouldNotBeOpened = !state.isInStorage || state.isContentRequested;
@@ -527,5 +526,12 @@ export class BookStore {
             isContentRequested: false,
             requestedContentSection: null,
         });
+    }
+
+    getAutobookmark(bookKey: BookKey) {
+        return this.getBookInteraction(bookKey).bookmarks.auto;
+    }
+    setAutobookmark(bookKey: BookKey, bookmark: Bookmark) {
+        return this.addBookInteractionBookmark(bookKey, bookmark, "auto");
     }
 }

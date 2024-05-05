@@ -126,12 +126,12 @@ export const useTocNav = (tocChildren: Structure[]) => {
         [tocChildren, tocState.currentSection]
     );
 
-    if (isDev()) {
-        // @ts-ignore
-        window["tocProps"] = tocProps;
-        // @ts-ignore
-        window["tocState"] = tocState;
-    }
+    // if (isDev()) {
+    //     // @ts-ignore
+    //     window["tocProps"] = tocProps;
+    //     // @ts-ignore
+    //     window["tocState"] = tocState;
+    // }
 
     return { tocNavTo, tocProps };
 };

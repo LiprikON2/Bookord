@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { createRoot } from "react-dom/client";
 
-import { Library, Reading, Test } from "~/renderer/scenes";
+import { Library, Reading, About } from "~/renderer/scenes";
 import { isDev } from "~/common/helpers";
 import { Root } from "./appRoot";
 import { LayoutLibrary, LayoutReading } from "./layouts";
@@ -70,7 +70,7 @@ export const aboutRoute = createRoute({
 export const aboutIndexRoute = createRoute({
     getParentRoute: () => aboutRoute,
     path: "/",
-    component: Test,
+    component: About,
 });
 
 export const readingRoute = createRoute({

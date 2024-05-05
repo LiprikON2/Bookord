@@ -249,6 +249,7 @@ export default class BookWebComponent extends HTMLElement {
     loadBook(contentState: BookContentState, content: BookContent, metadata: BookMetadata) {
         const { initSectionIndex } = contentState;
         const isInitialLoad = !this.book;
+        console.log("isInitialLoad", isInitialLoad, initSectionIndex, contentState, content);
 
         if (isInitialLoad) {
             this.book = { ...content, sectionNames: contentState.sectionNames, metadata };

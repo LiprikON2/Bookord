@@ -18,7 +18,6 @@ export interface TocChildProps {
     onSelected?: () => void;
 }
 
-// TODO ensure it is perfomant without propsAreEqual ― just with an observer  https://mobx.js.org/react-optimizations.html#render-lists-in-dedicated-components
 const propsAreEqual = (
     prevProps: Readonly<TocChildProps>,
     nextProps: Readonly<TocChildProps>
@@ -39,9 +38,8 @@ const propsAreEqual = (
     );
 };
 
-// // ref: https://github.com/facebook/react/issues/15156#issuecomment-474590693
-// const TocChild = memo(
-export const TocChild = observer(
+// ref: https://github.com/facebook/react/issues/15156#issuecomment-474590693
+const TocChild = memo(
     ({
         isSelected,
         onSelected,
@@ -89,9 +87,9 @@ export const TocChild = observer(
                 ))}
             </NavLink>
         );
-    }
-    // propsAreEqual
+    },
+    propsAreEqual
 );
 
-// TocChild.displayName = "TocChild";
-// export { TocChild };
+TocChild.displayName = "TocChild";
+export { TocChild };

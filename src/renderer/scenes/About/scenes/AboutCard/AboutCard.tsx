@@ -1,12 +1,14 @@
 import React from "react";
-
-import { Versions } from "./components/Versions";
 import { observer } from "mobx-react-lite";
 
-export const About = observer(() => {
+import { Versions } from "./components";
+import { useAppVersion } from "./hooks";
+
+export const AboutCard = observer(() => {
+    const bookordVersion = useAppVersion();
     return (
         <Versions>
-            <Versions.Item type="bookordSquare" />
+            <Versions.Item type="bookordCircle" name="bookord" version={bookordVersion} />
             <Versions.Item type="electron" />
             <Versions.Item type="chrome" />
             <Versions.Item type="license" />

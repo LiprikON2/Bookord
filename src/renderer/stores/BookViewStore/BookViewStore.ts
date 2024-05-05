@@ -322,10 +322,10 @@ export class BookViewStore {
         this.setSearchTerm(searchTerm, this.activeCollectionKey);
     }
 
-    get filterTitle() {
+    getFilterTitle(excludedCategories: (keyof FilterTags)[]) {
         const searchTerm = this.search;
         const categoriesHaveActiveTag = this.categoriesHaveActiveTag(
-            ["recent"],
+            excludedCategories,
             this.activeCollectionKey
         );
         const metaBookRecords = this.rootStore.bookStore.getBookMetadataInStorage();

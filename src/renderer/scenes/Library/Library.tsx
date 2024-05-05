@@ -11,7 +11,7 @@ export const Library = observer(() => {
 
     return (
         <Container px="lg" py="md" h="100%">
-            <DetailedTitle size="lg" getTitle={() => bookViewStore.filterTitle} />
+            <DetailedTitle size="lg" getTitle={() => bookViewStore.getFilterTitle(["recent"])} />
             <BookGrid />
         </Container>
     );

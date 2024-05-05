@@ -95,6 +95,7 @@ export const PanelTabsContent = observer(
                             {() => innerTab.tabHeading}
                         </TextObserver>
                         <TabsList getInnerTabs={() => innerTab.tabs} onTabClose={closeBook} />
+                        {/* TODO add a skeleton tab */}
                     </Stack>
                 </Tabs>
             ));

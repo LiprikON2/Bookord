@@ -29,7 +29,7 @@ export const getHomeMarkup = (
             dynamicHeight: false,
         },
         {
-            tabHeading: "Opened Books",
+            tabHeading: "Open",
             tabs: openedBookRecords.map((openedBook) => ({
                 id: `/layout-reading/reading/${openedBook.bookKey}`,
                 name: openedBook.title,

@@ -10,6 +10,10 @@ const mainContext = {
     // sendWatcherUpdate(watcherState: WatcherState): Promise<void> {
     //     return ipcRenderer.invoke("send-watcher-update", watcherState);
     // },
+
+    version(): Promise<string> {
+        return ipcRenderer.invoke("version");
+    },
 };
 
 export type MainContextApi = typeof mainContext;
