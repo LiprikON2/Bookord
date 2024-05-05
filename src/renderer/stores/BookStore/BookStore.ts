@@ -219,7 +219,11 @@ export class BookStore {
         };
         return fallbackedMetadata;
     }
-    setBookMetadata(bookKey: BookKey, metadata: BookMetadata | BookMetadataRaw) {
+    setBookMetadata(
+        bookKey: BookKey,
+        metadata: BookMetadata | BookMetadataRaw,
+        callback = () => this.rootStore.bookViewStore.updateTags()
+    ) {
         const fallbackedMetadata: BookMetadata = {
             ...metadata,
             cover: provideFallbackCover(metadata.cover),
@@ -228,9 +232,14 @@ export class BookStore {
         };
 
         this.metadataRecords.set(bookKey, fallbackedMetadata);
+        callback?.();
     }
-    removeBookMetadata(bookKey: BookKey) {
+    removeBookMetadata(
+        bookKey: BookKey,
+        callback = () => this.rootStore.bookViewStore.updateTags()
+    ) {
         this.metadataRecords.delete(bookKey);
+        callback?.();
     }
 
     getBookContent(bookKey: BookKey): BookContent {
@@ -394,7 +403,6 @@ export class BookStore {
         const isFullyParsed = parsedSections.length === content.sections.length;
         const sectionNames = content.sections.map((section) => section.id);
 
-        // console.log("update", parsedSections.length, content.sections.length, parsedSections);
         return {
             isInitSectionParsed,
             isFullyParsed,
@@ -421,31 +429,33 @@ export class BookStore {
 
         const metadataEntries = await context.getParsedMetadata(bookKeys);
 
-        // // ref: https://stackoverflow.com/a/64771774/10744339
-        // runInAction(() => {
-        metadataEntries.forEach(([bookKey, metadata]) => this.setBookMetadata(bookKey, metadata));
-        // });
+        metadataEntries.forEach(([bookKey, metadata]) =>
+            this.setBookMetadata(bookKey, metadata, null)
+        );
+        this.rootStore.bookViewStore.updateTags();
     }
 
-    // removeBook(bookKey: BookKey, deleteRecords: boolean = true) {
-    removeBook(bookKey: BookKey) {
+    removeBook(bookKey: BookKey, delayedBy = 200) {
         this.removeBookContent(bookKey);
         this.removeBookStoreState(bookKey);
 
         // Allows for animating components out with the cover of the book intact
-        setInterval(() => this.removeBookMetadata(bookKey), 200);
+        if (delayedBy) setTimeout(() => this.removeBookMetadata(bookKey), delayedBy);
+        else this.removeBookMetadata(bookKey);
     }
     removeBooks(bookKeys: BookKey[]) {
         bookKeys.forEach((bookKey) => this.removeBook(bookKey));
     }
 
-    updateStore(storageBooks: BookKey[]) {
+    updateBooks(storageBooks: BookKey[]) {
         const storeBooks = this.getBookKeysInStorage();
         const addedBooks = _.difference(storageBooks, storeBooks);
         const removedBooks = _.difference(storeBooks, storageBooks);
 
-        if (addedBooks.length) this.addBooks(addedBooks);
-        if (removedBooks.length) this.removeBooks(removedBooks);
+        if (addedBooks.length || removedBooks.length) {
+            if (addedBooks.length) this.addBooks(addedBooks);
+            if (removedBooks.length) this.removeBooks(removedBooks);
+        }
     }
 
     openBook(bookKey: BookKey, initSectionIndex: number = 0) {

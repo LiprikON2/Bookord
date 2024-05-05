@@ -12,7 +12,7 @@ export const useUpdateBookStore = (bookStore: BookStore) => {
     /* Updates store when watcher updates are received  */
     useEffect(() => {
         const unsub = context.handleWatcherUpdate(({ bookKeys }) =>
-            bookStore.updateStore(bookKeys)
+            bookStore.updateBooks(bookKeys)
         );
 
         return () => unsub();

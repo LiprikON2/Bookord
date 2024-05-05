@@ -7,16 +7,16 @@ import { BookMetadata, ViewItemGroup } from "~/renderer/stores";
 import { BookCard } from "./scenes";
 
 interface BookGroupsProps {
-    bookGroups: ViewItemGroup<BookMetadata>[];
+    getBookGroups: () => ViewItemGroup<BookMetadata>[];
 }
 
 // TODO refactor into a BookGroup component https://mobx.js.org/react-optimizations.html#render-lists-in-dedicated-components
-export const BookGroups = observer(({ bookGroups }: BookGroupsProps) => {
+export const BookGroups = observer(({ getBookGroups }: BookGroupsProps) => {
     const [selectedBookKey, setSelectedBookKey] = useState<string>(null);
 
     return (
         <>
-            {bookGroups.map((bookGroup) => (
+            {getBookGroups().map((bookGroup) => (
                 <SimpleGrid
                     key={bookGroup.name}
                     spacing={{

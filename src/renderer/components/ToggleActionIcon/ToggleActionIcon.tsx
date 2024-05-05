@@ -13,6 +13,7 @@ type ToggleActionIconProps = {
     onAction?: () => void;
     offAction?: () => void;
     ariaLabel?: string;
+    getAriaLabel?: () => string;
     classNames?: {
         icon?: string;
     };
@@ -28,8 +29,9 @@ const ToggleActionIcon = observer(
                 onClick,
                 onAction,
                 offAction,
-                ariaLabel,
+                getAriaLabel,
                 classNames,
+                ariaLabel,
             }: ToggleActionIconProps,
             ref: React.ForwardedRef<HTMLButtonElement>
         ) => {
@@ -59,7 +61,7 @@ const ToggleActionIcon = observer(
                     ref={ref}
                     onClick={onClick ? onClick : handleActionIconToggle}
                     size={rem(36)}
-                    aria-label={ariaLabel}
+                    aria-label={getAriaLabel?.() ?? ariaLabel}
                     variant="default-subtle"
                 >
                     {toggled ? <OnIcon {...iconProps} /> : <OffIcon {...iconProps} />}

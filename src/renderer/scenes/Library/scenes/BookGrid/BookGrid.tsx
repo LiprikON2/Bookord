@@ -4,15 +4,12 @@ import type { FileWithPath } from "@mantine/dropzone";
 import { observer } from "mobx-react-lite";
 
 import context from "~/renderer/ipc/fileOperations";
+import { useBookViewStore } from "~/renderer/stores";
 import { BookDropzone, BookGroups } from "./scenes";
-import { BookMetadata, ViewItemGroup } from "~/renderer/stores";
 
-interface BookGridProps {
-    bookGroups: ViewItemGroup<BookMetadata>[];
-    isBookStorageEmpty: boolean;
-}
+export const BookGrid = observer(() => {
+    const bookViewStore = useBookViewStore();
 
-export const BookGrid = observer(({ bookGroups, isBookStorageEmpty }: BookGridProps) => {
     const handleDrop = async (fileBlobs: FileWithPath[]) => {
         const files = fileBlobs.map(({ path, size, name, lastModified }) => ({
             path,
@@ -30,12 +27,12 @@ export const BookGrid = observer(({ bookGroups, isBookStorageEmpty }: BookGridPr
     return (
         <Box pt="md" style={{ position: "relative" }}>
             <BookDropzone
-                fullscreen={!isBookStorageEmpty}
+                getIsFullscreen={() => !bookViewStore.isBookStorageEmpty}
                 onDrop={handleDrop}
                 onFileDialogOpen={openFileDialog}
             />
 
-            <BookGroups bookGroups={bookGroups} />
+            <BookGroups getBookGroups={() => bookViewStore.bookGroups} />
         </Box>
     );
 });

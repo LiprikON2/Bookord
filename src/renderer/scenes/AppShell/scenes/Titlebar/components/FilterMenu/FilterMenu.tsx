@@ -3,20 +3,21 @@ import { Button, Menu, rem } from "@mantine/core";
 import { IconFilter, IconFilterFilled } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
 
-import { useFilterTags, useTags } from "~/renderer/stores";
+import { useBookViewStore } from "~/renderer/stores";
 import { ToggleActionIcon } from "~/renderer/components";
 import { FilterGroup } from "./components";
 import classes from "./FilterMenu.modules.css";
 
 export const FilterMenu = observer(() => {
-    const { resetActiveTags, categoriesHaveActiveTag } = useFilterTags();
-    const { resetTagCategory } = useTags("recent");
+    const bookViewStore = useBookViewStore();
+    const { resetActiveTags: resetRecentTags, getOtherCategoriesHaveActiveTag } =
+        bookViewStore.useTags("recent");
 
     const [opened, setOpened] = useState(false);
 
     const handleMenuToggle = (opened: boolean) => {
         setOpened(opened);
-        if (opened) resetTagCategory();
+        if (opened) resetRecentTags();
     };
 
     return (
@@ -33,7 +34,7 @@ export const FilterMenu = observer(() => {
                     aria-label="Filter"
                     OnIcon={IconFilterFilled}
                     OffIcon={IconFilter}
-                    on={opened || categoriesHaveActiveTag}
+                    on={opened || getOtherCategoriesHaveActiveTag()}
                     classNames={{ icon: classes.icon }}
                 />
             </Menu.Target>
@@ -48,7 +49,7 @@ export const FilterMenu = observer(() => {
                         fw="normal"
                         mt="auto"
                         style={{ alignSelf: "flex-end" }}
-                        onClick={resetActiveTags}
+                        onClick={() => bookViewStore.resetTags()}
                     >
                         Reset Filters
                     </Button>

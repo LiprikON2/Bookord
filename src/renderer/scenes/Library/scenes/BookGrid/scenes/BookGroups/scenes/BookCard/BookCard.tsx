@@ -1,13 +1,13 @@
 import React from "react";
-import { Paper, Text, Title, Group } from "@mantine/core";
+import { Paper, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "@tanstack/react-router";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { observer } from "mobx-react-lite";
 
 import context from "~/renderer/ipc/fileOperations";
 import { TitleObserver, TextObserver } from "~/renderer/components";
-import { BookKey, useBookMetadata, useBookStore } from "~/renderer/stores";
+import { BookKey, useBookStore } from "~/renderer/stores";
 import { bookKeyRoute } from "~/renderer/appRenderer";
 import { BookMenu, SummaryModal } from "./scenes";
 import classes from "./BookCard.module.css";

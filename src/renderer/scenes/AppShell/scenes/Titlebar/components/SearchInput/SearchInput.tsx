@@ -4,16 +4,16 @@ import { CloseButton, Pill, TextInput } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
 
+import { useBookViewStore } from "~/renderer/stores";
 import classes from "./SearchInput.module.css";
-import { useFilterTags } from "~/renderer/stores";
 
 export const SearchInput = observer(() => {
     const { ref, focused } = useFocusWithin<HTMLInputElement>();
+
+    const bookViewStore = useBookViewStore();
     const [searchTermValue, setSearchTermValue] = useState("");
     const [debouncedSearchTerm] = useDebouncedValue(searchTermValue, 100, { leading: true });
-
-    const { setSearchTerm } = useFilterTags();
-    useEffect(() => setSearchTerm(debouncedSearchTerm), [debouncedSearchTerm]);
+    useEffect(() => bookViewStore.setSearch(debouncedSearchTerm), [debouncedSearchTerm]);
 
     useWindowEvent("keydown", (event) => {
         if (event.code === "KeyP" && (event.ctrlKey || event.metaKey)) {

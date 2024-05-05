@@ -1,11 +1,13 @@
-import React, { useContext, useState } from "react";
-import { CloseButton, ScrollArea, Stack, Tabs, Text } from "@mantine/core";
+import React, { useState } from "react";
+import { Stack, Tabs } from "@mantine/core";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { observer } from "mobx-react-lite";
 
-import { RootStoreContext } from "~/renderer/stores/RootStoreContext";
+import { useBookStore } from "~/renderer/stores";
 import { useHistory, useIsMobile } from "~/renderer/hooks";
+import { TextObserver } from "~/renderer/components";
 import { Params, SidebarInnerTab, SidebarMarkup, SidebarTab } from "../../Sidebar";
+import { TabsList } from "./components";
 import classes from "./PanelTabsContent.module.css";
 
 interface PanelTabsContentProps {
@@ -19,11 +21,10 @@ const mobileProps = { variant: "pills" };
 
 export const PanelTabsContent = observer(
     ({ markup, outerTab, onChangeTab }: PanelTabsContentProps) => {
-        const { bookStore } = useContext(RootStoreContext);
+        const bookStore = useBookStore();
 
         const isMobile = useIsMobile();
         const navigate = useNavigate();
-        const { currentPath } = useHistory();
         const params: Params = useParams({ strict: false });
 
         const closeBook = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, tab: SidebarTab) => {
@@ -51,8 +52,9 @@ export const PanelTabsContent = observer(
             }
         };
 
-        const [previousInnerTab, setPreviousInnerTab] = useState<string | null>(null);
+        const { currentPath } = useHistory();
         const [activeInnerTab, setActiveInnerTab] = useState(decodeURIComponent(currentPath));
+        const [previousInnerTab, setPreviousInnerTab] = useState<string | null>(null);
 
         const changeTab = (id: string, innerTab: SidebarInnerTab) => {
             if (id === activeInnerTab) return;
@@ -89,43 +91,10 @@ export const PanelTabsContent = observer(
                     {...(isMobile ? mobileProps : desktopProps)}
                 >
                     <Stack p={0} m={0} gap={0} h="100%">
-                        <Text className={classes.tabHeading} c="dimmed">
-                            {innerTab.tabHeading}
-                        </Text>
-                        <Tabs.List>
-                            <ScrollArea
-                                w="100%"
-                                scrollbars="y"
-                                scrollbarSize={6}
-                                type="hover"
-                                classNames={{
-                                    viewport: classes.viewport,
-                                    scrollbar: classes.scrollbar,
-                                }}
-                            >
-                                {innerTab.tabs.map((tab) => (
-                                    <Tabs.Tab
-                                        component="div"
-                                        key={tab.id}
-                                        value={tab.id}
-                                        role="link"
-                                        leftSection={
-                                            tab.Icon && <tab.Icon className={classes.icon} />
-                                        }
-                                        rightSection={
-                                            tab.canBeClosed && (
-                                                <CloseButton
-                                                    size="sm"
-                                                    onClick={(e) => closeBook(e, tab)}
-                                                />
-                                            )
-                                        }
-                                    >
-                                        {tab.name}
-                                    </Tabs.Tab>
-                                ))}
-                            </ScrollArea>
-                        </Tabs.List>
+                        <TextObserver className={classes.tabHeading} c="dimmed">
+                            {() => innerTab.tabHeading}
+                        </TextObserver>
+                        <TabsList getInnerTabs={() => innerTab.tabs} onTabClose={closeBook} />
                     </Stack>
                 </Tabs>
             ));

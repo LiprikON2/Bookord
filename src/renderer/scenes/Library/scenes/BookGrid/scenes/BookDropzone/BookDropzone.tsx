@@ -5,12 +5,12 @@ import { observer } from "mobx-react-lite";
 import { BookDropzoneStates } from "./components";
 
 interface BookDropzoneProps extends Partial<DropzoneProps> {
-    fullscreen?: boolean;
+    getIsFullscreen?: () => boolean;
 }
 
 export const BookDropzone = observer(
     ({
-        fullscreen = false,
+        getIsFullscreen = () => false,
         activateOnClick,
         onFileDialogOpen,
         onDrop,
@@ -20,13 +20,18 @@ export const BookDropzone = observer(
         ...rest
     }: BookDropzoneProps) => {
         const dropzoneProps = {
-            // onDrop: (files: FileWithPath[]) => console.log("accepted files", files),
             onDrop,
             onReject: (files: FileRejection[]) => console.log("rejected files", files),
             accept: ["application/epub+zip"],
         };
 
-        if (!fullscreen) {
+        if (getIsFullscreen()) {
+            return (
+                <Dropzone.FullScreen {...dropzoneProps} {...rest}>
+                    <BookDropzoneStates fullscreen />
+                </Dropzone.FullScreen>
+            );
+        } else {
             return (
                 <Dropzone
                     data-activate-on-click
@@ -37,12 +42,6 @@ export const BookDropzone = observer(
                 >
                     <BookDropzoneStates />
                 </Dropzone>
-            );
-        } else {
-            return (
-                <Dropzone.FullScreen {...dropzoneProps} {...rest}>
-                    <BookDropzoneStates fullscreen />
-                </Dropzone.FullScreen>
             );
         }
     }

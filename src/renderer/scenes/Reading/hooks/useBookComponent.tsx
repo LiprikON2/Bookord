@@ -13,7 +13,7 @@ import classes from "./useBookComponent.module.css";
 export const useBookComponent = (bookKey: BookKey) => {
     const metadata = useBookMetadata(bookKey);
     const { autobookmark, setAutobookmark } = useBookInteractions(bookKey);
-    console.log("autobookmark", toJS(autobookmark), bookKey);
+    // console.log("autobookmark", toJS(autobookmark), bookKey);
 
     const { content, contentState } = useBookContent(bookKey, autobookmark?.elementSection ?? 0);
 
@@ -108,7 +108,7 @@ export const useBookComponent = (bookKey: BookKey) => {
     const isReadyToDisplay = Boolean(bookComponentRef.current && contentState.isInitSectionParsed);
 
     useEffect(() => {
-        console.log("loading book", isReadyToDisplay);
+        // console.log("loading book", isReadyToDisplay);
         if (isReadyToDisplay) bookComponentRef.current.loadBook(contentState, content, metadata);
     }, [isReadyToDisplay]);
 

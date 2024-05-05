@@ -3,8 +3,6 @@ import { Outlet } from "@tanstack/react-router";
 
 import { AddBooksButton, AppShell, LayoutMarkup } from "~/renderer/scenes";
 import { getHomeMarkup } from "./sharedLayoutMarkup";
-import { useStorageBooks } from "../stores";
-import { BookViewStoreContextProvider } from "../contexts";
 import { observer } from "mobx-react-lite";
 
 const libraryLayoutMarkup: LayoutMarkup = {
@@ -22,13 +20,9 @@ const libraryLayoutMarkup: LayoutMarkup = {
 };
 
 export const LayoutLibrary = observer(() => {
-    const { metaBookRecords } = useStorageBooks();
-
     return (
         <AppShell layoutMarkup={libraryLayoutMarkup}>
-            <BookViewStoreContextProvider metaBookRecords={metaBookRecords}>
-                <Outlet />
-            </BookViewStoreContextProvider>
+            <Outlet />
         </AppShell>
     );
 });

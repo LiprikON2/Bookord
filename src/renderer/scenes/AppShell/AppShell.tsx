@@ -72,7 +72,7 @@ export const AppShell = observer(({ layoutMarkup, children }: AppShellProps) => 
                     topSection={layoutMarkup.asideTopSection}
                     getMarkup={layoutMarkup.getAsideMarkup}
                     onChangeTab={mobileCloseAside}
-                ></Sidebar>
+                />
             </MantineAppShell.Aside>
             <MantineAppShell.Main>
                 {openedNavbar && isMobile && (

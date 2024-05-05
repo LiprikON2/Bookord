@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { action, computed, makeAutoObservable, toJS } from "mobx";
 import _ from "lodash";
 import Fuse from "fuse.js";
 
@@ -25,12 +25,12 @@ import { RootStore } from "../RootStore";
  */
 export class BookViewStore {
     activeCollectionKey: CollectionKey | undefined;
-    rootStore: RootStore;
+    readonly rootStore: RootStore;
 
-    metadataGetter = new BookMetadataGetter();
-    mainCollection = this.getInitCollection();
+    private metadataGetter = new BookMetadataGetter();
+    private mainCollection = this.getInitCollection();
     // userTags = new Map<BookKey, UserTag>();
-    userCollections = new Map<CollectionKey, Collection>();
+    private userCollections = new Map<CollectionKey, Collection>();
 
     constructor(rootStore: RootStore) {
         makeAutoObservable(this, { rootStore: false });
@@ -75,38 +75,41 @@ export class BookViewStore {
         };
     }
 
-    newFilter(items: ViewItem<BookMetadata>[], collection: Collection) {
+    private newFilter(items: ViewItem<BookMetadata>[], collection: Collection) {
         return new BookFilter<BookMetadata>(items, collection, this.metadataGetter);
     }
 
-    getTagCategoryName(tagCategory: keyof FilterTags): string;
-    getTagCategoryName(tagCategory: keyof FilterTags, collectionKey?: CollectionKey): string;
-    getTagCategoryName(tagCategory: keyof FilterTags, collectionKey?: CollectionKey) {
+    private getTagCategoryName(tagCategory: keyof FilterTags): string;
+    private getTagCategoryName(
+        tagCategory: keyof FilterTags,
+        collectionKey?: CollectionKey
+    ): string;
+    private getTagCategoryName(tagCategory: keyof FilterTags, collectionKey?: CollectionKey) {
         const collection = this.get(collectionKey);
         return collection.filterTags[tagCategory].name;
     }
 
-    getSearchTerm(): string;
-    getSearchTerm(collectionKey?: CollectionKey): string;
-    getSearchTerm(collectionKey?: CollectionKey) {
+    private getSearchTerm(): string;
+    private getSearchTerm(collectionKey?: CollectionKey): string;
+    private getSearchTerm(collectionKey?: CollectionKey) {
         const collection = this.get(collectionKey);
         return collection.searchTerm;
     }
 
-    setSearchTerm(searchTerm: string): void;
-    setSearchTerm(searchTerm: string, collectionKey?: CollectionKey): void;
-    setSearchTerm(searchTerm: string, collectionKey?: CollectionKey) {
+    private setSearchTerm(searchTerm: string): void;
+    private setSearchTerm(searchTerm: string, collectionKey?: CollectionKey): void;
+    private setSearchTerm(searchTerm: string, collectionKey?: CollectionKey) {
         const collection = this.get(collectionKey);
         collection.searchTerm = searchTerm;
     }
 
-    setTagsSearchTerm(searchTerm: string, tagCategory: keyof FilterTags): void;
-    setTagsSearchTerm(
+    private setTagsSearchTerm(searchTerm: string, tagCategory: keyof FilterTags): void;
+    private setTagsSearchTerm(
         searchTerm: string,
         tagCategory: keyof FilterTags,
         collectionKey?: CollectionKey
     ): void;
-    setTagsSearchTerm(
+    private setTagsSearchTerm(
         searchTerm: string,
         tagCategory: keyof FilterTags,
         collectionKey?: CollectionKey
@@ -115,9 +118,9 @@ export class BookViewStore {
         collection.filterTags[tagCategory].searchTerm = searchTerm;
     }
 
-    getTags(tagCategory: keyof FilterTags): Tag[];
-    getTags(tagCategory: keyof FilterTags, collectionKey?: CollectionKey): Tag[];
-    getTags(tagCategory: keyof FilterTags, collectionKey?: CollectionKey) {
+    private getTags(tagCategory: keyof FilterTags): Tag[];
+    private getTags(tagCategory: keyof FilterTags, collectionKey?: CollectionKey): Tag[];
+    private getTags(tagCategory: keyof FilterTags, collectionKey?: CollectionKey) {
         const collection = this.get(collectionKey);
 
         const { tagsActive, tagsCount, searchTerm, sortBy } = collection.filterTags[tagCategory];
@@ -156,9 +159,9 @@ export class BookViewStore {
         return tags;
     }
 
-    getTagsAll(): Tags;
-    getTagsAll(collectionKey?: CollectionKey): Tags;
-    getTagsAll(collectionKey?: CollectionKey) {
+    private getTagsAll(): Tags;
+    private getTagsAll(collectionKey?: CollectionKey): Tags;
+    private getTagsAll(collectionKey?: CollectionKey) {
         const collection = this.get(collectionKey);
 
         return Object.fromEntries(
@@ -168,20 +171,20 @@ export class BookViewStore {
             ])
         ) as any as Tags;
     }
-    sortTags(tags: Tag[], sortBy: TagCategory["sortBy"]): Tag[] {
+    private sortTags(tags: Tag[], sortBy: TagCategory["sortBy"]): Tag[] {
         if (sortBy === "count") return tags.sort((tagA, tagB) => tagB.count - tagA.count);
         else if (sortBy === "name")
             return tags.sort((tagA, tagB) => tagB.name.localeCompare(tagA.name));
     }
 
-    setActiveTag(tagCategory: keyof FilterTags, tag: TagName, active: boolean): void;
-    setActiveTag(
+    private setActiveTag(tagCategory: keyof FilterTags, tag: TagName, active: boolean): void;
+    private setActiveTag(
         tagCategory: keyof FilterTags,
         tag: TagName,
         active: boolean,
         collectionKey?: CollectionKey
     ): void;
-    setActiveTag(
+    private setActiveTag(
         tagCategory: keyof FilterTags,
         tag: TagName,
         active: boolean,
@@ -192,25 +195,28 @@ export class BookViewStore {
             collection.filterTags[tagCategory].tagsActive.set(tag, active);
     }
 
-    hasActiveTag(excludedTagCategories: (keyof FilterTags)[]): boolean;
-    hasActiveTag(
-        excludedTagCategories: (keyof FilterTags)[],
+    private categoriesHaveActiveTag(excludedCategories: (keyof FilterTags)[]): boolean;
+    private categoriesHaveActiveTag(
+        excludedCategories: (keyof FilterTags)[],
         collectionKey?: CollectionKey
     ): boolean;
-    hasActiveTag(excludedTagCategories: (keyof FilterTags)[] = [], collectionKey?: CollectionKey) {
+    private categoriesHaveActiveTag(
+        excludedCategories: (keyof FilterTags)[] = [],
+        collectionKey?: CollectionKey
+    ) {
         const collection = this.get(collectionKey);
-        const tagCategories = _.difference(
-            Object.keys(collection.filterTags),
-            excludedTagCategories
-        );
+        const tagCategories = _.difference(Object.keys(collection.filterTags), excludedCategories);
         return tagCategories.some((tagCategory: keyof FilterTags) =>
             this.categoryHasActiveTag(tagCategory, collectionKey)
         );
     }
 
-    categoryHasActiveTag(tagCategory: keyof FilterTags): boolean;
-    categoryHasActiveTag(tagCategory: keyof FilterTags, collectionKey?: CollectionKey): boolean;
-    categoryHasActiveTag(tagCategory: keyof FilterTags, collectionKey?: CollectionKey) {
+    private categoryHasActiveTag(tagCategory: keyof FilterTags): boolean;
+    private categoryHasActiveTag(
+        tagCategory: keyof FilterTags,
+        collectionKey?: CollectionKey
+    ): boolean;
+    private categoryHasActiveTag(tagCategory: keyof FilterTags, collectionKey?: CollectionKey) {
         const collection = this.get(collectionKey);
 
         return Array.from(collection.filterTags[tagCategory].tagsActive.values()).some(
@@ -218,10 +224,10 @@ export class BookViewStore {
         );
     }
 
-    resetActiveTags(): void;
-    resetActiveTags(tagCategory?: keyof FilterTags): void;
-    resetActiveTags(tagCategory?: keyof FilterTags, collectionKey?: CollectionKey): void;
-    resetActiveTags(tagCategory?: keyof FilterTags, collectionKey?: CollectionKey) {
+    private resetActiveTags(): void;
+    private resetActiveTags(tagCategory?: keyof FilterTags): void;
+    private resetActiveTags(tagCategory?: keyof FilterTags, collectionKey?: CollectionKey): void;
+    private resetActiveTags(tagCategory?: keyof FilterTags, collectionKey?: CollectionKey) {
         const collection = this.get(collectionKey);
 
         if (tagCategory === undefined) {
@@ -235,9 +241,9 @@ export class BookViewStore {
         }
     }
 
-    get(): Collection;
-    get(collectionKey?: CollectionKey): Collection;
-    get(collectionKey?: CollectionKey): Collection {
+    private get(): Collection;
+    private get(collectionKey?: CollectionKey): Collection;
+    private get(collectionKey?: CollectionKey): Collection {
         const collection =
             collectionKey === undefined
                 ? this.mainCollection
@@ -248,12 +254,12 @@ export class BookViewStore {
         return collection;
     }
 
-    apply(items: ViewItem<BookMetadata>[]): ViewItemGroup<BookMetadata>[];
-    apply(
+    private apply(items: ViewItem<BookMetadata>[]): ViewItemGroup<BookMetadata>[];
+    private apply(
         items: ViewItem<BookMetadata>[],
         collectionKey?: CollectionKey
     ): ViewItemGroup<BookMetadata>[];
-    apply(
+    private apply(
         items: ViewItem<BookMetadata>[],
         collectionKey?: CollectionKey
     ): ViewItemGroup<BookMetadata>[] {
@@ -262,9 +268,12 @@ export class BookViewStore {
         return this.newFilter(items, collection).applyFilterTags().results();
     }
 
-    populateFilterTags(items: ViewItem<BookMetadata>[]): void;
-    populateFilterTags(items: ViewItem<BookMetadata>[], collectionKey?: CollectionKey): void;
-    populateFilterTags(items: ViewItem<BookMetadata>[], collectionKey?: CollectionKey) {
+    private populateFilterTags(items: ViewItem<BookMetadata>[]): void;
+    private populateFilterTags(
+        items: ViewItem<BookMetadata>[],
+        collectionKey?: CollectionKey
+    ): void;
+    private populateFilterTags(items: ViewItem<BookMetadata>[], collectionKey?: CollectionKey) {
         const itemsWithMetadata = items.filter((item) => item.metadata);
         if (!itemsWithMetadata.length) return;
 
@@ -298,16 +307,27 @@ export class BookViewStore {
         });
     }
 
-    populateFilterTagsAll(items: ViewItem<BookMetadata>[]) {
+    private populateFilterTagsAll(items: ViewItem<BookMetadata>[]) {
         this.populateFilterTags(items);
 
         const userCollections = Array.from(this.userCollections.keys());
         userCollections.forEach((collection) => this.populateFilterTags(items, collection));
     }
 
+    get search() {
+        return this.getSearchTerm(this.activeCollectionKey);
+    }
+
+    setSearch(searchTerm: string) {
+        this.setSearchTerm(searchTerm, this.activeCollectionKey);
+    }
+
     get filterTitle() {
-        const searchTerm = this.getSearchTerm(this.activeCollectionKey);
-        const categoriesHaveActiveTag = this.hasActiveTag(["recent"], this.activeCollectionKey);
+        const searchTerm = this.search;
+        const categoriesHaveActiveTag = this.categoriesHaveActiveTag(
+            ["recent"],
+            this.activeCollectionKey
+        );
         const metaBookRecords = this.rootStore.bookStore.getBookMetadataInStorage();
         const bookGroups = this.apply(metaBookRecords, this.activeCollectionKey);
         const visibleBookCount = bookGroups.reduce(
@@ -315,7 +335,7 @@ export class BookViewStore {
             0
         );
 
-        const areBooksBeingSearched = searchTerm;
+        const areBooksBeingSearched = !!searchTerm;
         const areBooksBeingTagFiltered = categoriesHaveActiveTag;
         const areBooksBeingFiltered = areBooksBeingSearched || areBooksBeingTagFiltered;
 
@@ -342,5 +362,61 @@ export class BookViewStore {
         } else {
             return `All books (${visibleBookCount})`;
         }
+    }
+
+    get bookGroups() {
+        const metaBookRecords = this.rootStore.bookStore.getBookMetadataInStorage();
+        return this.apply(metaBookRecords, this.activeCollectionKey);
+    }
+
+    get isBookStorageEmpty() {
+        return !this.rootStore.bookStore.getBookStateInStorage().length;
+    }
+
+    resetTags() {
+        this.resetActiveTags(undefined, this.activeCollectionKey);
+    }
+
+    useTags(tagCategory: keyof FilterTags) {
+        const getTags = () =>
+            computed(() => this.getTags(tagCategory, this.activeCollectionKey)).get();
+
+        const getCategoryName = () =>
+            computed(() => this.getTagCategoryName(tagCategory, this.activeCollectionKey)).get();
+
+        const getCategoryHasActiveTag = () =>
+            computed(() => this.categoryHasActiveTag(tagCategory, this.activeCollectionKey)).get();
+
+        const getOtherCategoriesHaveActiveTag = () =>
+            computed(() =>
+                this.categoriesHaveActiveTag([tagCategory], this.activeCollectionKey)
+            ).get();
+
+        const resetActiveTags = action(() =>
+            this.resetActiveTags(tagCategory, this.activeCollectionKey)
+        );
+
+        const setActiveTag = action((tag: TagName, active: boolean) =>
+            this.setActiveTag(tagCategory, tag, active, this.activeCollectionKey)
+        );
+
+        const setTagsSearchTerm = action((searchTerm: string) =>
+            this.setTagsSearchTerm(searchTerm, tagCategory, this.activeCollectionKey)
+        );
+
+        return {
+            getTags,
+            getCategoryName,
+            getCategoryHasActiveTag,
+            getOtherCategoriesHaveActiveTag,
+            resetActiveTags,
+            setActiveTag,
+            setTagsSearchTerm,
+        };
+    }
+
+    updateTags() {
+        const metaBookRecords = this.rootStore.bookStore.getBookMetadataInStorage();
+        this.populateFilterTagsAll(metaBookRecords);
     }
 }

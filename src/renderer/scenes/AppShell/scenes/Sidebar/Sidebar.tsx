@@ -2,11 +2,17 @@ import React from "react";
 import { Stack, Tabs } from "@mantine/core";
 import { type ToOptions } from "@tanstack/react-router";
 import { type Icon } from "@tabler/icons-react";
+import { observer } from "mobx-react-lite";
 
-import { BookKey, BookStateOpened, useOpenedBooks } from "~/renderer/stores";
+import {
+    BookKey,
+    BookStateOpened,
+    useBookStore,
+    useBookViewStore,
+    useOpenedBooks,
+} from "~/renderer/stores";
 import { Bottom, PanelContent, PanelTabsContent, SegmentedTabList } from "./components";
 import classes from "./Sidebar.module.css";
-import { observer } from "mobx-react-lite";
 
 export type Params = ToOptions["params"] & { bookKey?: BookKey };
 export type NavParams = {
@@ -36,21 +42,19 @@ export type SidebarMarkup = {
     componentProps?: object;
 }[];
 
+interface SidebarProps {
+    getMarkup: (openedBookRecords: BookStateOpened[]) => SidebarMarkup;
+    topSection?: React.ReactNode;
+    onChangeTab: () => void;
+    children?: React.ReactNode;
+}
+
 // TODO consider using another router (<Outlet/>) to render Sidebar tabs' content
 export const Sidebar = observer(
-    ({
-        getMarkup,
-        topSection,
-        onChangeTab,
-        children,
-    }: {
-        getMarkup: (openedBookRecords: BookStateOpened[]) => SidebarMarkup;
-        topSection?: React.ReactNode;
-        onChangeTab: () => void;
-        children?: React.ReactNode;
-    }) => {
-        const openedBooks = useOpenedBooks();
-        const markup = getMarkup(openedBooks);
+    ({ getMarkup, topSection, onChangeTab, children }: SidebarProps) => {
+        const bookStore = useBookStore();
+
+        const markup = getMarkup(bookStore.getBookStateOpened());
 
         return (
             <>

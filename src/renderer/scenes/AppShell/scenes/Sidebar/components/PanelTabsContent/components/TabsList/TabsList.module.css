@@ -4,9 +4,10 @@
     }
 }
 
-.thumb {
-    opacity: 0.75;
+.scrollbar {
+    margin: rem(2px);
 }
+
 .icon {
     width: rem(16);
     height: rem(16);
