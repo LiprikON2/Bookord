@@ -1,15 +1,32 @@
-import { makeAutoObservable, runInAction } from "mobx";
+import {
+    autorun,
+    getDependencyTree,
+    makeAutoObservable,
+    reaction,
+    runInAction,
+    toJS,
+    trace,
+    when,
+} from "mobx";
 import _ from "lodash";
 
 import context from "./ipc";
 import sampleCover from "~/assets/images/sampleBookCover.webp";
 import { RootStore } from "../RootStore";
+import { RaceConditionGuard } from "./utils";
 
 export type BookState = {
     isInStorage: boolean;
     isContentRequested: boolean;
     isMetadataParsed: boolean;
 };
+export type BookStoreState = {
+    /** Wether or not watcher has given infomation about presense of file in the storage folder */
+    isInStorage: boolean;
+    /** Wether or not a request to parse contents of the file was made to a child process  */
+    isContentRequested: boolean;
+};
+
 export type BookContentState = {
     isInitSectionParsed: boolean;
     isFullyParsed: boolean;
@@ -105,18 +122,6 @@ export type BookContent = {
     }[];
 };
 
-export type BookStoreState = {
-    /** Wether or not watcher has given infomation about presense of file in the storage folder */
-    isInStorage: boolean;
-    /** Wether or not a request to parse contents of the file was made to a child process  */
-    isContentRequested: boolean;
-    /**
-     * When making a request to parse contents of the file to a child process,
-     * specifies which section of file content should parsed first
-     */
-    requestedContentSection: number | null;
-};
-
 export type BookKey = string;
 
 export type BookStateInStorage = BookState & {
@@ -132,20 +137,6 @@ export type BookStateOpened = BookStoreState & {
     bookKey: BookKey;
     title: BookKey | string;
 };
-
-export interface Bookmark {
-    elementIndex: number;
-    elementSection: number;
-}
-
-export interface BookInteractionState {
-    bookmarks: {
-        auto: Bookmark | null;
-        manual: Bookmark[];
-    };
-}
-
-type BookmarkTypes = keyof BookInteractionState["bookmarks"];
 
 const provideFallbackCover = (cover?: any): string => {
     if (!cover || cover === "unkown") return sampleCover;
@@ -173,6 +164,7 @@ const provideFallbackAuthors = (authors?: any): string => {
  * ref: https://mobx.js.org/defining-data-stores.html#domain-stores
  */
 export class BookStore {
+    raceConditionGuard = new RaceConditionGuard();
     rootStore: RootStore;
 
     // ref: https://www.zhenghao.io/posts/object-vs-map
@@ -181,18 +173,17 @@ export class BookStore {
     contentRecords = new Map<BookKey, BookContent>();
     contentStateRecords = new Map<BookKey, BookContentState>();
 
-    /**
-     * User interaction state records
-     */
-    interactionRecords = new Map<BookKey, BookInteractionState>();
-
     // TODO split:
     //
     // fileMetadataRecords = new Map<BookKey, BookMetadata>();
     // apiMetadataRecords = new Map<BookKey, any>();
 
     constructor(rootStore: RootStore) {
-        makeAutoObservable(this, { contentRecords: false, rootStore: false });
+        makeAutoObservable(this, {
+            contentRecords: false,
+            rootStore: false,
+            raceConditionGuard: false,
+        });
         this.rootStore = rootStore;
     }
 
@@ -251,7 +242,7 @@ export class BookStore {
                 sections: [],
             };
 
-            this.setBookContent(bookKey, defaultContent);
+            runInAction(() => this.setBookContent(bookKey, defaultContent));
 
             return this.getBookContent(bookKey);
         }
@@ -278,45 +269,6 @@ export class BookStore {
             parsedSections: [],
             sectionNames: [],
         });
-    }
-
-    getBookInteraction(bookKey: BookKey): BookInteractionState {
-        const interactionState = this.interactionRecords.get(bookKey);
-        if (!interactionState) {
-            const defaultInteractionState: BookInteractionState = {
-                bookmarks: {
-                    auto: null,
-                    manual: [],
-                },
-            };
-
-            runInAction(() => this.setBookInteraction(bookKey, defaultInteractionState));
-
-            return this.getBookInteraction(bookKey);
-        }
-
-        return interactionState;
-    }
-    setBookInteraction(bookKey: BookKey, interactionState: BookInteractionState) {
-        this.interactionRecords.set(bookKey, interactionState);
-    }
-    addBookInteractionBookmark(bookKey: BookKey, bookmark: Bookmark, type: BookmarkTypes) {
-        const interactionState = this.getBookInteraction(bookKey);
-
-        if (type === "auto") interactionState.bookmarks[type] = bookmark;
-        if (type === "manual") {
-            // Ensures all bookmark objects have unique values
-            interactionState.bookmarks[type] = _.uniqWith(
-                [...interactionState.bookmarks[type], bookmark],
-                _.isEqual
-            );
-        }
-    }
-    removeBookInteractionBookmark(bookKey: BookKey, targetBookmark: Bookmark) {
-        const interactionState = this.getBookInteraction(bookKey);
-        _.remove(interactionState.bookmarks["manual"], (bookmark) =>
-            _.isEqual(bookmark, targetBookmark)
-        );
     }
 
     getBookStoreState(bookKey: BookKey) {
@@ -417,22 +369,19 @@ export class BookStore {
             const storageState = this.getBookStoreState(bookKey);
 
             this.setBookStoreState(bookKey, {
-                requestedContentSection: storageState?.requestedContentSection ?? null,
                 isContentRequested: !!storageState?.isContentRequested,
                 isInStorage: true,
             });
-
-            if (storageState && storageState.requestedContentSection !== null) {
-                this.openBook(bookKey, storageState.requestedContentSection);
-            }
         });
 
         const metadataEntries = await context.getParsedMetadata(bookKeys);
 
-        metadataEntries.forEach(([bookKey, metadata]) =>
-            this.setBookMetadata(bookKey, metadata, null)
-        );
-        this.rootStore.bookViewStore.updateTags();
+        runInAction(() => {
+            metadataEntries.forEach(([bookKey, metadata]) =>
+                this.setBookMetadata(bookKey, metadata, null)
+            );
+            this.rootStore.bookViewStore.updateTags();
+        });
     }
 
     removeBook(bookKey: BookKey, delayedBy = 200) {
@@ -453,66 +402,67 @@ export class BookStore {
         const removedBooks = _.difference(storeBooks, storageBooks);
 
         if (addedBooks.length || removedBooks.length) {
-            if (addedBooks.length) this.addBooks(addedBooks);
-            if (removedBooks.length) this.removeBooks(removedBooks);
+            if (addedBooks.length) runInAction(() => this.addBooks(addedBooks));
+            if (removedBooks.length) runInAction(() => this.removeBooks(removedBooks));
         }
     }
 
-    openBook(bookKey: BookKey, initSectionIndex: number = 0) {
-        const state = this.getBookState(bookKey);
+    async openBook(bookKey: BookKey, initSectionIndex: number = 0) {
+        let state = this.getBookState(bookKey);
 
-        const shouldNotBeOpened = !state.isInStorage || state.isContentRequested;
-        if (shouldNotBeOpened) {
-            this.setBookStoreState(bookKey, {
-                isInStorage: state.isInStorage,
-                requestedContentSection: initSectionIndex,
-                isContentRequested: state.isContentRequested,
-            });
-
-            return;
+        if (state.isContentRequested) return;
+        if (!state.isInStorage) {
+            // Ensures there is only one promise at a time
+            await this.raceConditionGuard.getGuardedPromise(
+                when(() => this.getBookState(bookKey).isInStorage)
+            );
+            state = this.getBookState(bookKey);
         }
 
-        this.setBookStoreState(bookKey, {
-            isInStorage: state.isInStorage,
-            requestedContentSection: initSectionIndex,
-            isContentRequested: true,
+        runInAction(() => {
+            this.setBookStoreState(bookKey, {
+                isInStorage: state.isInStorage,
+                isContentRequested: true,
+            });
         });
 
-        context.getParsedContent(bookKey, initSectionIndex);
-        // TODO triggers warning:
-        // MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 message listeners
-        // added to [ForkUtilityProcess]. Use emitter.setMaxListeners() to increase limit
-        const unsub = context.handleParsedContentInit((initEvent) => {
-            if (initEvent.bookKey !== bookKey) return;
+        runInAction(() => {
+            context.getParsedContent(bookKey, initSectionIndex);
+            // TODO triggers warning:
+            // MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 message listeners
+            // added to [ForkUtilityProcess]. Use emitter.setMaxListeners() to increase limit
+            const unsub = context.handleParsedContentInit((initEvent) => {
+                if (initEvent.bookKey !== bookKey) return;
 
-            this.setBookContent(bookKey, initEvent.initContent);
+                this.setBookContent(bookKey, initEvent.initContent);
 
-            const initContentState = this.getContentStateFromContent(
-                initEvent.initContent,
-                initSectionIndex
-            );
-            this.setBookContentState(bookKey, initContentState);
-
-            const content = this.getBookContent(bookKey);
-            const unsub2 = context.handleParsedContentSection((sectionContentEvent) => {
-                if (sectionContentEvent.bookKey !== bookKey) return;
-
-                this.setBookContentSection(
-                    bookKey,
-                    sectionContentEvent.sectionIndex,
-                    sectionContentEvent.section
-                );
-
-                const updatedContentState = this.getContentStateFromContent(
-                    content,
+                const initContentState = this.getContentStateFromContent(
+                    initEvent.initContent,
                     initSectionIndex
                 );
-                this.setBookContentState(bookKey, updatedContentState);
+                this.setBookContentState(bookKey, initContentState);
 
-                if (updatedContentState.isFullyParsed) {
-                    unsub();
-                    unsub2();
-                }
+                const content = this.getBookContent(bookKey);
+                const unsub2 = context.handleParsedContentSection((sectionContentEvent) => {
+                    if (sectionContentEvent.bookKey !== bookKey) return;
+
+                    this.setBookContentSection(
+                        bookKey,
+                        sectionContentEvent.sectionIndex,
+                        sectionContentEvent.section
+                    );
+
+                    const updatedContentState = this.getContentStateFromContent(
+                        content,
+                        initSectionIndex
+                    );
+                    this.setBookContentState(bookKey, updatedContentState);
+
+                    if (updatedContentState.isFullyParsed) {
+                        unsub();
+                        unsub2();
+                    }
+                });
             });
         });
     }
@@ -524,14 +474,6 @@ export class BookStore {
         this.setBookStoreState(bookKey, {
             ...storeState,
             isContentRequested: false,
-            requestedContentSection: null,
         });
-    }
-
-    getAutobookmark(bookKey: BookKey) {
-        return this.getBookInteraction(bookKey).bookmarks.auto;
-    }
-    setAutobookmark(bookKey: BookKey, bookmark: Bookmark) {
-        return this.addBookInteractionBookmark(bookKey, bookmark, "auto");
     }
 }

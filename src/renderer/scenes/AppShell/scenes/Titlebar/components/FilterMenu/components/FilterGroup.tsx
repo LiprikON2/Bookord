@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Badge, CloseButton, Menu, ScrollArea, Stack, TextInput, rem } from "@mantine/core";
+import { CloseButton, Menu, ScrollArea, Stack, rem } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
 
-import { ToggleButton } from "~/renderer/components";
-import { FilterTags, useBookViewStore, useTags } from "~/renderer/stores";
+import { FilterTags, useBookViewStore } from "~/renderer/stores";
+import { FilterTextInput, Tags } from "./components";
 import classes from "./FilterGroup.module.css";
-import { FilterTextInput } from "./components/FilterTextInput";
-import { Tags } from "./components";
 
 export type FilterGroupProps = {
     tagCategory: keyof FilterTags;

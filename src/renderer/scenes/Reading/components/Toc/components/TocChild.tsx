@@ -1,6 +1,5 @@
 import React, { memo, useEffect, useState } from "react";
 import { NavLink } from "@mantine/core";
-import { observer } from "mobx-react-lite";
 
 import { Structure } from "~/renderer/stores";
 import classes from "./TocChild.module.css";

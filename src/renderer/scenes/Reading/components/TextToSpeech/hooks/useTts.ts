@@ -1,6 +1,25 @@
 import { useToggle } from "@mantine/hooks";
-import { useContext, useEffect } from "react";
-import { BookComponentContext } from "~/renderer/contexts";
+import { runInAction } from "mobx";
+import { useEffect } from "react";
+import { useBookReadStore } from "~/renderer/stores";
+
+const getParentElement = (ancestorElem: HTMLElement, childElem: ParentNode) => {
+    let parentElem = childElem;
+
+    while (parentElem.parentNode !== ancestorElem) {
+        parentElem = parentElem.parentNode;
+    }
+
+    return parentElem;
+};
+
+const selectElem = (elem: Element, selection: Selection) => {
+    const range = document.createRange();
+    range.selectNodeContents(elem);
+
+    selection.removeAllRanges();
+    selection.addRange(range);
+};
 
 // TODO use selection.modify("extend", "forward", "sentenceboundary") instead of the whole paragraphs
 // https://developer.mozilla.org/en-US/docs/Web/API/Selection/modify#granularity
@@ -9,6 +28,7 @@ export const useTts = (
     selectedPitch = 1,
     selectedRate = 1
 ) => {
+    const bookReadStore = useBookReadStore();
     const [ttsStatus, toggleTtsStatus] = useToggle(["standby", "speaking", "paused"]);
 
     const updateTtsState = () => {
@@ -28,7 +48,7 @@ export const useTts = (
         speechSynthesis.speak(new SpeechSynthesisUtterance(""));
         speechSynthesis.cancel();
         updateTtsState();
-        resetTtsTarget();
+        bookReadStore.resetTtsTarget();
     };
 
     const resumeTts = () => {
@@ -41,18 +61,6 @@ export const useTts = (
         speechSynthesis.pause();
         // Set manually, since state pause is not reflected immediately by speechSynthesis.paused
         toggleTtsStatus("paused");
-    };
-
-    const { ttsTarget, resetTtsTarget, contextRef } = useContext(BookComponentContext);
-
-    const getParentElement = (ancestorElem: HTMLElement, childElem: ParentNode) => {
-        let parentElem = childElem;
-
-        while (parentElem.parentNode !== ancestorElem) {
-            parentElem = parentElem.parentNode;
-        }
-
-        return parentElem;
     };
 
     // TODO paragraphTts = (sentences: string[], nextElem: Element, selection: Selection)
@@ -76,42 +84,36 @@ export const useTts = (
         updateTtsState();
     };
 
-    const selectElem = (elem: Element, selection: Selection) => {
-        const range = document.createRange();
-        range.selectNodeContents(elem);
-
-        selection.removeAllRanges();
-        selection.addRange(range);
-    };
-
     useEffect(() => {
-        if (ttsTarget?.startElement && contextRef) {
-            const { startElement, startElementSelectedText } = ttsTarget;
+        runInAction(() => {
+            if (!bookReadStore.ttsTarget.startElement) return;
+
+            const { startElement, startElementSelectedText } = bookReadStore.ttsTarget;
 
             const startParentElem = getParentElement(
-                contextRef.contentElem,
+                bookReadStore.bookComponent.contentElem,
                 startElement
             ) as HTMLElement;
             const startElementText = startParentElem.textContent;
 
             /** Transforms selected text
-             * <p>Test 123 456</p>
-             * from    |||
-             * to      |||||||
+             *       <p>Test 123 456</p>
+             * from          |||
+             *   to          |||||||
              */
             const initText = [
                 startElementSelectedText,
                 ...startElementText.split(startElementSelectedText).slice(1),
             ].join("");
             const nextParentElem = startParentElem.nextElementSibling;
-
-            const selection = contextRef.shadowRoot.getSelection() as Selection;
+            // @ts-ignore
+            const selection: Selection = bookReadStore.bookComponent.shadowRoot.getSelection();
             selection.modify("extend", "forward", "paragraphboundary");
 
             stopTts();
             startTts(initText, nextParentElem, selection);
-        }
-    }, [ttsTarget]);
+        });
+    }, [bookReadStore.ttsTarget.startElement]);
 
     return { ttsStatus, startTts, pauseTts, resumeTts, stopTts };
 };

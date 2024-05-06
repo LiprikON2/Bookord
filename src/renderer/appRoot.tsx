@@ -41,8 +41,11 @@ export const Root = observer(() => {
             <MantineProvider defaultColorScheme="dark" theme={baseTheme}>
                 <ContextMenuProvider>
                     <QueryClientProvider client={queryClient}>
+                        {/* RootStoreContextProvider must be above StrictMode or it breaks mobx autoruns */}
                         <RootStoreContextProvider>
-                            <Outlet />
+                            <React.StrictMode>
+                                <Outlet />
+                            </React.StrictMode>
                         </RootStoreContextProvider>
                     </QueryClientProvider>
                 </ContextMenuProvider>

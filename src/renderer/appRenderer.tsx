@@ -116,9 +116,9 @@ const rootElement = document.getElementById("app")!;
 if (!rootElement.innerHTML) {
     const root = createRoot(rootElement);
     root.render(
-        <React.StrictMode>
+        <>
             <TanStackRouterDevtools router={router} position="bottom-right" />
             <RouterProvider router={router} />
-        </React.StrictMode>
+        </>
     );
 }

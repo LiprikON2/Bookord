@@ -15,18 +15,18 @@ import {
     Text,
     useCombobox,
 } from "@mantine/core";
+import { useClipboard } from "@mantine/hooks";
 import { observer } from "mobx-react-lite";
-
-import classes from "./TextToSpeech.module.css";
 import {
     IconPlayerPauseFilled,
     IconPlayerPlayFilled,
     IconPlayerStopFilled,
 } from "@tabler/icons-react";
+
+import { usePlatform } from "~/renderer/hooks";
 import { useTts, useTtsVoices } from "./hooks";
 import { SliderInput } from "./components";
-import { usePlatform } from "~/renderer/hooks";
-import { useClipboard } from "@mantine/hooks";
+import classes from "./TextToSpeech.module.css";
 
 // TODO consider transforming TTS to AudioBuffer https://github.com/guest271314/SpeechSynthesisRecorder
 export const TextToSpeech = observer(() => {

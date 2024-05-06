@@ -1,8 +1,7 @@
-import { useContext, useMemo } from "react";
+import { useMemo } from "react";
+import { action } from "mobx";
 
-import { isDev } from "~/common/helpers";
-import { BookComponentContext, BookComponentTocContext } from "~/renderer/contexts";
-import type { Structure } from "~/renderer/stores";
+import { useBookReadStore, type Structure } from "~/renderer/stores";
 import { TocChildProps } from "../components";
 import { TocState } from "../../BookWebComponent";
 
@@ -110,28 +109,18 @@ const getTocProps = (
 };
 
 // TODO fix Structure's `sectionId` (e.g. Warlock.epub structure has duplicate a1Title.xhtml, a1Credits.xhtml)
-export const useTocNav = (tocChildren: Structure[]) => {
-    // TODO split ref and uiState contexts
-    const { contextRef } = useContext(BookComponentContext);
-    const { tocState } = useContext(BookComponentTocContext);
+export const useTocNav = () => {
+    const bookReadStore = useBookReadStore();
 
-    const tocNavTo = (sectionId: Structure["sectionId"]) => {
-        if (!sectionId || !contextRef) return;
-
-        contextRef.navToLink(sectionId);
-    };
+    const tocNavTo = action((sectionId: Structure["sectionId"]) => {
+        if (!sectionId || !bookReadStore.isReady) return;
+        bookReadStore.bookComponent.navToLink(sectionId);
+    });
 
     const tocProps = useMemo(
-        () => getTocProps(tocChildren, tocState, tocNavTo),
-        [tocChildren, tocState.currentSection]
+        () => getTocProps(bookReadStore.toc, bookReadStore.tocState, tocNavTo),
+        [bookReadStore.contentState.isInitSectionParsed, bookReadStore.tocState.currentSection]
     );
 
-    // if (isDev()) {
-    //     // @ts-ignore
-    //     window["tocProps"] = tocProps;
-    //     // @ts-ignore
-    //     window["tocState"] = tocState;
-    // }
-
-    return { tocNavTo, tocProps };
+    return tocProps;
 };

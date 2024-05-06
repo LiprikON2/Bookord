@@ -27,21 +27,29 @@ export type TocState = {
     currentSectionTitle: string | null;
     sectionNames: string[] | null;
 };
+
+interface ContextMenuEventDetail {
+    event: MouseEvent;
+    startElement: ParentNode;
+    startElementSelectedText: string;
+    selectedText: string;
+}
+
+interface AutobookmarkPositionEventDetail {
+    bookmark: Bookmark;
+}
+
+interface ImgClickEventDetail {
+    src: string;
+}
 export interface BookWebComponentEventMap extends HTMLElementEventMap {
-    imgClickEvent: MouseEvent;
+    imgClickEvent: MouseEvent & { detail: ImgClickEventDetail };
     uiStateUpdateEvent: Event & { detail: UiState };
     tocStateUpdateEvent: Event & { detail: TocState };
-    contextMenuEvent: MouseEvent & {
-        detail: {
-            e: MouseEvent;
-            startElement: ParentNode;
-            startElementSelectedText: string;
-            selectedText: string;
-        };
-    };
+    contextMenuEvent: MouseEvent & { detail: ContextMenuEventDetail };
 
     autobookmarkPositionEvent: Event & {
-        detail: { bookmark: Bookmark };
+        detail: AutobookmarkPositionEventDetail;
     };
 }
 
@@ -56,7 +64,7 @@ interface BookmarkableContentElement {
 export default class BookWebComponent extends HTMLElement {
     private book: Book;
     private rootElem: HTMLElement;
-    private contentElem: HTMLElement;
+    contentElem: HTMLElement;
     private styleElem: HTMLElement;
     private componentStyle: CSSStyleDeclaration;
     private styleLoader: StyleLoader;
@@ -75,6 +83,13 @@ export default class BookWebComponent extends HTMLElement {
      * Hides focusabel elements (mainly links) on another pages so they can't be tabbed onto without being visible
      */
     private focusableObserver: IntersectionObserver;
+
+    /**
+     * TODO
+     */
+    // pagePreview
+
+    onUnload = () => {}
 
     constructor() {
         super();
@@ -131,14 +146,17 @@ export default class BookWebComponent extends HTMLElement {
         const elementSection = this.state.book.currentSection;
         const elementIndex = this.contentChildren.indexOf(this.bookmarkableElement.element);
 
-        const bookmarkEvent = new CustomEvent("autobookmarkPositionEvent", {
-            bubbles: true,
-            cancelable: false,
-            composed: true,
-            detail: {
-                bookmark: { elementIndex, elementSection },
-            },
-        });
+        const bookmarkEvent = new CustomEvent<AutobookmarkPositionEventDetail>(
+            "autobookmarkPositionEvent",
+            {
+                bubbles: true,
+                cancelable: false,
+                composed: true,
+                detail: {
+                    bookmark: { elementIndex, elementSection },
+                },
+            }
+        );
 
         this.dispatchEvent(bookmarkEvent);
     }
@@ -362,16 +380,16 @@ export default class BookWebComponent extends HTMLElement {
     }
 
     private emitContextMenuEvent(
-        e: MouseEvent,
+        event: MouseEvent,
         startElement: ParentNode,
         startElementSelectedText: string,
         selectedText: string
     ) {
-        const contextMenuEvent = new CustomEvent("contextMenuEvent", {
+        const contextMenuEvent = new CustomEvent<ContextMenuEventDetail>("contextMenuEvent", {
             bubbles: true,
             cancelable: false,
             composed: true,
-            detail: { event: e, startElement, startElementSelectedText, selectedText },
+            detail: { event, startElement, startElementSelectedText, selectedText },
         });
 
         this.dispatchEvent(contextMenuEvent);
@@ -463,7 +481,7 @@ export default class BookWebComponent extends HTMLElement {
         const target = e.target;
         if (!(target instanceof HTMLImageElement)) return;
 
-        const imgClickEvent = new CustomEvent("imgClickEvent", {
+        const imgClickEvent = new CustomEvent<ImgClickEventDetail>("imgClickEvent", {
             bubbles: true,
             cancelable: false,
             composed: true,
@@ -681,7 +699,7 @@ export default class BookWebComponent extends HTMLElement {
      * Emits "uiStateUpdateEvent"
      */
     private emitUiState(uiState: UiState) {
-        const uiStateUpdateEvent = new CustomEvent("uiStateUpdateEvent", {
+        const uiStateUpdateEvent = new CustomEvent<UiState>("uiStateUpdateEvent", {
             bubbles: true,
             cancelable: false,
             composed: true,
@@ -694,7 +712,7 @@ export default class BookWebComponent extends HTMLElement {
      * Emits "tocStateUpdateEvent"
      */
     private emitTocState(tocState: TocState) {
-        const tocStateUpdateEvent = new CustomEvent("tocStateUpdateEvent", {
+        const tocStateUpdateEvent = new CustomEvent<TocState>("tocStateUpdateEvent", {
             bubbles: true,
             cancelable: false,
             composed: true,
@@ -866,12 +884,15 @@ export default class BookWebComponent extends HTMLElement {
     // );
 
     disconnectedCallback() {
+        console.log("disconnectedCallback");
+        this.onUnload()
         // Cancel debounces
         // this.recount.cancel();
         // this.bookmarkManager.emitSaveBookmarks.cancel();
     }
 }
 
+// ref: https://stackoverflow.com/a/55424778
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace React.JSX {
