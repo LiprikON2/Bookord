@@ -62,7 +62,7 @@ interface BookmarkableContentElement {
  * Book web component
  */
 export default class BookWebComponent extends HTMLElement {
-    private book: Book;
+    private book: Book = null;
     private rootElem: HTMLElement;
     contentElem: HTMLElement;
     private styleElem: HTMLElement;
@@ -89,11 +89,10 @@ export default class BookWebComponent extends HTMLElement {
      */
     // pagePreview
 
-    onUnload = () => {}
+    private onUnload = () => {};
 
     constructor() {
         super();
-
         this.attachShadow({ mode: "open" });
 
         this.shadowRoot.appendChild(template.content.cloneNode(true));
@@ -137,6 +136,10 @@ export default class BookWebComponent extends HTMLElement {
                 }
             });
         });
+    }
+
+    setOnUnload(onOnload: () => void) {
+        this.onUnload = onOnload;
     }
 
     /**
@@ -276,6 +279,11 @@ export default class BookWebComponent extends HTMLElement {
         } else {
             this.book = { ...content, sectionNames: contentState.sectionNames, metadata };
         }
+    }
+
+    unloadBook() {
+        this.book = null
+        this.state = new StateManager(this);
     }
 
     get initPosition(): Position {
@@ -768,8 +776,6 @@ export default class BookWebComponent extends HTMLElement {
     get displayWidth() {
         // `.clientWidth` cannot be used as it is rounded to the nearest integer
         const displayWidth = this.contentElem.getBoundingClientRect().width + this.columnGap;
-        //@ts-ignore
-        window["displayWidth"] = displayWidth;
         return displayWidth;
     }
 
@@ -782,13 +788,6 @@ export default class BookWebComponent extends HTMLElement {
         // the actual width is not an integer
         const approximateTotalWidth = this.contentElem.scrollWidth + this.columnGap;
         const totalWidth = this.getPageEdgeOffset(approximateTotalWidth);
-
-        //@ts-ignore
-        window["approximateTotalWidth"] = approximateTotalWidth;
-        //@ts-ignore
-        window["totalWidth"] = totalWidth;
-        //@ts-ignore
-        window["currentWidth"] = this.currentOffset;
 
         return totalWidth;
     }
@@ -885,10 +884,10 @@ export default class BookWebComponent extends HTMLElement {
 
     disconnectedCallback() {
         console.log("disconnectedCallback");
-        this.onUnload()
-        // Cancel debounces
-        // this.recount.cancel();
-        // this.bookmarkManager.emitSaveBookmarks.cancel();
+        this.resizeObserver.disconnect();
+        this.bookmarkObserver.disconnect();
+        this.focusableObserver.disconnect();
+        this.onUnload();
     }
 }
 

@@ -3,7 +3,7 @@ import { useHotkeys, useMergedRef } from "@mantine/hooks";
 import { useContextMenu } from "mantine-contextmenu";
 import { IconCopy, IconSpeakerphone } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
-import { action } from "mobx";
+import { action, when } from "mobx";
 
 import { useBookReadStore } from "~/renderer/stores/hooks";
 import { bookKeyRoute } from "~/renderer/appRenderer";
@@ -22,14 +22,28 @@ export const Reading = observer(() => {
     const { bookKey } = bookKeyRoute.useParams();
     const bookReadStore = useBookReadStore();
 
-    useEffect(() => {
-        bookReadStore.setBook(bookKey);
-    }, [bookKey]);
+    useEffect(
+        action(() => {
+            const unsub = when(
+                () => bookReadStore.isReady,
+                () => bookReadStore.load()
+            );
 
-    const bookComponentCallbackRef = useCallbackRef<BookWebComponent>((bookComponent) => {
-        bookReadStore.setBookComponent(bookComponent);
-        // bookComponent.onUnload = () => bookReadStore.unload();
-    });
+            const didSwitchBook = bookReadStore.book !== null;
+            if (didSwitchBook) bookReadStore.bookComponent.unloadBook();
+
+            bookReadStore.setBook(bookKey);
+            return unsub;
+        }),
+        [bookKey]
+    );
+
+    const bookComponentCallbackRef = useCallbackRef<BookWebComponent>(
+        action((bookComponent) => {
+            bookReadStore.setBookComponent(bookComponent);
+            bookReadStore.bookComponent.setOnUnload(bookReadStore.unload);
+        })
+    );
 
     // Usage of actions prevents `Observable being read outside a reactive context` warning
     useHotkeys([

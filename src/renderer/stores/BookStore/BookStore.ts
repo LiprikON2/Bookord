@@ -440,7 +440,7 @@ export class BookStore {
                     initEvent.initContent,
                     initSectionIndex
                 );
-                this.setBookContentState(bookKey, initContentState);
+                runInAction(() => this.setBookContentState(bookKey, initContentState));
 
                 const content = this.getBookContent(bookKey);
                 const unsub2 = context.handleParsedContentSection((sectionContentEvent) => {
@@ -456,7 +456,7 @@ export class BookStore {
                         content,
                         initSectionIndex
                     );
-                    this.setBookContentState(bookKey, updatedContentState);
+                    runInAction(() => this.setBookContentState(bookKey, updatedContentState));
 
                     if (updatedContentState.isFullyParsed) {
                         unsub();

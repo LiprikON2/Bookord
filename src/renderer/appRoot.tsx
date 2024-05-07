@@ -43,9 +43,9 @@ export const Root = observer(() => {
                     <QueryClientProvider client={queryClient}>
                         {/* RootStoreContextProvider must be above StrictMode or it breaks mobx autoruns */}
                         <RootStoreContextProvider>
-                            <React.StrictMode>
-                                <Outlet />
-                            </React.StrictMode>
+                            {/* <React.StrictMode> */}
+                            <Outlet />
+                            {/* </React.StrictMode> */}
                         </RootStoreContextProvider>
                     </QueryClientProvider>
                 </ContextMenuProvider>

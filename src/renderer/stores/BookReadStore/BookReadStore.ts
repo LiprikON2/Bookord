@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { makeAutoObservable, observable, runInAction, toJS, when } from "mobx";
+import { makeAutoObservable, observable, runInAction, toJS } from "mobx";
 
 import type BookWebComponent from "~/renderer/scenes/Reading/components/BookWebComponent";
 import type { TocState } from "~/renderer/scenes/Reading/components/BookWebComponent";
@@ -27,7 +27,7 @@ type TtsTarget = {
 export class BookReadStore {
     rootStore: RootStore;
     bookComponent: BookWebComponent | null = null;
-    bookKey: BookKey | null = null;
+    private bookKey: BookKey | null = null;
     tocState: TocState = {
         currentSectionName: null,
         currentSection: null,
@@ -59,14 +59,6 @@ export class BookReadStore {
             { autoBind: true }
         );
         this.rootStore = rootStore;
-
-        when(
-            () => this.isReady,
-            () => this.load()
-        );
-
-        // @ts-ignore
-        window["tt"] = this;
     }
 
     setTocState(tocState: TocState) {
@@ -148,6 +140,10 @@ export class BookReadStore {
         this.setBook(null);
         this.resetTtsTarget();
         this.resetUiState();
+    }
+
+    get book() {
+        return this.bookKey;
     }
 
     setBook(bookKey: BookKey) {

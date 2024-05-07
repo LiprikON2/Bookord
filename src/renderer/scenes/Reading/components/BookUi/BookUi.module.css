@@ -1,0 +1,3 @@
+.lineClamp {
+    @mixin lineClamp 1;
+}
