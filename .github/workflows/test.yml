@@ -1,0 +1,12 @@
+name: Test
+on:
+    workflow_dispatch:
+jobs:
+    increment-semver:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Get next version
+              uses: reecetech/version-increment@2024.4.3
+              id: version
+              with:
+                  use_api: true
