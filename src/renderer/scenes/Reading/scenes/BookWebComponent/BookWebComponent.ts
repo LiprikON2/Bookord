@@ -56,6 +56,8 @@ export interface BookWebComponentEventMap extends HTMLElementEventMap {
 interface BookmarkableContentElement {
     element: Element | null;
     intersectionRatio: number | null;
+    elementSection: number | null;
+    elementIndex: number | null;
 }
 
 /**
@@ -78,6 +80,8 @@ export default class BookWebComponent extends HTMLElement {
     private bookmarkableElement: BookmarkableContentElement = {
         element: null,
         intersectionRatio: null,
+        elementSection: null,
+        elementIndex: null,
     };
     /**
      * Hides focusabel elements (mainly links) on another pages so they can't be tabbed onto without being visible
@@ -145,10 +149,7 @@ export default class BookWebComponent extends HTMLElement {
     /**
      * Emits "autobookmarkPositionEvent" with a new or updated bookmark
      */
-    emitAutobookmarkPosition() {
-        const elementSection = this.state.book.currentSection;
-        const elementIndex = this.contentChildren.indexOf(this.bookmarkableElement.element);
-
+    emitAutobookmarkPosition({ elementIndex, elementSection }: BookmarkableContentElement) {
         const bookmarkEvent = new CustomEvent<AutobookmarkPositionEventDetail>(
             "autobookmarkPositionEvent",
             {
@@ -168,11 +169,27 @@ export default class BookWebComponent extends HTMLElement {
         intersectionRatio: number,
         element = this.bookmarkableElement.element
     ) {
+        const elementSection = this.state.book.currentSection;
+        const elementIndex = this.contentChildren.indexOf(element);
+        if (elementIndex === -1) return;
+
         const prevElem = this.bookmarkableElement;
-        const nextElem = { element, intersectionRatio };
+        const nextElem = { element, intersectionRatio, elementIndex, elementSection };
         this.bookmarkableElement = nextElem;
 
         this.onBookmarkableElemChange(prevElem, nextElem);
+    }
+
+    private resetBookmarkableElemIntersectionRatio() {
+        this.bookmarkableElement.intersectionRatio = null;
+    }
+    private resetBookmarkableElement() {
+        this.bookmarkableElement = {
+            element: null,
+            intersectionRatio: null,
+            elementSection: null,
+            elementIndex: null,
+        };
     }
 
     private onBookmarkableElemChange(
@@ -191,7 +208,7 @@ export default class BookWebComponent extends HTMLElement {
             }
         }
 
-        this.emitAutobookmarkPosition();
+        this.emitAutobookmarkPosition(nextElem);
     }
     private updateObservers() {
         this.updateBookmarkObserver();
@@ -200,7 +217,7 @@ export default class BookWebComponent extends HTMLElement {
 
     private updateBookmarkObserver() {
         this.bookmarkObserver.disconnect();
-        this.setBookmarkableElement(null);
+        this.resetBookmarkableElemIntersectionRatio();
 
         this.contentChildren.forEach((childElem) => this.bookmarkObserver.observe(childElem));
     }
@@ -214,7 +231,7 @@ export default class BookWebComponent extends HTMLElement {
 
     private onSectionLoad(currentPos: Position) {
         console.log("onSectionLoad");
-        this.setBookmarkableElement(null, null);
+        this.resetBookmarkableElement();
         this.navigateToPosition(currentPos);
 
         this.emitTocState({
@@ -267,23 +284,28 @@ export default class BookWebComponent extends HTMLElement {
         return this.book.sectionNames.length;
     }
 
-    loadBook(contentState: BookContentState, content: BookContent, metadata: BookMetadata) {
-        const { initSectionIndex } = contentState;
+    loadBook(
+        content: BookContent,
+        metadata: BookMetadata,
+        sectionIndex: number,
+        sectionNames: BookContentState["sectionNames"],
+        position?: Position
+    ) {
         const isInitialLoad = !this.book;
-        console.log("isInitialLoad", isInitialLoad, initSectionIndex, contentState, content);
+
+        console.log("load ->", sectionIndex, position);
 
         if (isInitialLoad) {
-            this.book = { ...content, sectionNames: contentState.sectionNames, metadata };
-            this.loadSection(initSectionIndex);
+            this.book = { ...content, sectionNames, metadata };
+            this.loadSection(sectionIndex, position);
             this.state.setInitBookInfo(this.book.sectionNames.length);
-        } else {
-            this.book = { ...content, sectionNames: contentState.sectionNames, metadata };
         }
     }
 
     unloadBook() {
-        this.book = null
+        this.book = null;
         this.state = new StateManager(this);
+        this.resetBookmarkableElement();
     }
 
     get initPosition(): Position {
@@ -628,21 +650,21 @@ export default class BookWebComponent extends HTMLElement {
     private navigateToPosition({ sectionPage, elementIndex, elementSelector }: Position) {
         if (elementSelector || elementIndex) {
             this.shiftToElement({ elementIndex, elementSelector });
-        } else if (!sectionPage.isFromBack) {
-            const { firstPage } = this.state.section;
-            this.shiftToSectionPage(firstPage);
+        } else if (sectionPage) {
+            if (!sectionPage.isFromBack) {
+                const { firstPage } = this.state.section;
+                this.shiftToSectionPage(firstPage);
 
-            const targetPage = sectionPage.value;
-            this.flipNPages(targetPage);
-        } else if (sectionPage.isFromBack) {
-            const { lastPage } = this.state.section;
-            this.shiftToSectionPage(lastPage);
+                const targetPage = sectionPage.value;
+                this.flipNPages(targetPage);
+            } else if (sectionPage.isFromBack) {
+                const { lastPage } = this.state.section;
+                this.shiftToSectionPage(lastPage);
 
-            const targetPage = sectionPage.value;
-            this.flipNPages(targetPage);
+                const targetPage = sectionPage.value;
+                this.flipNPages(targetPage);
+            }
         }
-
-        // this.bookmarkManager.emitSaveBookmarks();
     }
 
     /**

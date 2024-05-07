@@ -1,21 +1,21 @@
 import _ from "lodash";
 import { makeAutoObservable, observable, runInAction, toJS } from "mobx";
 
-import type BookWebComponent from "~/renderer/scenes/Reading/components/BookWebComponent";
-import type { TocState } from "~/renderer/scenes/Reading/components/BookWebComponent";
+import type BookWebComponent from "~/renderer/scenes/Reading/scenes/BookWebComponent";
+import type { TocState } from "~/renderer/scenes/Reading/scenes/BookWebComponent";
 import { BookKey } from "../BookStore";
 import { RootStore } from "../RootStore";
 
 export interface BookInteractionState {
     bookmarks: {
-        auto: Bookmark | null;
+        auto: Bookmark;
         manual: Bookmark[];
     };
 }
 
 type BookmarkTypes = keyof BookInteractionState["bookmarks"];
 export interface Bookmark {
-    elementIndex: number;
+    elementIndex: number | null;
     elementSection: number;
 }
 
@@ -97,7 +97,7 @@ export class BookReadStore {
         if (!interactionState) {
             const defaultInteractionState: BookInteractionState = {
                 bookmarks: {
-                    auto: null,
+                    auto: { elementSection: 0, elementIndex: 0 },
                     manual: [],
                 },
             };
@@ -132,7 +132,16 @@ export class BookReadStore {
     }
 
     load() {
-        this.bookComponent.loadBook(toJS(this.contentState), this.content, toJS(this.metadata));
+        const { elementIndex } = this.autobookmark;
+        const { sectionNames } = this.contentState;
+
+        this.bookComponent.loadBook(
+            this.content,
+            toJS(this.metadata),
+            this.initSectionIndex,
+            sectionNames,
+            { elementIndex }
+        );
     }
     unload() {
         console.log("unload");
@@ -173,10 +182,6 @@ export class BookReadStore {
         return this.rootStore.bookStore.getBookContentState(this.bookKey);
     }
 
-    get initSection() {
-        return this.contentState.initSectionIndex;
-    }
-
     get isReady() {
         return Boolean(this.bookKey && this.isBookComponentReady && this.isInitSectionReady);
     }
@@ -194,10 +199,35 @@ export class BookReadStore {
     }
 
     get initSectionIndex() {
-        return this.autobookmark?.elementIndex ?? 0;
+        const initSectionIndex = this.autobookmark.elementSection;
+        return initSectionIndex;
     }
 
     setAutobookmark(bookmark: Bookmark) {
         return this.addBookInteractionBookmark(this.bookKey, bookmark, "auto");
+    }
+
+    addManualBookmark() {
+        this.addBookInteractionBookmark(this.bookKey, this.autobookmark, "manual");
+    }
+    removeManualBookmark() {
+        this.currentManualBookmarks.forEach((bookmark) =>
+            this.removeBookInteractionBookmark(this.bookKey, bookmark)
+        );
+    }
+
+    /**
+     * Returns all manual bookmarks on current page
+     */
+    get currentManualBookmarks(): Bookmark[] {
+        const interactionState = this.getBookInteraction(this.bookKey);
+        const { manual } = interactionState.bookmarks;
+
+        return manual;
+    }
+
+    get isManualBookmarked() {
+        // return !this.manualBookmark;
+        return false;
     }
 }

@@ -9,9 +9,9 @@ import { useBookReadStore } from "~/renderer/stores/hooks";
 import { bookKeyRoute } from "~/renderer/appRenderer";
 import { useCallbackRef, useEvents } from "./hooks";
 import { BookUi } from "./components";
-import "./components/BookWebComponent";
-import type BookWebComponent from "./components/BookWebComponent";
-import type { BookWebComponentEventMap } from "./components/BookWebComponent";
+import "./scenes/BookWebComponent";
+import type BookWebComponent from "./scenes/BookWebComponent";
+import type { BookWebComponentEventMap } from "./scenes/BookWebComponent";
 import classes from "./Reading.module.css";
 
 // TODO https://eisenbergeffect.medium.com/web-components-2024-winter-update-445f27e7613a
@@ -86,11 +86,13 @@ export const Reading = observer(() => {
 
     return (
         <BookUi title={bookReadStore.metadata.title} uiState={bookReadStore.uiState}>
+            {bookReadStore.isManualBookmarked ? (
+                <button onClick={bookReadStore.removeManualBookmark}>del bookmark</button>
+            ) : (
+                <button onClick={bookReadStore.addManualBookmark}>add bookmark</button>
+            )}
             {!bookReadStore.isReady && "loading..."}
-            <book-web-component
-                class={classes.bookWebComponent}
-                ref={useMergedRef(bookComponentCallbackRef, eventsRef)}
-            />
+            <book-web-component ref={useMergedRef(bookComponentCallbackRef, eventsRef)} />
         </BookUi>
     );
 });
