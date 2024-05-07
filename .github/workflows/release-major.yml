@@ -1,6 +1,6 @@
 # ref: https://sevic.dev/notes/electron-forge-publish-github/
 
-name: Release app
+name: Release major
 on:
     workflow_dispatch:
 jobs:
