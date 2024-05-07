@@ -1,0 +1,72 @@
+# ref: https://sevic.dev/notes/electron-forge-publish-github/
+
+name: Release app
+on:
+    workflow_dispatch:
+jobs:
+    increment-semver:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write # 'write' access to repository contents
+        steps:
+            - name: Github checkout
+              uses: actions/checkout@v4
+
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+
+            - name: Set up git name
+              run: |
+                  git config --global user.email "44316968+LiprikON2@users.noreply.github.com"
+                  git config --global user.name "LiprikON2"
+
+            - name: Bump package.json version
+              run: npm version major
+
+            - name: Commit new version
+              run: |
+                  git show
+                  git push
+
+    build:
+        needs: [increment-semver]
+        environment: CI
+        strategy:
+            matrix:
+                os:
+                    [
+                        { name: "windows", image: "windows-latest" },
+                        { name: "linux", image: "ubuntu-latest" },
+                        { name: "macos", image: "macos-11" },
+                    ]
+            fail-fast: true
+        runs-on: ${{ matrix.os.image }}
+        steps:
+            - name: Github checkout
+              uses: actions/checkout@v4
+
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+
+            # ref: https://github.com/LinusU/node-appdmg/issues/234#issuecomment-2002410428
+            - name: Fix appdmg GHA mac runner error 1
+              if: matrix.os.name == 'macos'
+              uses: actions/setup-python@v5
+              with:
+                  python-version: 3.11
+
+            - name: Fix appdmg GHA mac runner error 2
+              if: matrix.os.name == 'macos'
+              run: |
+                  python3 -m pip install setuptools --break-system-packages
+                  npm install -g appdmg@0.6.6
+
+            - run: npm install
+            - name: Publish app
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GH_BOOKORD_RELEASE_TOKEN }}
+              run: npm run publish
