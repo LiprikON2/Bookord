@@ -7,11 +7,13 @@ jobs:
     increment-semver:
         runs-on: ubuntu-latest
         steps:
-            - name: Get next version
-              uses: reecetech/version-increment@2024.4.3
-              id: version
-              with:
-                  use_api: true
+            - name: Bump package.json version
+              run: npm version patch
+
+            - name: Commit new version
+              run: |
+                  git show
+                  git push
 
     build:
         needs: [increment-semver]
@@ -29,13 +31,6 @@ jobs:
         steps:
             - name: Github checkout
               uses: actions/checkout@v4
-
-            - name: Get next version
-              uses: reecetech/version-increment@2024.4.3
-              id: version
-              with:
-                  scheme: semver
-                  increment: patch
 
             - name: Use Node.js
               uses: actions/setup-node@v4
