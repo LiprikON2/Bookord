@@ -19,6 +19,14 @@ jobs:
         steps:
             - name: Github checkout
               uses: actions/checkout@v4
+
+            - name: Get next version
+              uses: reecetech/version-increment@2024.4.3
+              id: version
+              with:
+                  scheme: semver
+                  increment: patch
+
             - name: Use Node.js
               uses: actions/setup-node@v4
               with:
