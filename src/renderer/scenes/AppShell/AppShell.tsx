@@ -79,7 +79,7 @@ export const AppShell = observer(({ layoutMarkup, children }: AppShellProps) => 
                     <Overlay onClick={mobileCloseNavbar} backgroundOpacity={0.25} />
                 )}
 
-                <Box className={classes.mainBox} px={layoutMarkup.scrollArea ? 0 : "md"}>
+                <Box className={classes.mainBox}>
                     {layoutMarkup.scrollArea ? (
                         <ScrollArea
                             h="100%"

@@ -1,3 +1,28 @@
+.top {
+    display: grid;
+
+    grid-auto-flow: column;
+    grid-template-columns: var(--mantine-spacing-md) repeat(5, 1fr) var(--mantine-spacing-md);
+    grid-template-rows: rem(24);
+    gap: 0;
+}
+
+.topCenter {
+    grid-row: 1;
+    grid-column: 2 / -2;
+}
+
+.bookmark {
+    outline-offset: -3px;
+}
+
+.topRight {
+    grid-row: 1;
+    grid-column: -2 / -1;
+    align-self: start;
+    justify-self: end;
+}
+
 .lineClamp {
     @mixin lineClamp 1;
 }

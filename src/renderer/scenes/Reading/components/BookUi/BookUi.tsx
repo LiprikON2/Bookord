@@ -3,30 +3,64 @@ import { Box, Group, Stack, Text } from "@mantine/core";
 import { observer } from "mobx-react-lite";
 
 import classes from "./BookUi.module.css";
+import { ToggleActionIcon } from "~/renderer/components";
+import { IconBookmark, IconBookmarkFilled } from "@tabler/icons-react";
+import clsx from "clsx";
 
 interface BookUiProps {
     title: string;
     uiState: UiState;
     visible?: boolean;
     children?: React.ReactNode;
+    bookmarked: boolean;
+    onAddBookmark?: () => void;
+    onRemoveBookmark?: () => void;
 }
 
 const BookUi = observer(
     // eslint-disable-next-line react/display-name
     forwardRef(
         (
-            { title, uiState, visible = true, children }: BookUiProps,
+            {
+                title,
+                uiState,
+                onAddBookmark,
+                onRemoveBookmark,
+                bookmarked = false,
+                visible = true,
+                children,
+            }: BookUiProps,
             ref: React.ForwardedRef<HTMLDivElement>
         ) => {
             return (
                 <Stack h="100%" gap={4} ref={ref}>
-                    <Group justify="center" px={4}>
-                        <Text className={classes.lineClamp} c="dimmed" ta="center" fw={500}>
+                    <Group p={0} className={classes.top}>
+                        <Text
+                            className={clsx(classes.topCenter, classes.lineClamp)}
+                            c="dimmed"
+                            ta="center"
+                            fw={500}
+                        >
                             {title}
                         </Text>
+                        <ToggleActionIcon
+                            pos="absolute"
+                            iconSize="85%"
+                            size="md"
+                            className={clsx(classes.topRight, classes.bookmark)}
+                            OnIcon={IconBookmarkFilled}
+                            OffIcon={IconBookmark}
+                            variant="transparent"
+                            ariaLabel="bookmark"
+                            on={bookmarked}
+                            onAction={onAddBookmark}
+                            offAction={onRemoveBookmark}
+                        />
                     </Group>
-                    <Box style={{ overflow: "hidden", flexBasis: "100%" }}>{children}</Box>
-                    <Group justify="space-between" px={4} wrap="nowrap">
+                    <Box style={{ overflow: "hidden", flexBasis: "100%" }} px="md">
+                        {children}
+                    </Box>
+                    <Group justify="space-between" px="md" wrap="nowrap">
                         <Text c="dimmed" className={classes.lineClamp}>
                             {uiState.currentSectionTitle}
                         </Text>
