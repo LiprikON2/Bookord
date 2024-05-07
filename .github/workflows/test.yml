@@ -4,6 +4,8 @@ on:
 jobs:
     increment-semver:
         runs-on: ubuntu-latest
+        permissions:
+            contents: write # 'write' access to repository contents
         steps:
             - name: Github checkout
               uses: actions/checkout@v4
