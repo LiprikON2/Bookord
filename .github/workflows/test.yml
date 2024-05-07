@@ -13,6 +13,11 @@ jobs:
               with:
                   node-version: 20
 
+            - name: Set up git name
+              run: |
+                  git config --global user.email "44316968+LiprikON2@users.noreply.github.com"
+                  git config --global user.name "LiprikON2"
+
             - name: Bump package.json version
               run: npm version patch
 
