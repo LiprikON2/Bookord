@@ -41,7 +41,7 @@ export const Reading = observer(() => {
     const bookComponentCallbackRef = useCallbackRef<BookWebComponent>(
         action((bookComponent) => {
             bookReadStore.setBookComponent(bookComponent);
-            bookReadStore.bookComponent.setOnUnload(bookReadStore.unload);
+            bookReadStore.bookComponent.setOnDisconnect(bookReadStore.unload);
         })
     );
 
@@ -63,7 +63,10 @@ export const Reading = observer(() => {
         imgClickEvent: (e) => console.log("click"),
         uiStateUpdateEvent: (e) => bookReadStore.setUiState(e.detail),
         tocStateUpdateEvent: (e) => bookReadStore.setTocState(e.detail),
-        autobookmarkPositionEvent: (e) => bookReadStore.setAutobookmark(e.detail.bookmark),
+        bookmarkPositionsEvent: (e) => {
+            bookReadStore.setBookmarkablePositions(e.detail.manual);
+            bookReadStore.setAutobookmark(e.detail.auto);
+        },
         contextMenuEvent: (e) => {
             showContextMenu([
                 {
@@ -85,14 +88,16 @@ export const Reading = observer(() => {
     });
 
     return (
-        <BookUi title={bookReadStore.metadata.title} uiState={bookReadStore.uiState}>
+        <>
             {bookReadStore.isManualBookmarked ? (
                 <button onClick={bookReadStore.removeManualBookmark}>del bookmark</button>
             ) : (
                 <button onClick={bookReadStore.addManualBookmark}>add bookmark</button>
             )}
-            {!bookReadStore.isReady && "loading..."}
-            <book-web-component ref={useMergedRef(bookComponentCallbackRef, eventsRef)} />
-        </BookUi>
+            <BookUi title={bookReadStore.metadata.title} uiState={bookReadStore.uiState}>
+                {!bookReadStore.isReady && "loading..."}
+                <book-web-component ref={useMergedRef(bookComponentCallbackRef, eventsRef)} />
+            </BookUi>
+        </>
     );
 });

@@ -46,6 +46,7 @@ export class BookReadStore {
         startElement: null,
         startElementSelectedText: null,
     };
+    bookmarkablePositions: Bookmark[] = [];
 
     /**
      * User interaction state records
@@ -149,6 +150,7 @@ export class BookReadStore {
         this.setBook(null);
         this.resetTtsTarget();
         this.resetUiState();
+        this.setBookmarkablePositions([]);
     }
 
     get book() {
@@ -216,6 +218,10 @@ export class BookReadStore {
         );
     }
 
+    setBookmarkablePositions(bookmarkablePositions: Bookmark[]) {
+        this.bookmarkablePositions = bookmarkablePositions;
+    }
+
     /**
      * Returns all manual bookmarks on current page
      */
@@ -223,11 +229,15 @@ export class BookReadStore {
         const interactionState = this.getBookInteraction(this.bookKey);
         const { manual } = interactionState.bookmarks;
 
-        return manual;
+        const currentManuakBookmarks = _.intersectionWith(
+            manual,
+            this.bookmarkablePositions,
+            _.isEqual
+        );
+        return currentManuakBookmarks;
     }
 
     get isManualBookmarked() {
-        // return !this.manualBookmark;
-        return false;
+        return Boolean(this.currentManualBookmarks.length);
     }
 }
