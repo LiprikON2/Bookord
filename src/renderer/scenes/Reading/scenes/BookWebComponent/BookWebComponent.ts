@@ -474,26 +474,26 @@ export default class BookWebComponent extends HTMLElement {
         let [sectionName, markerId] = target.href.split("#").pop().split(",");
         markerId = "#" + markerId;
 
-        const isLinkValid = this.navToLink(sectionName, markerId);
+        const isLinkValid = this.navToLink(sectionName, { markerId });
 
         // Opens link in external browser
         if (!isLinkValid && target.href) window.open(target.href, "_blank");
     }
 
-    navToLink(sectionId: string, markerId?: string) {
+    navToLink(sectionId: string, position?: Position) {
         const sectionIndex = this.book.sectionNames.findIndex(
             (sectionName) => sectionName === sectionId
         );
-        const isLinkValid = sectionIndex !== -1;
+        const doesSectionExist = sectionIndex !== -1;
 
-        if (isLinkValid) {
-            const position = { markerId };
-
-            if (this.state.book.currentSection === sectionIndex) this.navigateToPosition(position);
-            else this.loadSection(sectionIndex, position);
+        if (doesSectionExist) {
+            const isWithingCurrentSection = sectionIndex === this.state.book.currentSection;
+            if (isWithingCurrentSection) {
+                if (position) this.navigateToPosition(position);
+                else this.navigateToPosition({ elementIndex: 0 });
+            } else this.loadSection(sectionIndex, position);
         }
-
-        return isLinkValid;
+        return doesSectionExist;
     }
 
     /**
@@ -660,7 +660,7 @@ export default class BookWebComponent extends HTMLElement {
     }
 
     private navigateToPosition({ sectionPage, elementIndex, elementSelector }: Position) {
-        if (elementSelector || elementIndex) {
+        if (elementSelector || elementIndex || elementIndex === 0) {
             this.shiftToElement({ elementIndex, elementSelector });
         } else if (sectionPage) {
             if (!sectionPage.isFromBack) {
@@ -689,7 +689,7 @@ export default class BookWebComponent extends HTMLElement {
         { element, elementIndex, elementSelector }: Position,
         callback = () => this.onSectionShift()
     ) {
-        if (elementIndex) {
+        if (elementIndex || elementIndex === 0) {
             element = this.getElementByIndex(elementIndex);
         } else if (elementSelector) {
             element = this.contentElem.querySelector(elementSelector);

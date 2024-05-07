@@ -132,6 +132,39 @@ export class BookReadStore {
         );
     }
 
+    getSectionTitle(sectionIndex: number, toc = this.toc, root = true): string {
+        const { sectionNames } = this.contentState;
+
+        let descendantSectionTitle;
+        for (const tocEntry of toc) {
+            const tocEntryChildren = tocEntry?.children;
+            if (tocEntryChildren) {
+                descendantSectionTitle = this.getSectionTitle(
+                    sectionIndex,
+                    tocEntryChildren,
+                    false
+                );
+                if (descendantSectionTitle) break;
+            }
+        }
+
+        const tocEntry = toc.find((tocEntry) => tocEntry.sectionId === sectionNames[sectionIndex]);
+        const sectionTitle = tocEntry?.name;
+
+        if (descendantSectionTitle) {
+            // Use the deep-nested title if possible
+            return descendantSectionTitle;
+        } else if (sectionTitle) {
+            return sectionTitle;
+        } else if (root && sectionIndex >= 0 && sectionIndex < sectionNames.length) {
+            // Untitled sections try to use previous section's title
+            const prevSectionTitle = this.getSectionTitle(sectionIndex - 1, toc);
+            return prevSectionTitle;
+        } else {
+            return "Unknown chapter";
+        }
+    }
+
     load() {
         const { elementIndex } = this.autobookmark;
         const { sectionNames } = this.contentState;
@@ -222,12 +255,32 @@ export class BookReadStore {
         this.bookmarkablePositions = bookmarkablePositions;
     }
 
+    get manualBookmarks() {
+        const interactionState = this.getBookInteraction(this.bookKey);
+        return interactionState.bookmarks.manual;
+    }
+
+    get bookmarks() {
+        const currentManualBookmarks = this.currentManualBookmarks;
+        return this.manualBookmarks
+            .map((manualBookmark) => ({
+                ...manualBookmark,
+                sectionId: this.contentState.sectionNames[manualBookmark.elementSection],
+                label: this.getSectionTitle(manualBookmark.elementSection),
+                active: _.some(currentManualBookmarks, (currentManualBookmark) =>
+                    _.isEqual(currentManualBookmark, manualBookmark)
+                ),
+            }))
+            .toSorted(
+                (a, b) => a.elementSection - b.elementSection || a.elementIndex - b.elementIndex
+            );
+    }
+
     /**
      * Returns all manual bookmarks on current page
      */
     get currentManualBookmarks(): Bookmark[] {
-        const interactionState = this.getBookInteraction(this.bookKey);
-        const { manual } = interactionState.bookmarks;
+        const manual = this.manualBookmarks;
 
         const currentManuakBookmarks = _.intersectionWith(
             manual,

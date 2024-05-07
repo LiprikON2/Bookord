@@ -1,0 +1,38 @@
+.navLink {
+    border-end-start-radius: var(--mantine-radius-md);
+    border-start-start-radius: var(--mantine-radius-md);
+
+    @media (max-width: $mantine-breakpoint-sm) {
+        border-radius: var(--mantine-radius-md);
+    }
+
+    border: rem(1px) transparent solid;
+    &[data-active="true"] {
+        /* margin-right: 0.5px; */
+
+        border-right: transparent;
+        @mixin dark {
+            border-color: var(--nl-bg);
+            background: linear-gradient(90deg, var(--nl-bg) 0%, var(--mantine-color-dark-6) 100%);
+        }
+
+        @mixin light {
+            border-color: var(--mantine-color-default-border);
+            background: linear-gradient(90deg, var(--nl-bg) 0%, var(--mantine-color-gray-1) 100%);
+        }
+    }
+
+    &:not([data-active="true"]):hover {
+        border-right: rem(1px) var(--mantine-color-default-border) solid;
+    }
+}
+
+.label {
+    display: block;
+    line-height: 1.5;
+}
+
+.icon {
+    width: rem(18);
+    height: rem(18);
+}

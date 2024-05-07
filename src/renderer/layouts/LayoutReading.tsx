@@ -1,9 +1,9 @@
 import React from "react";
 import { Outlet } from "@tanstack/react-router";
-import { IconList, IconSpeakerphone } from "@tabler/icons-react";
+import { IconBookmarks, IconList, IconSpeakerphone } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
 
-import { Toc, AppShell, LayoutMarkup, TextToSpeech } from "~/renderer/scenes";
+import { Toc, AppShell, LayoutMarkup, TextToSpeech, Bookmarks } from "~/renderer/scenes";
 import { getHomeMarkup } from "./sharedLayoutMarkup";
 
 const readingLayoutMarkup: LayoutMarkup = {
@@ -20,6 +20,12 @@ const readingLayoutMarkup: LayoutMarkup = {
             Icon: IconList,
             innerTabs: [],
             Component: Toc,
+        },
+        {
+            name: "Bookmarks",
+            Icon: IconBookmarks,
+            innerTabs: [],
+            Component: Bookmarks,
         },
     ],
     navbarTopSection: null,

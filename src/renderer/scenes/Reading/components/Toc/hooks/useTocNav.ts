@@ -2,8 +2,8 @@ import { useMemo } from "react";
 import { action } from "mobx";
 
 import { useBookReadStore, type Structure } from "~/renderer/stores";
-import { TocChildProps } from "../components";
-import { TocState } from "../../BookWebComponent";
+import type { TocChildProps } from "../components";
+import type { TocState } from "../../../scenes/BookWebComponent";
 
 const checkIfHasSelectChild = (tocProp: TocChildProps): boolean => {
     if (tocProp.isSelected) return true;

@@ -88,22 +88,15 @@ export const Reading = observer(() => {
     });
 
     return (
-        <>
-            {/* {bookReadStore.isManualBookmarked ? (
-                <button onClick={bookReadStore.removeManualBookmark}>del bookmark</button>
-            ) : (
-                <button onClick={bookReadStore.addManualBookmark}>add bookmark</button>
-            )} */}
-            <BookUi
-                title={bookReadStore.metadata.title}
-                uiState={bookReadStore.uiState}
-                bookmarked={bookReadStore.isManualBookmarked}
-                onAddBookmark={bookReadStore.addManualBookmark}
-                onRemoveBookmark={bookReadStore.removeManualBookmark}
-            >
-                {!bookReadStore.isReady && "loading..."}
-                <book-web-component ref={useMergedRef(bookComponentCallbackRef, eventsRef)} />
-            </BookUi>
-        </>
+        <BookUi
+            title={bookReadStore.metadata.title}
+            uiState={bookReadStore.uiState}
+            bookmarked={bookReadStore.isManualBookmarked}
+            onAddBookmark={bookReadStore.addManualBookmark}
+            onRemoveBookmark={bookReadStore.removeManualBookmark}
+        >
+            {!bookReadStore.isReady && "loading..."}
+            <book-web-component ref={useMergedRef(bookComponentCallbackRef, eventsRef)} />
+        </BookUi>
     );
 });
