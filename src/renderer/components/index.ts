@@ -1,6 +1,7 @@
 export * from "./DetailedTitle";
 export * from "./Icons";
 export * from "./LanguagePicker";
+export * from "./SkeletonSidebar";
 export * from "./TextObserver";
 export * from "./ThemeToggle";
 export * from "./TitleObserver";

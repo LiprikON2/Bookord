@@ -4,10 +4,11 @@ import { useContextMenu } from "mantine-contextmenu";
 import { IconCopy, IconSpeakerphone } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
 import { action, when } from "mobx";
+import { useIdleTimer } from "react-idle-timer";
 
 import { useBookReadStore } from "~/renderer/stores/hooks";
 import { bookKeyRoute } from "~/renderer/appRenderer";
-import { useCallbackRef, useEvents } from "./hooks";
+import { useCallbackRef, useEvents, useTimeTracker } from "./hooks";
 import { BookUi } from "./components";
 import "./scenes/BookWebComponent";
 import type BookWebComponent from "./scenes/BookWebComponent";
@@ -36,6 +37,18 @@ export const Reading = observer(() => {
             return unsub;
         }),
         [bookKey]
+    );
+
+    useTimeTracker(
+        action((activeDuration, idleDuration) => {
+            bookReadStore.addTimeRecord({
+                activeDuration,
+                idleDuration,
+                endDate: new Date(),
+                endBookmark: bookReadStore.autobookmark,
+                progress: bookReadStore.currentProgress,
+            });
+        })
     );
 
     const bookComponentCallbackRef = useCallbackRef<BookWebComponent>(
@@ -94,6 +107,7 @@ export const Reading = observer(() => {
             bookmarked={bookReadStore.isManualBookmarked}
             onAddBookmark={bookReadStore.addManualBookmark}
             onRemoveBookmark={bookReadStore.removeManualBookmark}
+            isReady={bookReadStore.isReady}
         >
             {!bookReadStore.isReady && "loading..."}
             <book-web-component ref={useMergedRef(bookComponentCallbackRef, eventsRef)} />

@@ -8,7 +8,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
 
-import { LanguagePicker } from "~/components/LanguagePicker";
+import { LanguagePicker } from "~/renderer/components";
 import { getSetting } from "~/renderer/stores";
 import flags from "~/assets/images/flags/language";
 import context from "~/renderer/ipc/thirdPartyApi";

@@ -1,11 +1,12 @@
 import React from "react";
-import { NavLink, Stack, Text, rem } from "@mantine/core";
+import { NavLink, Stack, Skeleton, Text, rem } from "@mantine/core";
 import { IconBookmark } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
+import { action } from "mobx";
 
+import { SkeletonSidebar } from "~/renderer/components";
 import { type Structure, useBookReadStore } from "~/renderer/stores";
 import classes from "./Bookmarks.module.css";
-import { action } from "mobx";
 
 interface BookmarksProps {
     autoscrollTargetRef: (node: any) => void;
@@ -19,12 +20,18 @@ export const Bookmarks = observer(({ autoscrollTargetRef }: BookmarksProps) => {
         bookReadStore.bookComponent.navToLink(sectionId, { elementIndex });
     });
 
-    if (!bookReadStore.bookmarks.length)
+    if (!bookReadStore.isReady) {
+        return <SkeletonSidebar />;
+    }
+
+    if (bookReadStore.isReady && !bookReadStore.bookmarks.length) {
         return (
             <Text c="dimmed" size="sm" px="sm">
                 No bookmarks saved yet.
             </Text>
         );
+    }
+
     return bookReadStore.bookmarks.map(
         ({ active, sectionId, label, elementIndex, elementSection }) => (
             <NavLink
@@ -34,7 +41,7 @@ export const Bookmarks = observer(({ autoscrollTargetRef }: BookmarksProps) => {
                     <Stack gap={2} align="center" miw={24}>
                         <IconBookmark className={classes.icon} stroke={1.5} />
                         <Text c="dimmed" size={rem(11)}>
-                            {elementSection}-{elementIndex}
+                            {elementSection}.{elementIndex}
                         </Text>
                     </Stack>
                 }

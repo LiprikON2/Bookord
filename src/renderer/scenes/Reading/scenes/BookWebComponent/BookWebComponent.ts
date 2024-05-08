@@ -268,6 +268,8 @@ export default class BookWebComponent extends HTMLElement {
             currentSection: this.state.book.currentSection,
             currentSectionTitle: this.state.section.title,
         });
+        const uiState = this.getBookUiState();
+        this.emitUiState(uiState);
     }
 
     async onResize() {
@@ -699,8 +701,6 @@ export default class BookWebComponent extends HTMLElement {
             const targetOffset = this.getElementOffset(element);
 
             this.setOffset(targetOffset, callback);
-        } else {
-            throw new Error("Couldn't find specified element");
         }
     }
 

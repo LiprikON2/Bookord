@@ -7,7 +7,7 @@ import { observer } from "mobx-react-lite";
 
 import context from "~/renderer/ipc/fileOperations";
 import { TitleObserver, TextObserver } from "~/renderer/components";
-import { BookKey, useBookStore } from "~/renderer/stores";
+import { BookKey, useBookReadStore, useBookStore } from "~/renderer/stores";
 import { bookKeyRoute } from "~/renderer/appRenderer";
 import { BookMenu, SummaryModal } from "./scenes";
 import classes from "./BookCard.module.css";
@@ -22,6 +22,7 @@ export const BookCard = observer(({ bookKey, onClick, visible = true }: BookCard
     const [openedModal, { open: openModal, close: closeModal }] = useDisclosure(false);
 
     const bookStore = useBookStore();
+    const bookReadStore = useBookReadStore();
     const metadata = bookStore.getBookMetadata(bookKey, true);
 
     const handleDelete = () => context.deleteFile(bookKey);

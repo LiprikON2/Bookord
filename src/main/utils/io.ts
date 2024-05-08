@@ -51,7 +51,7 @@ export class Watcher {
         console.info("[watcher]: appDir", appDir);
 
         // Added file event
-        this.watcher.on("add", (filePath) => {
+        this.watcher.on("add", (filePath, stats) => {
             const fileName = path.parse(filePath).base;
             console.info("[watcher]: was added:", fileName);
 

@@ -10,7 +10,7 @@ import clsx from "clsx";
 interface BookUiProps {
     title: string;
     uiState: UiState;
-    visible?: boolean;
+    isReady?: boolean;
     children?: React.ReactNode;
     bookmarked: boolean;
     onAddBookmark?: () => void;
@@ -27,7 +27,7 @@ const BookUi = observer(
                 onAddBookmark,
                 onRemoveBookmark,
                 bookmarked = false,
-                visible = true,
+                isReady = true,
                 children,
             }: BookUiProps,
             ref: React.ForwardedRef<HTMLDivElement>
@@ -43,19 +43,21 @@ const BookUi = observer(
                         >
                             {title}
                         </Text>
-                        <ToggleActionIcon
-                            pos="absolute"
-                            iconSize="85%"
-                            size="md"
-                            className={clsx(classes.topRight, classes.bookmark)}
-                            OnIcon={IconBookmarkFilled}
-                            OffIcon={IconBookmark}
-                            variant="transparent"
-                            ariaLabel="bookmark"
-                            on={bookmarked}
-                            onAction={onAddBookmark}
-                            offAction={onRemoveBookmark}
-                        />
+                        {isReady && (
+                            <ToggleActionIcon
+                                pos="absolute"
+                                iconSize="85%"
+                                size="md"
+                                className={clsx(classes.topRight, classes.bookmark)}
+                                OnIcon={IconBookmarkFilled}
+                                OffIcon={IconBookmark}
+                                variant="transparent"
+                                ariaLabel="bookmark"
+                                on={bookmarked}
+                                onAction={onAddBookmark}
+                                offAction={onRemoveBookmark}
+                            />
+                        )}
                     </Group>
                     <Box style={{ overflow: "hidden", flexBasis: "100%" }} px="md">
                         {children}

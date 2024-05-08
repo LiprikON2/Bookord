@@ -6,11 +6,24 @@ import type { TocState } from "~/renderer/scenes/Reading/scenes/BookWebComponent
 import { BookKey } from "../BookStore";
 import { RootStore } from "../RootStore";
 
+interface TimeRecord {
+    activeDuration: number;
+    idleDuration: number;
+    endDate: Date;
+    endBookmark: Bookmark;
+    progress: number;
+    // durations: {
+    //     isIdle: boolean;
+    //     duration: number;
+    // }[];
+}
+
 export interface BookInteractionState {
     bookmarks: {
         auto: Bookmark;
         manual: Bookmark[];
     };
+    reading: TimeRecord[];
 }
 
 type BookmarkTypes = keyof BookInteractionState["bookmarks"];
@@ -93,7 +106,12 @@ export class BookReadStore {
         return this.rootStore.bookStore.getBookContent(this.bookKey).structure;
     }
 
-    private getBookInteraction(bookKey: BookKey): BookInteractionState {
+    private addBookInteractionTimeRecord(bookKey: BookKey, timeRecord: TimeRecord) {
+        const interactionState = this.getBookInteraction(bookKey);
+        interactionState.reading.push(timeRecord);
+    }
+
+    getBookInteraction(bookKey: BookKey): BookInteractionState {
         const interactionState = this.interactionRecords.get(bookKey);
         if (!interactionState) {
             const defaultInteractionState: BookInteractionState = {
@@ -101,6 +119,7 @@ export class BookReadStore {
                     auto: { elementSection: 0, elementIndex: 0 },
                     manual: [],
                 },
+                reading: [],
             };
 
             runInAction(() => this.setBookInteraction(bookKey, defaultInteractionState));
@@ -261,6 +280,8 @@ export class BookReadStore {
     }
 
     get bookmarks() {
+        if (!this.contentState.isInitSectionParsed) return [];
+
         const currentManualBookmarks = this.currentManualBookmarks;
         return this.manualBookmarks
             .map((manualBookmark) => ({
@@ -292,5 +313,36 @@ export class BookReadStore {
 
     get isManualBookmarked() {
         return Boolean(this.currentManualBookmarks.length);
+    }
+
+    // TODO not very accurate as it assumes every section has the same number of pages
+    get currentProgress() {
+        if (!this.contentState.isFullyParsed) return null;
+
+        const { elementSection } = this.autobookmark;
+        const { currentSectionPage, totalSectionPages } = this.uiState;
+        const sectionRatio = 1 / this.contentState.sectionNames.length;
+        const sectionPageRatio = 1 / totalSectionPages;
+        const progress =
+            sectionRatio * elementSection + sectionRatio * (sectionPageRatio * currentSectionPage);
+
+        return progress;
+    }
+
+    getLastKnownProgress(bookKey: BookKey) {
+        const interaction = this.getBookInteraction(bookKey);
+        const timeRecord = interaction.reading.findLast(
+            (timeRecord) => timeRecord.progress !== null
+        );
+        return timeRecord?.progress ?? null;
+    }
+
+    addTimeRecord(timeRecord: TimeRecord) {
+        this.addBookInteractionTimeRecord(this.bookKey, timeRecord);
+    }
+
+    getActiveDuration(bookKey: BookKey) {
+        const interaction = this.getBookInteraction(bookKey);
+        return interaction.reading.reduce((acc, cur) => acc + cur.activeDuration, 0);
     }
 }

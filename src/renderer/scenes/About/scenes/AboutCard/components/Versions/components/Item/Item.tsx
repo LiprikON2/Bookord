@@ -2,7 +2,7 @@ import React from "react";
 import { Text, Image } from "@mantine/core";
 import { observer } from "mobx-react-lite";
 
-import { icons, type Icon } from "~/components/Icons";
+import { icons, type Icon } from "~/renderer/components";
 import { useVersions } from "./hooks";
 import classes from "./Item.module.css";
 

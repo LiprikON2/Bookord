@@ -1,0 +1,16 @@
+.skeleton {
+    width: unset;
+    height: rem(24);
+    border-radius: var(--mantine-radius-md);
+
+    &:not(:first-child) {
+        margin-top: rem(8);
+    }
+}
+
+.skeletonLeft {
+    margin-right: var(--mantine-spacing-md);
+}
+.skeletonRight {
+    margin-left: var(--mantine-spacing-md);
+}

@@ -44,16 +44,18 @@ export const TextToSpeech = observer(() => {
 
     return (
         <>
-            <button
-                onClick={() => {
-                    // responsiveVoice.speak("hello world");
-                    // responsiveVoice.speak("hello world", "Fallback UK Female");
-                    // responsiveVoice.speak("hello world", "Welsh Male");
-                    responsiveVoice.speak("Привет мир", "Russian Female");
-                }}
-            >
-                Test
-            </button>
+            {isDev() && (
+                <button
+                    onClick={() => {
+                        // responsiveVoice.speak("hello world");
+                        // responsiveVoice.speak("hello world", "Fallback UK Female");
+                        // responsiveVoice.speak("hello world", "Welsh Male");
+                        responsiveVoice.speak("Привет мир", "Russian Female");
+                    }}
+                >
+                    Test
+                </button>
+            )}
             <Stack pl="sm" pr="md">
                 <Combobox
                     disabled={ttsStatus !== "standby"}

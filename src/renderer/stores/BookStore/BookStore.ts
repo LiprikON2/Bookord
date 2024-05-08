@@ -158,6 +158,11 @@ const provideFallbackAuthors = (authors?: any): string => {
     return authors;
 };
 
+interface FileMetadata {
+    addedDate: Date;
+    // openedDates: Date[] | null;
+}
+
 /**
  * Domain store
  *
@@ -169,7 +174,10 @@ export class BookStore {
 
     // ref: https://www.zhenghao.io/posts/object-vs-map
     storeStateRecords = new Map<BookKey, BookStoreState>();
-    metadataRecords = new Map<BookKey, BookMetadata>();
+
+    bookMetadataRecords = new Map<BookKey, BookMetadata>();
+    fileMetadataRecords = new Map<BookKey, FileMetadata>();
+
     contentRecords = new Map<BookKey, BookContent>();
     contentStateRecords = new Map<BookKey, BookContentState>();
 
@@ -187,8 +195,29 @@ export class BookStore {
         this.rootStore = rootStore;
     }
 
+    getFileMetadata(bookKey: BookKey) {
+        const metadata = this.fileMetadataRecords.get(bookKey);
+        return metadata;
+    }
+
+    initFileMetadata(bookKey: BookKey) {
+        const initMetadata: FileMetadata = {
+            addedDate: new Date(),
+        };
+
+        this.setFileMetadata(bookKey, initMetadata);
+    }
+
+    setFileMetadata(bookKey: BookKey, metadata: FileMetadata) {
+        this.fileMetadataRecords.set(bookKey, metadata);
+    }
+
+    removeFileMetadata(bookKey: BookKey) {
+        this.fileMetadataRecords.delete(bookKey);
+    }
+
     getBookMetadata(bookKey: BookKey, fallbacks = false) {
-        const metadata = this.metadataRecords.get(bookKey);
+        const metadata = this.bookMetadataRecords.get(bookKey);
         if (!fallbacks) return metadata;
 
         const fallbackedMetadata: BookMetadata = {
@@ -222,14 +251,15 @@ export class BookStore {
             author: provideFallbackAuthors(metadata.author),
         };
 
-        this.metadataRecords.set(bookKey, fallbackedMetadata);
+        this.bookMetadataRecords.set(bookKey, fallbackedMetadata);
+        this.initFileMetadata(bookKey);
         callback?.();
     }
     removeBookMetadata(
         bookKey: BookKey,
         callback = () => this.rootStore.bookViewStore.updateTags()
     ) {
-        this.metadataRecords.delete(bookKey);
+        this.bookMetadataRecords.delete(bookKey);
         callback?.();
     }
 
