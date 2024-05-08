@@ -55,7 +55,7 @@ export type BookMetadataRaw = {
 export type BookMetadata = {
     title: string;
     description: string;
-    date: string;
+    date: Date | null;
     cover: string;
     author: string;
     indentifiers: string[];
@@ -136,6 +136,15 @@ export type BookStateInStorageWithMetadata = BookStateInStorage & {
 export type BookStateOpened = BookStoreState & {
     bookKey: BookKey;
     title: BookKey | string;
+};
+
+const provideFallbackDate = (date?: any): string => {
+    if (typeof date === "object") {
+        if ("_" in date && typeof date?._ === "string") {
+            return date._;
+        } else return "Unknown";
+    } else if (typeof date === "string" && date) return date;
+    return date;
 };
 
 const provideFallbackCover = (cover?: any): string => {
@@ -222,7 +231,6 @@ export class BookStore {
 
         const fallbackedMetadata: BookMetadata = {
             description: "",
-            date: "",
             indentifiers: [],
             languages: [],
             relations: [],
@@ -232,10 +240,11 @@ export class BookStore {
             coverages: [],
             rights: [],
             sources: [],
+            ...metadata,
+            date: new Date(provideFallbackDate(metadata?.date)),
             cover: provideFallbackCover(metadata?.cover),
             title: provideFallbackTitle(bookKey, metadata?.title),
             author: provideFallbackAuthors(metadata?.author),
-            ...metadata,
         };
         return fallbackedMetadata;
     }
@@ -246,6 +255,7 @@ export class BookStore {
     ) {
         const fallbackedMetadata: BookMetadata = {
             ...metadata,
+            date: new Date(provideFallbackDate(metadata?.date)),
             cover: provideFallbackCover(metadata.cover),
             title: provideFallbackTitle(bookKey, metadata.title),
             author: provideFallbackAuthors(metadata.author),

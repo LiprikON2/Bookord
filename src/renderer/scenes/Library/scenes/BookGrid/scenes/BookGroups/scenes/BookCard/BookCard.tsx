@@ -1,4 +1,5 @@
 import React from "react";
+import { IconInfoCircle, IconRobot, IconTrash } from "@tabler/icons-react";
 import { Paper, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "@tanstack/react-router";
@@ -6,10 +7,11 @@ import { motion } from "framer-motion";
 import { observer } from "mobx-react-lite";
 
 import context from "~/renderer/ipc/fileOperations";
-import { TitleObserver, TextObserver } from "~/renderer/components";
 import { BookKey, useBookReadStore, useBookStore } from "~/renderer/stores";
 import { bookKeyRoute } from "~/renderer/appRenderer";
-import { BookMenu, SummaryModal } from "./scenes";
+import { TitleObserver, TextObserver } from "~/renderer/components";
+import { AboutModal, BookMenu, SummaryModal } from "./scenes";
+import { ProgressObserver } from "./components";
 import classes from "./BookCard.module.css";
 
 interface BookCardProps {
@@ -19,13 +21,31 @@ interface BookCardProps {
 }
 
 export const BookCard = observer(({ bookKey, onClick, visible = true }: BookCardProps) => {
-    const [openedModal, { open: openModal, close: closeModal }] = useDisclosure(false);
-
     const bookStore = useBookStore();
     const bookReadStore = useBookReadStore();
     const metadata = bookStore.getBookMetadata(bookKey, true);
 
+    const [openedSummary, { open: openSummary, close: closeSummary }] = useDisclosure(false);
+    const [openedAbout, { open: openAbout, close: closeAbout }] = useDisclosure(false);
     const handleDelete = () => context.deleteFile(bookKey);
+
+    const menuItems = [
+        { label: "About", Icon: IconInfoCircle, onClick: openAbout, onClose: closeAbout },
+        {
+            label: "Summary (AI)",
+            Icon: IconRobot,
+            onClick: openSummary,
+            onClose: closeSummary,
+        },
+        {
+            label: "Delete",
+            Icon: IconTrash,
+            onClick: handleDelete,
+            props: {
+                color: "red",
+            },
+        },
+    ];
 
     if (!visible) return <></>;
     return (
@@ -76,16 +96,23 @@ export const BookCard = observer(({ bookKey, onClick, visible = true }: BookCard
                                 {() => metadata.title}
                             </TitleObserver>
                         </Paper>
-                        <BookMenu handleDelete={handleDelete} openModal={openModal} />
+                        <BookMenu items={menuItems} />
                     </Group>
+                    <ProgressObserver
+                        className={classes.progress}
+                        title="Reading"
+                        size="sm"
+                        getValue={() => bookReadStore.getLastKnownProgress(bookKey) * 100}
+                    />
                 </Paper>
             </Link>
             <SummaryModal
                 getTitle={() => metadata.title}
                 getAuthor={() => metadata.author}
-                opened={openedModal}
-                onClose={closeModal}
+                opened={openedSummary}
+                onClose={closeSummary}
             />
+            <AboutModal bookKey={bookKey} opened={openedAbout} onClose={closeAbout} />
         </motion.div>
     );
 });

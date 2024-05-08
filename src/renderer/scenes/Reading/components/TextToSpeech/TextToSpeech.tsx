@@ -23,6 +23,7 @@ import {
     IconPlayerStopFilled,
 } from "@tabler/icons-react";
 
+import { isDev } from "~/common/helpers";
 import { usePlatform } from "~/renderer/hooks";
 import { useTts, useTtsVoices } from "./hooks";
 import { SliderInput } from "./components";

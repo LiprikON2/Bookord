@@ -1,37 +1,43 @@
 import React from "react";
-import { Menu, ActionIcon } from "@mantine/core";
-import { IconMenu2, IconRobot, IconTrash } from "@tabler/icons-react";
+import { Menu, ActionIcon, MenuItemProps } from "@mantine/core";
+import { type Icon, IconMenu2 } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
 
-interface BookMenu {
-    openModal: () => void;
-    handleDelete: () => void;
+interface BookMenuItem {
+    Icon: Icon;
+    label: string;
+    onClick?: () => void;
+    onClose?: () => void;
+    props?: MenuItemProps;
+    dividerBefore?: boolean;
 }
-export const BookMenu = observer(({ openModal, handleDelete }: BookMenu) => {
+interface BookMenu {
+    items: BookMenuItem[];
+}
+const iconStyle = { width: "70%", height: "70%" };
+
+export const BookMenu = observer(({ items }: BookMenu) => {
     return (
         <Menu shadow="md" width={180} position="top-end" closeOnItemClick>
             <Menu.Target>
                 <ActionIcon size="3rem" aria-label="Book menu" variant="default">
-                    <IconMenu2 style={{ width: "70%", height: "70%" }} stroke={1.5} />
+                    <IconMenu2 style={iconStyle} stroke={1.5} />
                 </ActionIcon>
             </Menu.Target>
 
             <Menu.Dropdown>
-                <Menu.Item
-                    onClick={openModal}
-                    leftSection={<IconRobot style={{ width: "70%", height: "70%" }} />}
-                >
-                    Summary (AI)
-                </Menu.Item>
-
-                <Menu.Divider />
-                <Menu.Item
-                    onClick={handleDelete}
-                    color="red"
-                    leftSection={<IconTrash style={{ width: "70%", height: "70%" }} />}
-                >
-                    Delete
-                </Menu.Item>
+                {items.map((item) => (
+                    <React.Fragment key={item.label}>
+                        <Menu.Item
+                            onClick={item.onClick}
+                            leftSection={<item.Icon style={iconStyle} />}
+                            {...item.props}
+                        >
+                            {item.label}
+                        </Menu.Item>
+                        {item.dividerBefore && <Menu.Divider />}
+                    </React.Fragment>
+                ))}
             </Menu.Dropdown>
         </Menu>
     );

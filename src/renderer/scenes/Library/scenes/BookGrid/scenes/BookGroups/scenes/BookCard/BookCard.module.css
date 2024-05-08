@@ -9,6 +9,16 @@
     background-size: cover;
     background-position: center;
     aspect-ratio: 351 / 575;
+
+    position: relative;
+    overflow: hidden;
+
+    & .progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
 }
 
 .title {

@@ -336,6 +336,9 @@ export class BookReadStore {
         );
         return timeRecord?.progress ?? null;
     }
+    getProgress(bookKey: BookKey) {
+        return `${(this.getLastKnownProgress(bookKey) * 100).toFixed(2)}%`;
+    }
 
     addTimeRecord(timeRecord: TimeRecord) {
         this.addBookInteractionTimeRecord(this.bookKey, timeRecord);
@@ -344,5 +347,84 @@ export class BookReadStore {
     getActiveDuration(bookKey: BookKey) {
         const interaction = this.getBookInteraction(bookKey);
         return interaction.reading.reduce((acc, cur) => acc + cur.activeDuration, 0);
+    }
+
+    getReadTime(bookKey: BookKey) {
+        const duration = this.getActiveDuration(bookKey);
+        const seconds = Math.floor(duration / 1000);
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+
+        if (hours === 0 && minutes < 1) return "Not read";
+
+        let timeString = "";
+
+        if (hours > 0) {
+            timeString += `${hours} hrs, `;
+        }
+
+        if (minutes > 0 || hours === 0) {
+            timeString += `${minutes} min`;
+        }
+
+        return timeString;
+    }
+
+    getPublishDate(bookKey: BookKey) {
+        const publishDate = this.rootStore.bookStore.getBookMetadata(bookKey)?.date;
+        const isValid = !Number.isNaN(new Date(publishDate).getTime());
+
+        if (!isValid) return null;
+        return publishDate.toISOString().split("T")[0];
+    }
+
+    getAddedDate(bookKey: BookKey) {
+        const addedDate = this.rootStore.bookStore.getFileMetadata(bookKey)?.addedDate;
+
+        if (!addedDate) return null;
+        return addedDate.toISOString().split("T")[0];
+    }
+
+    getOpenedDate(bookKey: BookKey) {
+        const interaction = this.getBookInteraction(bookKey);
+        const lastOpenedDate = interaction.reading.at(-1)?.endDate;
+        if (!lastOpenedDate) return null;
+        return lastOpenedDate.toISOString().split("T")[0];
+    }
+
+    getOpenedTimeAgo(bookKey: BookKey) {
+        const interaction = this.getBookInteraction(bookKey);
+        const lastOpenedDate = interaction.reading.at(-1)?.endDate;
+        if (!lastOpenedDate) return "never";
+
+        const currentDate = new Date();
+        const diff = currentDate.getTime() - lastOpenedDate.getTime();
+
+        const seconds = Math.floor(diff / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        const months = Math.floor(days / 30);
+        const years = Math.floor(days / 365);
+
+        if (seconds < 60) {
+            return "just now";
+        } else if (minutes < 60) {
+            return minutes + " minutes ago";
+        } else if (hours < 24) {
+            return hours + " hours ago";
+        } else if (days === 1) {
+            return "yesterday";
+        } else if (days < 30) {
+            return days + " days ago";
+        } else if (months === 1) {
+            return "1 month ago";
+        } else if (months < 12) {
+            return months + " months ago";
+        } else if (years === 1) {
+            return "1 year ago";
+        } else {
+            return years + " years ago";
+        }
     }
 }
