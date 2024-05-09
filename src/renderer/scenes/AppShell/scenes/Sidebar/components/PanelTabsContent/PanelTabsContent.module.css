@@ -23,6 +23,7 @@
     position: unset;
     max-width: 100%;
     padding-block: calc(var(--mantine-spacing-xs) / 2);
+    outline-offset: rem(-4);
 
     /* Accomodates close button in the rightSection */
     &:has(.tabSection[data-position="right"]) {

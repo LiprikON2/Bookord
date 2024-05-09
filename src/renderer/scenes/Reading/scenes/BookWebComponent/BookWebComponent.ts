@@ -309,7 +309,7 @@ export default class BookWebComponent extends HTMLElement {
         ];
     }
 
-    private get contentChildren() {
+    get contentChildren() {
         return [...this.contentElem.children];
     }
 
@@ -421,9 +421,9 @@ export default class BookWebComponent extends HTMLElement {
             elem.addEventListener("contextmenu", (e: MouseEvent) => {
                 // @ts-ignore
                 const selection: Selection = this.shadowRoot.getSelection();
+                if (!selection || selection.rangeCount < 1) return;
 
                 const selectedText = selection.toString();
-
                 const range = selection.getRangeAt(0);
                 const startElement = range.startContainer.parentNode;
                 const [startElementSelectedText] = selectedText.split("\n");
@@ -728,7 +728,7 @@ export default class BookWebComponent extends HTMLElement {
      * The `elementIndex` is given precedence over `elementSelector`,
      * and `elementSelector` is given precedence over `element`.
      */
-    private shiftToElement(
+    shiftToElement(
         { element, elementIndex, elementSelector }: Position,
         callback = () => this.onSectionShift()
     ) {
@@ -740,8 +740,7 @@ export default class BookWebComponent extends HTMLElement {
 
         if (element) {
             const targetOffset = this.getElementOffset(element);
-
-            this.setOffset(targetOffset, callback);
+            if (targetOffset || targetOffset === 0) this.setOffset(targetOffset, callback);
         }
     }
 
@@ -810,12 +809,11 @@ export default class BookWebComponent extends HTMLElement {
      * Returns element's offset
      * @param {HTMLElement} elem
      * @param {boolean} [roundToEdge] - whether to round offset to the nearest multiple of page widths
-     * @returns {number}
      */
     getElementOffset(elem: HTMLElement, roundToEdge = true) {
-        if (!elem) throw new Error("Cannot get element offset: elem is not provided.");
+        const elemOffset = elem?.offsetLeft;
 
-        const elemOffset = elem.offsetLeft;
+        if (!elemOffset && elemOffset !== 0) return null;
         if (!roundToEdge) return elemOffset;
 
         return this.getPageEdgeOffset(elemOffset);

@@ -1,5 +1,5 @@
 import { useToggle } from "@mantine/hooks";
-import { runInAction } from "mobx";
+import { action, reaction, runInAction, when } from "mobx";
 import { useEffect } from "react";
 import { useBookReadStore } from "~/renderer/stores";
 
@@ -28,8 +28,22 @@ export const useTts = (
     selectedPitch = 1,
     selectedRate = 1
 ) => {
-    const bookReadStore = useBookReadStore();
     const [ttsStatus, toggleTtsStatus] = useToggle(["standby", "speaking", "paused"]);
+    const bookReadStore = useBookReadStore();
+
+    const flipToElement = action((nextElem: Element) => {
+        bookReadStore.bookComponent?.shiftToElement?.({ element: nextElem as HTMLElement });
+    });
+
+    const ttsNextSection = action(() => {
+        bookReadStore.bookComponent?.flipNSections?.(1);
+
+        const elem = bookReadStore.bookComponent?.contentChildren[0];
+        // @ts-ignore
+        const selection: Selection = bookReadStore.bookComponent.shadowRoot.getSelection();
+        selectElem(elem, selection);
+        startTts(elem.textContent, elem.nextElementSibling, selection);
+    });
 
     const updateTtsState = () => {
         if (speechSynthesis.paused) {
@@ -75,9 +89,27 @@ export const useTts = (
         if (nextElem) {
             utterance.onend = () => {
                 selectElem(nextElem, selection);
-                startTts(nextElem.textContent, nextElem.nextElementSibling, selection);
+
+                let nextText = nextElem.textContent;
+
+                // TODO fix, not working for some reason
+                if (!nextElem.textContent) {
+                    const img: HTMLImageElement = nextElem.querySelector("img[alt]");
+                    if (img) nextText = img.alt;
+                }
+
+                startTts(nextText, nextElem.nextElementSibling, selection);
+                flipToElement(nextElem);
             };
-        } else utterance.onend = () => stopTts();
+        } else {
+            utterance.onend = () => {
+                selection.removeAllRanges();
+                stopTts();
+                if (bookReadStore.bookComponent?.doesNextSectionExist) {
+                    ttsNextSection();
+                }
+            };
+        }
 
         speechSynthesis.speak(utterance);
 
