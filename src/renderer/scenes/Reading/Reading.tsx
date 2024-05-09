@@ -56,17 +56,25 @@ export const Reading = observer(() => {
             bookReadStore.bookComponent.setOnDisconnect(bookReadStore.unload);
         })
     );
+    const handleNextPage = action(() => bookReadStore.bookComponent?.pageForward?.());
+    const handlePrevPage = action(() => bookReadStore.bookComponent?.pageBackward?.());
+    const handleNextFivePage = action(() => bookReadStore.bookComponent?.flipNPages?.(5));
+    const handlePrevFivePage = action(() => bookReadStore.bookComponent?.flipNPages?.(-5));
+    const handleNextSection = action(() => bookReadStore.bookComponent?.sectionForward?.());
+    const handlePrevSection = action(() => bookReadStore.bookComponent?.sectionBackward?.());
 
     // Usage of actions prevents `Observable being read outside a reactive context` warning
     useHotkeys([
-        ["ArrowRight", action(() => bookReadStore.bookComponent?.pageForward?.())],
-        ["ArrowLeft", action(() => bookReadStore.bookComponent?.pageBackward?.())],
-        ["Ctrl + ArrowRight", action(() => bookReadStore.bookComponent?.flipNPages?.(5))],
-        ["Ctrl + ArrowLeft", action(() => bookReadStore.bookComponent?.flipNPages?.(-5))],
-        // TODO on linux this is workspace switching shortcut
-        // https://i.imgur.com/IzROIKD.png
-        ["Ctrl + Alt + ArrowRight", action(() => bookReadStore.bookComponent?.sectionForward?.())],
-        ["Ctrl + Alt + ArrowLeft", action(() => bookReadStore.bookComponent?.sectionBackward?.())],
+        ["ArrowRight", handleNextPage],
+        ["ArrowLeft", handlePrevPage],
+        ["Ctrl + ArrowRight", handleNextFivePage],
+        ["Ctrl + ArrowLeft", handlePrevFivePage],
+        ["Shift + ArrowRight", handleNextFivePage],
+        ["Shift + ArrowLeft", handlePrevFivePage],
+        ["Ctrl + Alt + ArrowRight", handleNextSection],
+        ["Ctrl + Alt + ArrowLeft", handlePrevSection],
+        ["Shift + Alt + ArrowRight", handleNextSection],
+        ["Shift + Alt + ArrowLeft", handlePrevSection],
     ]);
 
     const { showContextMenu } = useContextMenu();
@@ -101,12 +109,18 @@ export const Reading = observer(() => {
 
     return (
         <BookUi
+            isReady={bookReadStore.isReady}
             title={bookReadStore.metadata.title}
             uiState={bookReadStore.uiState}
             bookmarked={bookReadStore.isManualBookmarked}
             onAddBookmark={bookReadStore.addManualBookmark}
             onRemoveBookmark={bookReadStore.removeManualBookmark}
-            isReady={bookReadStore.isReady}
+            onNextPage={handleNextPage}
+            onNextFivePage={handleNextFivePage}
+            onNextSection={handleNextSection}
+            onPrevPage={handlePrevPage}
+            onPrevFivePage={handlePrevFivePage}
+            onPrevSection={handlePrevSection}
         >
             <BookSkeleton visible={bookReadStore.isReady} />
             <book-web-component ref={useMergedRef(bookComponentCallbackRef, eventsRef)} />

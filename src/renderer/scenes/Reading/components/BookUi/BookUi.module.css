@@ -12,10 +12,6 @@
     grid-column: 2 / -2;
 }
 
-.bookmark {
-    outline-offset: -3px;
-}
-
 .topRight {
     grid-row: 1;
     grid-column: -2 / -1;
@@ -23,6 +19,32 @@
     justify-self: end;
 }
 
+.bookmark {
+    outline-offset: -3px;
+}
+
 .lineClamp {
     @mixin lineClamp 1;
+}
+
+.buttonContainer {
+    --b-padding: var(--mantine-spacing-xl);
+    position: relative;
+    padding: var(--b-padding);
+
+    .backwardButton {
+        position: absolute;
+        width: var(--b-padding);
+        left: 0;
+        top: var(--b-padding);
+        bottom: var(--b-padding);
+    }
+
+    .forwardButton {
+        position: absolute;
+        width: var(--b-padding);
+        right: 0;
+        top: var(--b-padding);
+        bottom: var(--b-padding);
+    }
 }

@@ -37,6 +37,15 @@ type TtsTarget = {
     startElementSelectedText: string | null;
 };
 
+const defaultUiState = {
+    currentSectionTitle: "",
+    currentSectionPage: 0,
+    totalSectionPages: 0,
+    currentBookPage: 0,
+    totalBookPages: 0,
+    nextPage: false,
+    prevPage: false,
+};
 export class BookReadStore {
     rootStore: RootStore;
     bookComponent: BookWebComponent | null = null;
@@ -47,13 +56,7 @@ export class BookReadStore {
         currentSectionTitle: null,
         sectionNames: null,
     };
-    uiState: UiState = {
-        currentSectionTitle: "",
-        currentSectionPage: 0,
-        totalSectionPages: 0,
-        currentBookPage: 0,
-        totalBookPages: 0,
-    };
+    uiState: UiState = defaultUiState;
 
     ttsTarget: TtsTarget = {
         startElement: null,
@@ -83,13 +86,7 @@ export class BookReadStore {
         this.uiState = uiState;
     }
     resetUiState() {
-        this.uiState = {
-            currentSectionTitle: "",
-            currentSectionPage: 0,
-            totalSectionPages: 0,
-            currentBookPage: 0,
-            totalBookPages: 0,
-        };
+        this.uiState = defaultUiState;
     }
 
     setTtsTarget(ttsTarget: TtsTarget) {

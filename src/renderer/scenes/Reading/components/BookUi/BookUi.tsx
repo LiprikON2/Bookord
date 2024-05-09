@@ -6,6 +6,8 @@ import classes from "./BookUi.module.css";
 import { ToggleActionIcon } from "~/renderer/components";
 import { IconBookmark, IconBookmarkFilled } from "@tabler/icons-react";
 import clsx from "clsx";
+import { FlipPageButton } from "./components";
+import { useKeyboardStrength } from "./hooks";
 
 interface BookUiProps {
     title: string;
@@ -15,6 +17,12 @@ interface BookUiProps {
     bookmarked: boolean;
     onAddBookmark?: () => void;
     onRemoveBookmark?: () => void;
+    onNextPage?: () => void;
+    onNextFivePage?: () => void;
+    onNextSection?: () => void;
+    onPrevPage?: () => void;
+    onPrevFivePage?: () => void;
+    onPrevSection?: () => void;
 }
 
 const BookUi = observer(
@@ -29,9 +37,17 @@ const BookUi = observer(
                 bookmarked = false,
                 isReady = true,
                 children,
+                onNextPage,
+                onNextFivePage,
+                onNextSection,
+                onPrevPage,
+                onPrevFivePage,
+                onPrevSection,
             }: BookUiProps,
             ref: React.ForwardedRef<HTMLDivElement>
         ) => {
+            const keyboardStrength = useKeyboardStrength();
+
             return (
                 <Stack h="100%" gap={4} ref={ref}>
                     <Group p={0} className={classes.top}>
@@ -59,9 +75,33 @@ const BookUi = observer(
                             />
                         )}
                     </Group>
-                    <Box style={{ overflow: "hidden", flexBasis: "100%" }} px="md">
-                        {children}
-                    </Box>
+                    <Group
+                        className={classes.buttonContainer}
+                        wrap="nowrap"
+                        style={{ flexBasis: "100%", overflow: "hidden" }}
+                    >
+                        {uiState.prevPage && (
+                            <FlipPageButton
+                                className={classes.backwardButton}
+                                direction="left"
+                                strength={keyboardStrength}
+                                onLowClick={onPrevPage}
+                                onMediumClick={onPrevFivePage}
+                                onHighClick={onPrevSection}
+                            />
+                        )}
+                        <Box style={{ height: "100%", width: "100%" }}>{children}</Box>
+                        {uiState.nextPage && (
+                            <FlipPageButton
+                                className={classes.forwardButton}
+                                direction="right"
+                                strength={keyboardStrength}
+                                onLowClick={onNextPage}
+                                onMediumClick={onNextFivePage}
+                                onHighClick={onNextSection}
+                            />
+                        )}
+                    </Group>
                     <Group justify="space-between" px="md" wrap="nowrap">
                         <Text c="dimmed" className={classes.lineClamp}>
                             {uiState.currentSectionTitle}

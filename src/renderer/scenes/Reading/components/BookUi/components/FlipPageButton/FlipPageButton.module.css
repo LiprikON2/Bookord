@@ -1,0 +1,41 @@
+.button {
+    position: relative;
+
+    filter: brightness(100%);
+    transition: filter 0.15s ease;
+
+    &:hover {
+        filter: brightness(80%);
+
+        .icon {
+            transform: scale(2);
+        }
+    }
+
+    &:active {
+        filter: brightness(120%);
+        .icon {
+            transform: scale(1.5);
+        }
+    }
+    &:focus {
+        outline: none;
+    }
+}
+
+.icon {
+    width: 100%;
+    height: 90%;
+    transform: scale(1.5);
+    transition: transform 0.2s;
+
+    position: absolute;
+    top: 0;
+
+    &[data-position="left"] {
+        right: rem(6);
+    }
+    &[data-position="right"] {
+        right: calc(rem(6) * -1);
+    }
+}

@@ -107,5 +107,7 @@
  * @property {number} totalSectionPages
  * @property {number} currentBookPage
  * @property {number} totalBookPages
+ * @property {boolean} nextPage
+ * @property {boolean} prevPage
  *
  */

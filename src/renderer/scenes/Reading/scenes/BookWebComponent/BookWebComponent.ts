@@ -314,7 +314,7 @@ export default class BookWebComponent extends HTMLElement {
     }
 
     get totalSections() {
-        return this.book.sectionNames.length;
+        return this?.book?.sectionNames?.length ?? 0;
     }
 
     loadBook(
@@ -568,6 +568,48 @@ export default class BookWebComponent extends HTMLElement {
         this.flipNPages(-1);
     }
 
+    get doesNextSectionExist() {
+        const lastSection = this.totalSections - 1;
+        const { currentSection } = this.state.book;
+        const nextSection = currentSection + 1;
+
+        const doesNextSectionExist = nextSection <= lastSection;
+        return doesNextSectionExist;
+    }
+
+    get doesPrevSectionExist() {
+        const firstSection = 0;
+        const { currentSection } = this.state.book;
+        const prevSection = currentSection - 1;
+
+        const doesPrevSectionExist = prevSection >= firstSection;
+        return doesPrevSectionExist;
+    }
+
+    get doesNextSectionPageExist() {
+        const { currentPage: currentSectionPage, lastPage: lastSectionPage } = this.state.section;
+        const nextSectionPage = currentSectionPage + 1;
+
+        const doesNextSectionPageExist = nextSectionPage <= lastSectionPage;
+        return doesNextSectionPageExist;
+    }
+    get doesPrevSectionPageExist() {
+        const { currentPage: currentSectionPage, firstPage: firstSectionPage } = this.state.section;
+        const prevSectionPage = currentSectionPage + 1;
+
+        const doesPrevSectionPageExist = prevSectionPage >= firstSectionPage;
+        return doesPrevSectionPageExist;
+    }
+
+    get doesNextPageExist() {
+        if (this.doesNextSectionExist) return true;
+        return this.doesNextSectionPageExist;
+    }
+    get doesPrevPageExist() {
+        if (this.doesPrevSectionExist) return true;
+        return this.doesNextSectionPageExist;
+    }
+
     /**
      * Flips specified amout of pages forward or backwards
      */
@@ -578,14 +620,12 @@ export default class BookWebComponent extends HTMLElement {
         const currentSectionPage = this.state.section.currentPage;
         const requestedSectionPage = currentSectionPage + n;
 
-        const firstSection = 0;
-        const lastSection = this.totalSections - 1;
         const { currentSection } = this.state.book;
         const nextSection = currentSection + 1;
         const prevSection = currentSection - 1;
 
-        const doesNextSectionExist = nextSection <= lastSection;
-        const doesPrevSectionExist = prevSection >= firstSection;
+        const doesNextSectionExist = this.doesNextSectionExist;
+        const doesPrevSectionExist = this.doesPrevSectionExist;
 
         const didRequestSucceedingSection = requestedSectionPage > lastSectionPage;
         const didRequestPreceedingSection = requestedSectionPage < firstSectionPage;
@@ -733,6 +773,8 @@ export default class BookWebComponent extends HTMLElement {
             totalSectionPages,
             currentBookPage,
             totalBookPages,
+            nextPage: this.doesNextPageExist,
+            prevPage: this.doesPrevPageExist,
         };
 
         return uiState;
