@@ -495,6 +495,7 @@ export default class BookWebComponent extends HTMLElement {
                 else this.navigateToPosition({ elementIndex: 0 });
             } else this.loadSection(sectionIndex, position);
         }
+
         return doesSectionExist;
     }
 
@@ -747,7 +748,6 @@ export default class BookWebComponent extends HTMLElement {
             composed: true,
             detail: uiState,
         });
-
         this.dispatchEvent(uiStateUpdateEvent);
     }
     /**

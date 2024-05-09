@@ -1,0 +1,38 @@
+.skeleton {
+    @mixin light {
+        &:where([data-visible])::after {
+            background-color: var(--mantine-color-gray-2);
+        }
+
+        &:where([data-visible])::before {
+            background-color: var(--mantine-color-gray-4);
+        }
+    }
+
+    @mixin dark {
+        &:where([data-visible])::after {
+            background-color: var(--mantine-color-dark-3);
+        }
+
+        &:where([data-visible])::before {
+            background-color: var(--mantine-color-dark-5);
+        }
+    }
+}
+
+.box {
+    --columns-count: 2;
+    --column-gap: 2rem;
+
+    --columns-count: 1;
+    --column-gap: 50px;
+
+    --column-gap-total: calc(calc(var(--columns-count) - 1) * var(--column-gap));
+
+    --book-component-width: calc(calc(30rem * var(--columns-count)) + var(--column-gap-total));
+
+    /* TODO properly share styles (CSS variables) https://lamplightdev.com/blog/2021/03/23/how-to-share-styles-in-the-shadow-dom/ */
+
+    max-width: calc(calc(30rem * var(--columns-count)) + var(--column-gap-total));
+    margin: auto;
+}

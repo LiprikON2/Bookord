@@ -1,6 +1,6 @@
 import React from "react";
 import { IconInfoCircle, IconRobot, IconTrash } from "@tabler/icons-react";
-import { Paper, Group } from "@mantine/core";
+import { Paper, Group, Indicator } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
@@ -24,6 +24,9 @@ export const BookCard = observer(({ bookKey, onClick, visible = true }: BookCard
     const bookStore = useBookStore();
     const bookReadStore = useBookReadStore();
     const metadata = bookStore.getBookMetadata(bookKey, true);
+    const { isMetadataParsed } = bookStore.getBookState(bookKey);
+
+    const openedTimeAgoStr = bookReadStore.getOpenedTimeAgo(bookKey);
 
     const [openedSummary, { open: openSummary, close: closeSummary }] = useDisclosure(false);
     const [openedAbout, { open: openAbout, close: closeAbout }] = useDisclosure(false);
@@ -66,45 +69,47 @@ export const BookCard = observer(({ bookKey, onClick, visible = true }: BookCard
                     bookKey,
                 }}
             >
-                <Paper
-                    shadow="md"
-                    p="md"
-                    radius="md"
-                    className={classes.card}
-                    style={{ backgroundImage: `url(${metadata.cover})` }}
-                >
-                    <div>
-                        <TextObserver className={classes.category} size="xs">
-                            {() => metadata.author}
-                        </TextObserver>
-                    </div>
-                    <Group
-                        justify="space-between"
-                        w="100%"
-                        wrap="nowrap"
-                        h="3rem"
-                        onClick={(e) => e.preventDefault()}
+                <Indicator disabled={openedTimeAgoStr !== "never" || !isMetadataParsed}>
+                    <Paper
+                        shadow="md"
+                        p="md"
+                        radius="md"
+                        className={classes.card}
+                        style={{ backgroundImage: `url(${metadata.cover})` }}
                     >
-                        <Paper
-                            color="cyan.3"
-                            style={{ flexGrow: 1 }}
-                            h="100%"
-                            p="0.5rem"
-                            styles={{ root: { display: "flex" } }}
+                        <div>
+                            <TextObserver className={classes.category} size="xs">
+                                {() => metadata.author}
+                            </TextObserver>
+                        </div>
+                        <Group
+                            justify="space-between"
+                            w="100%"
+                            wrap="nowrap"
+                            h="3rem"
+                            onClick={(e) => e.preventDefault()}
                         >
-                            <TitleObserver order={3} className={classes.title}>
-                                {() => metadata.title}
-                            </TitleObserver>
-                        </Paper>
-                        <BookMenu items={menuItems} />
-                    </Group>
-                    <ProgressObserver
-                        className={classes.progress}
-                        title="Reading"
-                        size="sm"
-                        getValue={() => bookReadStore.getLastKnownProgress(bookKey) * 100}
-                    />
-                </Paper>
+                            <Paper
+                                color="cyan.3"
+                                style={{ flexGrow: 1 }}
+                                h="100%"
+                                p="0.5rem"
+                                styles={{ root: { display: "flex" } }}
+                            >
+                                <TitleObserver order={3} className={classes.title}>
+                                    {() => metadata.title}
+                                </TitleObserver>
+                            </Paper>
+                            <BookMenu items={menuItems} />
+                        </Group>
+                        <ProgressObserver
+                            className={classes.progress}
+                            title="Reading"
+                            size="sm"
+                            getValue={() => bookReadStore.getLastKnownProgress(bookKey) * 100}
+                        />
+                    </Paper>
+                </Indicator>
             </Link>
             <SummaryModal
                 getTitle={() => metadata.title}

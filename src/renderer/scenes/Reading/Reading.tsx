@@ -4,12 +4,11 @@ import { useContextMenu } from "mantine-contextmenu";
 import { IconCopy, IconSpeakerphone } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
 import { action, when } from "mobx";
-import { useIdleTimer } from "react-idle-timer";
 
 import { useBookReadStore } from "~/renderer/stores/hooks";
 import { bookKeyRoute } from "~/renderer/appRenderer";
 import { useCallbackRef, useEvents, useTimeTracker } from "./hooks";
-import { BookUi } from "./components";
+import { BookSkeleton, BookUi } from "./components";
 import "./scenes/BookWebComponent";
 import type BookWebComponent from "./scenes/BookWebComponent";
 import type { BookWebComponentEventMap } from "./scenes/BookWebComponent";
@@ -31,7 +30,7 @@ export const Reading = observer(() => {
             );
 
             const didSwitchBook = bookReadStore.book !== null;
-            if (didSwitchBook) bookReadStore.bookComponent.unloadBook();
+            if (didSwitchBook) bookReadStore.bookComponent?.unloadBook?.();
 
             bookReadStore.setBook(bookKey);
             return unsub;
@@ -109,7 +108,7 @@ export const Reading = observer(() => {
             onRemoveBookmark={bookReadStore.removeManualBookmark}
             isReady={bookReadStore.isReady}
         >
-            {!bookReadStore.isReady && "loading..."}
+            <BookSkeleton visible={bookReadStore.isReady} />
             <book-web-component ref={useMergedRef(bookComponentCallbackRef, eventsRef)} />
         </BookUi>
     );

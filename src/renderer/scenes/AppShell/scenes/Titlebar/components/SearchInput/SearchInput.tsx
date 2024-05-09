@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDebouncedValue, useFocusWithin, useWindowEvent } from "@mantine/hooks";
 import { CloseButton, Pill, TextInput } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
+import { reaction } from "mobx";
 import { observer } from "mobx-react-lite";
 
 import { useBookViewStore } from "~/renderer/stores";
@@ -14,6 +15,17 @@ export const SearchInput = observer(() => {
     const [searchTermValue, setSearchTermValue] = useState("");
     const [debouncedSearchTerm] = useDebouncedValue(searchTermValue, 100, { leading: true });
     useEffect(() => bookViewStore.setSearch(debouncedSearchTerm), [debouncedSearchTerm]);
+
+    /* Updates input value when something other than input changes search term */
+    useEffect(() => {
+        const unsub = reaction(
+            () => bookViewStore.search,
+            () => {
+                if (!focused) setSearchTermValue(bookViewStore.search);
+            }
+        );
+        return unsub;
+    }, [bookViewStore.search, focused]);
 
     useWindowEvent("keydown", (event) => {
         if (event.code === "KeyP" && (event.ctrlKey || event.metaKey)) {

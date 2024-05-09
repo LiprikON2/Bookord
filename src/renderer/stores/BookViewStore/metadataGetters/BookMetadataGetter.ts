@@ -1,7 +1,7 @@
 import { BookMetadata, BookMetadataRaw } from "../../BookStore/BookStore";
 import type { FilterTags, MetadataGetter, RecentTagName } from "../interfaces";
 
-export class BookMetadataGetter<T extends BookMetadataRaw> implements MetadataGetter<T> {
+export class BookMetadataGetter<T extends BookMetadata> implements MetadataGetter<T> {
     getPublishYears(metadata: T) {
         const year = new Date(metadata.date).getFullYear();
         const yearString = Number.isNaN(year) ? "Unknown" : year.toString();
@@ -25,11 +25,11 @@ export class BookMetadataGetter<T extends BookMetadataRaw> implements MetadataGe
         return typeof metadata.title === "string" ? metadata.title : "";
     }
     getAuthors(metadata: T) {
-        if (typeof metadata.author === "object") {
-            if ("_" in metadata.author && typeof metadata.author?._ === "string") {
-                return metadata.author._;
-            } else return "Unknown";
-        } else if (typeof metadata.author === "string" && metadata.author) return metadata.author;
+        // if (typeof metadata.author === "object") {
+        //     if ("_" in metadata.author && typeof metadata.author?._ === "string") {
+        //         return metadata.author._;
+        //     } else return "Unknown";
+        // } else if (typeof metadata.author === "string" && metadata.author) return metadata.author;
         return metadata.author;
     }
 
