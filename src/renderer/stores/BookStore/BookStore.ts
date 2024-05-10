@@ -7,6 +7,7 @@ import storeContext from "./ipc";
 import { RootStore } from "../RootStore";
 import { autosave } from "../utils";
 import { RaceConditionGuard } from "./utils";
+import { Bookmark } from "../BookReadStore";
 
 export type BookState = {
     isInStorage: boolean;
@@ -166,6 +167,28 @@ interface FileMetadata {
 
 export type BookStoreData = BookStore["store"];
 
+export interface TimeRecord {
+    activeDuration: number;
+    idleDuration: number;
+    endDate: Date;
+    endBookmark: Bookmark;
+    progress: number;
+    // durations: {
+    //     isIdle: boolean;
+    //     duration: number;
+    // }[];
+}
+
+export interface BookInteractionState {
+    bookmarks: {
+        auto: Bookmark;
+        manual: Bookmark[];
+    };
+    reading: TimeRecord[];
+}
+
+export type BookmarkTypes = keyof BookInteractionState["bookmarks"];
+
 /**
  * Domain store
  *
@@ -184,6 +207,11 @@ export class BookStore {
 
     contentRecords = new Map<BookKey, BookContent>();
     contentStateRecords = new Map<BookKey, BookContentState>();
+
+    /**
+     * User interaction state records
+     */
+    interactionRecords = new Map<BookKey, BookInteractionState>();
 
     // TODO split:
     //
@@ -218,6 +246,7 @@ export class BookStore {
         const store = {
             bookMetadataRecords: this.bookMetadataRecords,
             fileMetadataRecords: this.fileMetadataRecords,
+            interactionRecords: this.interactionRecords,
         };
 
         return store;
@@ -246,11 +275,25 @@ export class BookStore {
                     const store: BookStoreData = collection?.store;
                     if (!store) return;
 
-                    store.fileMetadataRecords.forEach((entry) => {
+                    store.interactionRecords?.forEach((entry) => {
+                        const [key, value] = entry as unknown as [BookKey, BookInteractionState];
+
+                        // Deserializate date string back to date
+                        const deserializedValue = {
+                            ...value,
+                            reading: value.reading.map((timeRecord) => ({
+                                ...timeRecord,
+                                endDate: new Date(timeRecord.endDate),
+                            })),
+                        };
+
+                        this.setBookInteraction(key, deserializedValue);
+                    });
+                    store.fileMetadataRecords?.forEach((entry) => {
                         const [key, value] = entry as unknown as [BookKey, FileMetadata];
                         this.setFileMetadata(key, value);
                     });
-                    store.bookMetadataRecords.forEach((entry) => {
+                    store.bookMetadataRecords?.forEach((entry) => {
                         const [key, value] = entry as unknown as [BookKey, BookMetadata];
                         this.setBookMetadata(key, value, null);
 
@@ -266,6 +309,51 @@ export class BookStore {
             );
 
         runInAction(() => this.setReady());
+    }
+
+    addBookInteractionTimeRecord(bookKey: BookKey, timeRecord: TimeRecord) {
+        const interactionState = this.getBookInteraction(bookKey);
+        interactionState.reading.push(timeRecord);
+    }
+
+    getBookInteraction(bookKey: BookKey): BookInteractionState {
+        const interactionState = this.interactionRecords.get(bookKey);
+        if (!interactionState) {
+            const defaultInteractionState: BookInteractionState = {
+                bookmarks: {
+                    auto: { elementSection: 0, elementIndex: 0 },
+                    manual: [],
+                },
+                reading: [],
+            };
+
+            runInAction(() => this.setBookInteraction(bookKey, defaultInteractionState));
+
+            return this.getBookInteraction(bookKey);
+        }
+
+        return interactionState;
+    }
+    setBookInteraction(bookKey: BookKey, interactionState: BookInteractionState) {
+        this.interactionRecords.set(bookKey, interactionState);
+    }
+    addBookInteractionBookmark(bookKey: BookKey, bookmark: Bookmark, type: BookmarkTypes) {
+        const interactionState = this.getBookInteraction(bookKey);
+
+        if (type === "auto") interactionState.bookmarks[type] = bookmark;
+        if (type === "manual") {
+            // Ensures all bookmark objects have unique values
+            interactionState.bookmarks[type] = _.uniqWith(
+                [...interactionState.bookmarks[type], bookmark],
+                _.isEqual
+            );
+        }
+    }
+    removeBookInteractionBookmark(bookKey: BookKey, targetBookmark: Bookmark) {
+        const interactionState = this.getBookInteraction(bookKey);
+        _.remove(interactionState.bookmarks["manual"], (bookmark) =>
+            _.isEqual(bookmark, targetBookmark)
+        );
     }
 
     getFileMetadata(bookKey: BookKey) {

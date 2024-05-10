@@ -90,7 +90,9 @@ const BookUi = observer(
                                 onHighClick={onPrevSection}
                             />
                         )}
-                        <Box style={{ height: "100%", width: "100%" }}>{children}</Box>
+                        <Box style={{ height: "100%", width: "100%", position: "relative" }}>
+                            {children}
+                        </Box>
                         {uiState.nextPage && (
                             <FlipPageButton
                                 className={classes.forwardButton}

@@ -1,32 +1,11 @@
 import _ from "lodash";
-import { makeAutoObservable, observable, runInAction, toJS } from "mobx";
+import { makeAutoObservable, observable, runInAction, toJS, when } from "mobx";
 
 import type BookWebComponent from "~/renderer/scenes/Reading/scenes/BookWebComponent";
 import type { TocState } from "~/renderer/scenes/Reading/scenes/BookWebComponent";
-import { BookKey } from "../BookStore";
+import { BookKey, TimeRecord } from "../BookStore";
 import { RootStore } from "../RootStore";
 
-interface TimeRecord {
-    activeDuration: number;
-    idleDuration: number;
-    endDate: Date;
-    endBookmark: Bookmark;
-    progress: number;
-    // durations: {
-    //     isIdle: boolean;
-    //     duration: number;
-    // }[];
-}
-
-export interface BookInteractionState {
-    bookmarks: {
-        auto: Bookmark;
-        manual: Bookmark[];
-    };
-    reading: TimeRecord[];
-}
-
-type BookmarkTypes = keyof BookInteractionState["bookmarks"];
 export interface Bookmark {
     elementIndex: number | null;
     elementSection: number;
@@ -64,11 +43,6 @@ export class BookReadStore {
     };
     bookmarkablePositions: Bookmark[] = [];
 
-    /**
-     * User interaction state records
-     */
-    interactionRecords = new Map<BookKey, BookInteractionState>();
-
     constructor(rootStore: RootStore) {
         makeAutoObservable(
             this,
@@ -101,51 +75,6 @@ export class BookReadStore {
 
     get toc() {
         return this.rootStore.bookStore.getBookContent(this.bookKey).structure;
-    }
-
-    private addBookInteractionTimeRecord(bookKey: BookKey, timeRecord: TimeRecord) {
-        const interactionState = this.getBookInteraction(bookKey);
-        interactionState.reading.push(timeRecord);
-    }
-
-    getBookInteraction(bookKey: BookKey): BookInteractionState {
-        const interactionState = this.interactionRecords.get(bookKey);
-        if (!interactionState) {
-            const defaultInteractionState: BookInteractionState = {
-                bookmarks: {
-                    auto: { elementSection: 0, elementIndex: 0 },
-                    manual: [],
-                },
-                reading: [],
-            };
-
-            runInAction(() => this.setBookInteraction(bookKey, defaultInteractionState));
-
-            return this.getBookInteraction(bookKey);
-        }
-
-        return interactionState;
-    }
-    private setBookInteraction(bookKey: BookKey, interactionState: BookInteractionState) {
-        this.interactionRecords.set(bookKey, interactionState);
-    }
-    private addBookInteractionBookmark(bookKey: BookKey, bookmark: Bookmark, type: BookmarkTypes) {
-        const interactionState = this.getBookInteraction(bookKey);
-
-        if (type === "auto") interactionState.bookmarks[type] = bookmark;
-        if (type === "manual") {
-            // Ensures all bookmark objects have unique values
-            interactionState.bookmarks[type] = _.uniqWith(
-                [...interactionState.bookmarks[type], bookmark],
-                _.isEqual
-            );
-        }
-    }
-    private removeBookInteractionBookmark(bookKey: BookKey, targetBookmark: Bookmark) {
-        const interactionState = this.getBookInteraction(bookKey);
-        _.remove(interactionState.bookmarks["manual"], (bookmark) =>
-            _.isEqual(bookmark, targetBookmark)
-        );
     }
 
     getSectionTitle(sectionIndex: number, toc = this.toc, root = true): string {
@@ -213,8 +142,12 @@ export class BookReadStore {
         if (this.bookKey) this.requestContent();
     }
 
-    requestContent() {
-        this.rootStore.bookStore.openBook(this.bookKey, this.initSectionIndex);
+    async requestContent() {
+        console.log("Request content", this.initSectionIndex);
+        await when(() => this.rootStore.bookStore.isReady);
+        console.log("Request content now", this.initSectionIndex);
+
+        runInAction(() => this.rootStore.bookStore.openBook(this.bookKey, this.initSectionIndex));
     }
 
     setBookComponent(bookComponent: BookWebComponent) {
@@ -234,7 +167,12 @@ export class BookReadStore {
     }
 
     get isReady() {
-        return Boolean(this.bookKey && this.isBookComponentReady && this.isInitSectionReady);
+        return Boolean(
+            this.bookKey &&
+                this.rootStore.bookStore.isReady &&
+                this.isBookComponentReady &&
+                this.isInitSectionReady
+        );
     }
 
     get isBookComponentReady() {
@@ -246,7 +184,7 @@ export class BookReadStore {
     }
 
     get autobookmark() {
-        return this.getBookInteraction(this.bookKey).bookmarks.auto;
+        return this.rootStore.bookStore.getBookInteraction(this.bookKey).bookmarks.auto;
     }
 
     get initSectionIndex() {
@@ -255,15 +193,19 @@ export class BookReadStore {
     }
 
     setAutobookmark(bookmark: Bookmark) {
-        return this.addBookInteractionBookmark(this.bookKey, bookmark, "auto");
+        return this.rootStore.bookStore.addBookInteractionBookmark(this.bookKey, bookmark, "auto");
     }
 
     addManualBookmark() {
-        this.addBookInteractionBookmark(this.bookKey, this.autobookmark, "manual");
+        this.rootStore.bookStore.addBookInteractionBookmark(
+            this.bookKey,
+            this.autobookmark,
+            "manual"
+        );
     }
     removeManualBookmark() {
         this.currentManualBookmarks.forEach((bookmark) =>
-            this.removeBookInteractionBookmark(this.bookKey, bookmark)
+            this.rootStore.bookStore.removeBookInteractionBookmark(this.bookKey, bookmark)
         );
     }
 
@@ -272,7 +214,7 @@ export class BookReadStore {
     }
 
     get manualBookmarks() {
-        const interactionState = this.getBookInteraction(this.bookKey);
+        const interactionState = this.rootStore.bookStore.getBookInteraction(this.bookKey);
         return interactionState.bookmarks.manual;
     }
 
@@ -327,7 +269,7 @@ export class BookReadStore {
     }
 
     getLastKnownProgress(bookKey: BookKey) {
-        const interaction = this.getBookInteraction(bookKey);
+        const interaction = this.rootStore.bookStore.getBookInteraction(bookKey);
         const timeRecord = interaction.reading.findLast(
             (timeRecord) => timeRecord.progress !== null
         );
@@ -338,11 +280,11 @@ export class BookReadStore {
     }
 
     addTimeRecord(timeRecord: TimeRecord) {
-        this.addBookInteractionTimeRecord(this.bookKey, timeRecord);
+        this.rootStore.bookStore.addBookInteractionTimeRecord(this.bookKey, timeRecord);
     }
 
     getActiveDuration(bookKey: BookKey) {
-        const interaction = this.getBookInteraction(bookKey);
+        const interaction = this.rootStore.bookStore.getBookInteraction(bookKey);
         return interaction.reading.reduce((acc, cur) => acc + cur.activeDuration, 0);
     }
 
@@ -383,14 +325,14 @@ export class BookReadStore {
     }
 
     getOpenedDate(bookKey: BookKey) {
-        const interaction = this.getBookInteraction(bookKey);
+        const interaction = this.rootStore.bookStore.getBookInteraction(bookKey);
         const lastOpenedDate = interaction.reading.at(-1)?.endDate;
         if (!lastOpenedDate) return null;
         return lastOpenedDate.toISOString().split("T")[0];
     }
 
     getOpenedTimeAgo(bookKey: BookKey) {
-        const interaction = this.getBookInteraction(bookKey);
+        const interaction = this.rootStore.bookStore.getBookInteraction(bookKey);
         const lastOpenedDate = interaction.reading.at(-1)?.endDate;
         if (!lastOpenedDate) return "never";
 

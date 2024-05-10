@@ -35,4 +35,16 @@
 
     max-width: calc(calc(30rem * var(--columns-count)) + var(--column-gap-total));
     margin: auto;
+
+    position: absolute;
+    z-index: 10;
+    inset: 0;
+
+    @mixin dark {
+        background: var(--mantine-color-dark-6);
+    }
+
+    @mixin light {
+        background: var(--mantine-color-gray-1);
+    }
 }

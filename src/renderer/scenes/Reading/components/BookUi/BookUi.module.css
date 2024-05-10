@@ -30,7 +30,7 @@
 .buttonContainer {
     --b-padding: var(--mantine-spacing-xl);
     position: relative;
-    padding: var(--b-padding);
+    padding-inline: var(--b-padding);
 
     .backwardButton {
         position: absolute;
