@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useClickOutside, useHotkeys, useMergedRef } from "@mantine/hooks";
+import { useClickOutside, useDisclosure, useHotkeys, useMergedRef } from "@mantine/hooks";
 import { useContextMenu } from "mantine-contextmenu";
 import { IconCopy, IconLanguage, IconSpeakerphone, IconVocabulary } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
@@ -11,8 +11,14 @@ import context from "~/renderer/ipc/thirdPartyApi";
 import { getSetting } from "~/renderer/stores";
 import { useBookReadStore } from "~/renderer/stores/hooks";
 import { bookKeyRoute } from "~/renderer/appRenderer";
-import { useCallbackRef, useEvents, useTimeTracker } from "./hooks";
-import { BookSkeleton, BookUi } from "./components";
+import { useCallbackRef, useEvents, useReadingEvents, useTimeTracker } from "./hooks";
+import {
+    BookSkeleton,
+    BookUi,
+    DictionaryTooltip,
+    TooltipTarget,
+    TranslationTooltip,
+} from "./components";
 import "./scenes/BookWebComponent";
 import type BookWebComponent from "./scenes/BookWebComponent";
 import type { BookWebComponentEventMap } from "./scenes/BookWebComponent";
@@ -63,33 +69,33 @@ export const Reading = observer(() => {
         })
     );
     const handleNextPage = action(() => {
-        dismissTranslation();
-        dismissDefinition();
+        closeTranslationTooltip();
+        closeDictionaryTooltip();
         bookReadStore.bookComponent?.pageForward?.();
     });
     const handlePrevPage = action(() => {
-        dismissTranslation();
-        dismissDefinition();
+        closeTranslationTooltip();
+        closeDictionaryTooltip();
         bookReadStore.bookComponent?.pageBackward?.();
     });
     const handleNextFivePage = action(() => {
-        dismissTranslation();
-        dismissDefinition();
+        closeTranslationTooltip();
+        closeDictionaryTooltip();
         bookReadStore.bookComponent?.flipNPages?.(5);
     });
     const handlePrevFivePage = action(() => {
-        dismissTranslation();
-        dismissDefinition();
+        closeTranslationTooltip();
+        closeDictionaryTooltip();
         bookReadStore.bookComponent?.flipNPages?.(-5);
     });
     const handleNextSection = action(() => {
-        dismissTranslation();
-        dismissDefinition();
+        closeTranslationTooltip();
+        closeDictionaryTooltip();
         bookReadStore.bookComponent?.sectionForward?.();
     });
     const handlePrevSection = action(() => {
-        dismissTranslation();
-        dismissDefinition();
+        closeTranslationTooltip();
+        closeDictionaryTooltip();
         bookReadStore.bookComponent?.sectionBackward?.();
     });
 
@@ -107,143 +113,28 @@ export const Reading = observer(() => {
         ["Shift + Alt + ArrowLeft", handlePrevSection],
     ]);
 
-    const { showContextMenu } = useContextMenu();
-
-    // TODO make a setting https://developers.deepl.com/docs/resources/supported-languages#target-languages
-    const translateTargetLang = "RU";
-    const [translateTarget, setTranslateTarget] = useState<{
-        text: string | null;
-        position: { x: number; y: number } | null;
-    }>({
+    const [translateTarget, setTranslateTarget] = useState<TooltipTarget>({
         text: null,
         position: null,
     });
+    const [
+        translationTooltipOpened,
+        { open: openTranslationTooltip, close: closeTranslationTooltip },
+    ] = useDisclosure(false);
 
-    const { data: translation } = useQuery({
-        queryKey: ["deepl", translateTarget.text, translateTargetLang] as [string, string, string],
-        queryFn: ({ queryKey: [_, text, targetLang] }) => {
-            const deeplKey = getSetting(["General", "API", "Language", "DeepL API key"]).value;
-            return context.apiDeepl(text, targetLang, deeplKey);
-        },
-        refetchOnMount: false,
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-        retry: false,
-        enabled: translateTarget.text !== null,
-    });
-
-    useEffect(() => {
-        if (translation) setTranslationTooltipOpened(true);
-    }, [translation]);
-
-    const translationTooltipRef = useRef<TooltipRefProps>(null);
-    const [translationTooltipOpened, setTranslationTooltipOpened] = useState(false);
-    const dismissTranslation = () => setTranslationTooltipOpened(false);
-
-    useEffect(() => {
-        if (translationTooltipOpened)
-            translationTooltipRef.current?.open({
-                content: translation,
-                position: translateTarget.position,
-            });
-        else translationTooltipRef.current?.close();
-    }, [translationTooltipOpened]);
-
-    // TODO detect from text or book metadata
-    const definitionTargetLang = "EN";
-    const [definitionTarget, setDefinitionTarget] = useState<{
-        text: string | null;
-        position: { x: number; y: number } | null;
-    }>({
+    const [dictionaryTarget, setDictionaryTarget] = useState<TooltipTarget>({
         text: null,
         position: null,
     });
+    const [
+        dictionaryTooltipOpened,
+        { open: openDictionaryTooltip, close: closeDictionaryTooltip },
+    ] = useDisclosure(false);
 
-    const { data: definition } = useQuery({
-        queryKey: ["dictionary", definitionTarget.text, definitionTargetLang] as [
-            string,
-            string,
-            string
-        ],
-        queryFn: ({ queryKey: [_, text, targetLang] }) => context.apiDictionary(text, targetLang),
-        // select: (data: any) => data?.meanings?.[0]?.definitions?.[0]?.definition,
-        refetchOnMount: false,
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-        retry: false,
-        enabled: definitionTarget.text !== null,
+    const eventsRef = useReadingEvents(setTranslateTarget, setDictionaryTarget, {
+        icon: classes.icon,
     });
 
-    useEffect(() => {
-        if (definition) setDefinitionTooltipOpened(true);
-    }, [definition]);
-
-    const definitionTooltipRef = useRef<TooltipRefProps>(null);
-    const [definitionTooltipOpened, setDefinitionTooltipOpened] = useState(false);
-    const dismissDefinition = () => setDefinitionTooltipOpened(false);
-
-    useEffect(() => {
-        if (definitionTooltipOpened)
-            definitionTooltipRef.current?.open({
-                content: definition,
-                position: definitionTarget.position,
-            });
-        else definitionTooltipRef.current?.close();
-    }, [definitionTooltipOpened]);
-
-    const eventsRef = useEvents<BookWebComponentEventMap, BookWebComponent>({
-        imgClickEvent: (e) => console.log("click"),
-        uiStateUpdateEvent: (e) => bookReadStore.setUiState(e.detail),
-        tocStateUpdateEvent: (e) => bookReadStore.setTocState(e.detail),
-        bookmarkPositionsEvent: (e) => {
-            bookReadStore.setBookmarkablePositions(e.detail.manual);
-            bookReadStore.setAutobookmark(e.detail.auto);
-        },
-        contextMenuEvent: (e) => {
-            showContextMenu([
-                {
-                    key: "copy",
-                    icon: <IconCopy className={classes.icon} />,
-                    onClick: () => navigator.clipboard.writeText(e.detail.selectedText),
-                },
-                {
-                    key: "tts",
-                    icon: <IconSpeakerphone className={classes.icon} />,
-                    title: "Text-to-Speech",
-                    onClick: () => {
-                        const { startElement, startElementSelectedText } = e.detail;
-                        bookReadStore.setTtsTarget({ startElement, startElementSelectedText });
-                    },
-                },
-                {
-                    key: "translate",
-                    icon: <IconLanguage className={classes.icon} />,
-                    onClick: () => {
-                        const { selectedText, selectionPosition } = e.detail;
-
-                        setTranslateTarget({
-                            text: selectedText,
-                            position: selectionPosition,
-                        });
-                    },
-                },
-                {
-                    key: "definition",
-                    icon: <IconVocabulary className={classes.icon} />,
-                    onClick: () => {
-                        const { selectedText, selectionPosition } = e.detail;
-
-                        setDefinitionTarget({
-                            text: selectedText,
-                            position: selectionPosition,
-                        });
-                    },
-                },
-            ])(e.detail.event as any);
-        },
-    });
-
-    const { colorSceme } = useColorScheme();
     return (
         <>
             <BookUi
@@ -263,28 +154,18 @@ export const Reading = observer(() => {
                 <BookSkeleton visible={bookReadStore.isReady} />
                 <book-web-component ref={useMergedRef(bookComponentCallbackRef, eventsRef)} />
             </BookUi>
-            <Portal>
-                <Tooltip
-                    id="translation"
-                    className={classes.tooltip}
-                    ref={translationTooltipRef}
-                    imperativeModeOnly
-                    variant={colorSceme}
-                    opacity={1}
-                />
-                {translationTooltipOpened && <Overlay onClick={dismissTranslation} opacity={0} />}
-            </Portal>
-            <Portal>
-                <Tooltip
-                    id="definition"
-                    className={classes.tooltip}
-                    ref={definitionTooltipRef}
-                    imperativeModeOnly
-                    variant={colorSceme}
-                    opacity={1}
-                />
-                {definitionTooltipOpened && <Overlay onClick={dismissDefinition} opacity={0} />}
-            </Portal>
+            <TranslationTooltip
+                target={translateTarget}
+                opened={translationTooltipOpened}
+                onOpen={openTranslationTooltip}
+                onClose={closeTranslationTooltip}
+            />
+            <DictionaryTooltip
+                target={dictionaryTarget}
+                opened={dictionaryTooltipOpened}
+                onOpen={openDictionaryTooltip}
+                onClose={closeDictionaryTooltip}
+            />
         </>
     );
 });

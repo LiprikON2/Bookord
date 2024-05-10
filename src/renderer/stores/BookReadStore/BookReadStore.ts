@@ -143,10 +143,7 @@ export class BookReadStore {
     }
 
     async requestContent() {
-        console.log("Request content", this.initSectionIndex);
         await when(() => this.rootStore.bookStore.isReady);
-        console.log("Request content now", this.initSectionIndex);
-
         runInAction(() => this.rootStore.bookStore.openBook(this.bookKey, this.initSectionIndex));
     }
 

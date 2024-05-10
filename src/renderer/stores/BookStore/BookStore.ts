@@ -231,7 +231,6 @@ export class BookStore {
         );
         this.rootStore = rootStore;
 
-        // ref: https://stackoverflow.com/a/40326316/10744339
         this.load();
         autosave(this.store, this.save);
 
