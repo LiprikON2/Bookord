@@ -1,15 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
 import { useQuery } from "@tanstack/react-query";
 import { Tooltip, TooltipRefProps } from "react-tooltip";
 import { Overlay, Portal } from "@mantine/core";
 
 import { useColorScheme } from "~/renderer/hooks";
-import { getSetting } from "~/renderer/stores";
 import context from "~/renderer/ipc/thirdPartyApi";
 import classes from "./DictionaryTooltip.module.css";
 
-export interface TooltipTarget {
+interface TooltipTarget {
     text: string | null;
     position: { x: number; y: number } | null;
 }

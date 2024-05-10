@@ -25,19 +25,46 @@ export class BookFilter<T extends BookMetadata> implements Filter<T> {
 
         if (sortBy === "recent") {
             items.sort((itemA, itemB) => {
-                const openDateA = this.metadataGetter.getOpenDate(itemA.metadata);
-                const openDateB = this.metadataGetter.getOpenDate(itemB.metadata);
+                const openDateA = itemA.fileMetadata.openedDate;
+                const openDateB = itemB.fileMetadata.openedDate;
 
-                if (sort === "ascending") return openDateB.valueOf() - openDateA.valueOf();
-                else if (sort === "descending") return openDateA.valueOf() - openDateB.valueOf();
+                // TODO tweak for never opened books
+                if (sort === "ascending") {
+                    if (!openDateA && openDateB) return 1;
+                    if (openDateA && !openDateB) return -1;
+                    if (!openDateA && !openDateB) return 0;
+                    return openDateB.valueOf() - openDateA.valueOf();
+                } else if (sort === "descending") {
+                    if (!openDateA && openDateB) return -1;
+                    if (openDateA && !openDateB) return 1;
+                    if (!openDateA && !openDateB) return 0;
+                    return openDateA.valueOf() - openDateB.valueOf();
+                }
             });
         } else if (sortBy === "title") {
             items.sort((itemA, itemB) => {
                 const titleA = this.metadataGetter.getTitle(itemA.metadata);
                 const titleB = this.metadataGetter.getTitle(itemB.metadata);
 
-                if (sort === "ascending") return titleB.localeCompare(titleA);
-                else if (sort === "descending") return titleA.localeCompare(titleB);
+                if (sort === "ascending") return titleA.localeCompare(titleB);
+                else if (sort === "descending") return titleB.localeCompare(titleA);
+            });
+        } else if (sortBy === "publishYears") {
+            items.sort((itemA, itemB) => {
+                const [publishYearA] = this.metadataGetter.getPublishYears(itemA.metadata);
+                const [publishYearB] = this.metadataGetter.getPublishYears(itemB.metadata);
+
+                if (sort === "ascending") {
+                    if (publishYearA === "Unknown" && publishYearB) return 1;
+                    if (publishYearA && publishYearB === "Unknown") return -1;
+                    if (publishYearA === "Unknown" && publishYearB === "Unknown") return 0;
+                    return Number(publishYearB) - Number(publishYearA);
+                } else if (sort === "descending") {
+                    if (publishYearA === "Unknown" && publishYearB) return -1;
+                    if (publishYearA && publishYearB === "Unknown") return 1;
+                    if (publishYearA === "Unknown" && publishYearB === "Unknown") return 0;
+                    return Number(publishYearA) - Number(publishYearB);
+                }
             });
         }
 
@@ -96,7 +123,7 @@ export class BookFilter<T extends BookMetadata> implements Filter<T> {
         filterTagsLogicalOp: Collection["logicalOp"]
     ) {
         const predicate = ([categoryKey, activeTags]: [keyof FilterTags, string[]]) => {
-            const itemTags = this.metadataGetter.get(categoryKey, item.metadata);
+            const itemTags = this.metadataGetter.get(categoryKey, item.metadata, item.fileMetadata);
             const { logicalOp } = this.collection.filterTags[categoryKey];
             if (activeTags.length === 0) return true;
             else if (logicalOp === "and")
@@ -123,16 +150,95 @@ export class BookFilter<T extends BookMetadata> implements Filter<T> {
     }
 
     results(): ViewItemGroup<T>[] {
-        const { groupBy } = this.collection;
+        const { groupBy, groupSort } = this.collection;
 
-        if (groupBy === null)
+        const searchedItems = this.search(this.items);
+
+        if (groupBy === "author") {
+            const entries = Object.entries(
+                Object.groupBy(searchedItems, ({ metadata }) => metadata?.author)
+            );
+
+            let sortedEntries: typeof entries;
+            if (groupSort === "ascending") {
+                sortedEntries = entries.sort(([a], [b]) => a.localeCompare(b));
+            } else if (groupSort === "descending") {
+                sortedEntries = entries.sort(([a], [b]) => b.localeCompare(a));
+            }
+
+            return sortedEntries.map(([name, items]) => ({ name, items: this.sort(items) }));
+        }
+
+        if (groupBy === "added") {
+            const entries = Object.entries(
+                Object.groupBy(searchedItems, ({ fileMetadata }) =>
+                    this.metadataGetter.getRelativeDateGroupings(fileMetadata.addedDate).at(-1)
+                )
+            );
+            const relativeGroupings = this.metadataGetter.getRelativeGroupingsList();
+
+            let sortedEntries: typeof entries;
+            if (groupSort === "ascending") {
+                sortedEntries = entries.sort(
+                    ([a], [b]) => relativeGroupings.indexOf(b) - relativeGroupings.indexOf(a)
+                );
+            } else if (groupSort === "descending") {
+                sortedEntries = entries.sort(
+                    ([a], [b]) => relativeGroupings.indexOf(a) - relativeGroupings.indexOf(b)
+                );
+            }
+
+            return sortedEntries.map(([name, items]) => ({ name, items: this.sort(items) }));
+        }
+        if (groupBy === "recent") {
+            const entries = Object.entries(
+                Object.groupBy(searchedItems, ({ fileMetadata }) =>
+                    this.metadataGetter
+                        .getRelativeDateGroupings(fileMetadata.openedDate, "Never")
+                        .at(-1)
+                )
+            );
+
+            const relativeGroupings = this.metadataGetter.getRelativeGroupingsList("Never");
+
+            let sortedEntries: typeof entries;
+            if (groupSort === "ascending") {
+                sortedEntries = entries.sort(
+                    ([a], [b]) => relativeGroupings.indexOf(b) - relativeGroupings.indexOf(a)
+                );
+            } else if (groupSort === "descending") {
+                sortedEntries = entries.sort(
+                    ([a], [b]) => relativeGroupings.indexOf(a) - relativeGroupings.indexOf(b)
+                );
+            }
+
+            return sortedEntries.map(([name, items]) => ({ name, items: this.sort(items) }));
+        }
+        if (groupBy === "publishYears") {
+            const entries = Object.entries(
+                Object.groupBy(
+                    searchedItems,
+                    ({ metadata }) => this.metadataGetter.getPublishYears(metadata)[0]
+                )
+            );
+
+            let sortedEntries: typeof entries;
+            if (groupSort === "ascending") {
+                sortedEntries = entries.sort(([a], [b]) => Number(b) - Number(a));
+            } else if (groupSort === "descending") {
+                sortedEntries = entries.sort(([a], [b]) => Number(a) - Number(b));
+            }
+
+            return sortedEntries.map(([name, items]) => ({ name, items: this.sort(items) }));
+        }
+
+        if (groupBy === "none" || true) {
             return [
                 {
                     name: "Ungrouped",
-                    items: this.sort(this.search(this.items)),
+                    items: this.sort(searchedItems),
                 },
             ];
-
-        return [];
+        }
     }
 }

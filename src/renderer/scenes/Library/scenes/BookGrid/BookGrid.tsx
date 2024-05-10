@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@mantine/core";
+import { Box, Stack } from "@mantine/core";
 import type { FileWithPath } from "@mantine/dropzone";
 import { observer } from "mobx-react-lite";
 
@@ -35,10 +35,12 @@ export const BookGrid = observer(() => {
                 />
             )}
 
-            <BookGroups
-                getBookGroups={() => bookViewStore.bookGroups}
-                visible={bookStore.isReady}
-            />
+            <Stack gap="lg">
+                <BookGroups
+                    getBookGroups={() => bookViewStore.bookGroups}
+                    visible={bookStore.isReady}
+                />
+            </Stack>
         </Box>
     );
 });

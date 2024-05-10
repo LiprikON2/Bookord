@@ -123,7 +123,6 @@ export class BookReadStore {
         );
     }
     unload() {
-        console.log("unload");
         this.setBookComponent(null);
         this.setBook(null);
         this.resetTtsTarget();

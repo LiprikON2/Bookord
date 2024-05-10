@@ -1,5 +1,5 @@
 import { BookMetadata, BookMetadataRaw } from "../../BookStore/BookStore";
-import type { FilterTags, MetadataGetter, RecentTagName } from "../interfaces";
+import type { FilterTags, MetadataGetter, RecentTagName, ViewItem } from "../interfaces";
 
 export class BookMetadataGetter<T extends BookMetadata> implements MetadataGetter<T> {
     getPublishYears(metadata: T) {
@@ -15,12 +15,6 @@ export class BookMetadataGetter<T extends BookMetadata> implements MetadataGette
         return Array.isArray(metadata.subjects) ? metadata.subjects : [];
     }
 
-    getOpenDate(metadata: T) {
-        // TODO
-        const openBookDate = new Date("2024-04-04");
-        return openBookDate;
-    }
-
     getTitle(metadata: T) {
         return typeof metadata.title === "string" ? metadata.title : "";
     }
@@ -33,11 +27,26 @@ export class BookMetadataGetter<T extends BookMetadata> implements MetadataGette
         return metadata.author;
     }
 
-    getRecent(metadata: T): RecentTagName[] {
-        const currentDate = new Date();
-        const openBookDate = this.getOpenDate(metadata);
+    getRelativeGroupingsList(fallback = "Unknown") {
+        return [
+            "Today",
+            "Yesterday",
+            "Earlier this week",
+            "Last week",
+            "Earlier this month",
+            "Last month",
+            "Earlier this year",
+            "Last year",
+            "A long time ago",
+            fallback,
+        ];
+    }
 
-        const timeDifference = currentDate.valueOf() - openBookDate.valueOf();
+    getRelativeDateGroupings(date: Date | null, fallback = "Unknown"): RecentTagName[] {
+        if (date === null) return [fallback];
+        const currentDate = new Date();
+
+        const timeDifference = currentDate.valueOf() - date.valueOf();
         const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 
         const relativeDateGroupings: RecentTagName[] = [];
@@ -76,7 +85,7 @@ export class BookMetadataGetter<T extends BookMetadata> implements MetadataGette
         return relativeDateGroupings;
     }
 
-    get(tag: keyof FilterTags, metadata: T | null) {
+    get(tag: keyof FilterTags, metadata: T | null, fileMetadata: ViewItem<T>["fileMetadata"]) {
         if (!metadata) return [];
 
         switch (tag) {
@@ -87,7 +96,7 @@ export class BookMetadataGetter<T extends BookMetadata> implements MetadataGette
             case "subjects":
                 return this.getSubjects(metadata);
             case "recent":
-                return this.getRecent(null);
+                return this.getRelativeDateGroupings(fileMetadata.openedDate);
 
             default:
                 throw new Error(`Tag ${tag} is not implemented`);

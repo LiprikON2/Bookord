@@ -125,6 +125,7 @@ export type BookStateInStorage = BookState & {
 export type BookStateInStorageWithMetadata = BookStateInStorage & {
     visible: boolean;
     metadata: BookMetadata | null;
+    fileMetadata: (FileMetadata & { openedDate: Date }) | null;
 };
 
 export type BookStateOpened = BookStoreState & {
@@ -506,6 +507,10 @@ export class BookStore {
             ...bookState,
             visible: true,
             metadata: bookState.isMetadataParsed ? this.getBookMetadata(bookState.id) : null,
+            fileMetadata: {
+                ...this.getFileMetadata(bookState.id),
+                openedDate: this.getOpenedDate(bookState.id),
+            },
         }));
     }
 
@@ -553,6 +558,13 @@ export class BookStore {
             parsedSections,
             sectionNames,
         };
+    }
+
+    getOpenedDate(bookKey: BookKey) {
+        const interaction = this.rootStore.bookStore.getBookInteraction(bookKey);
+        const lastOpenedDate = interaction.reading.at(-1)?.endDate;
+        if (!lastOpenedDate) return null;
+        return lastOpenedDate;
     }
 
     async addBooks(bookKeys: BookKey[]) {

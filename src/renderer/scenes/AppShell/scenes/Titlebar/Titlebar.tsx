@@ -51,21 +51,23 @@ export const Titlebar = observer(({ showBurger, toggleBurger, showFilterMenu }: 
                 </Group>
             </Group>
             <Group className={classes.searchGroup} wrap="nowrap">
-                <SearchInput />
                 {showFilterMenu && (
-                    <Group wrap="nowrap" gap={0}>
-                        <FilterMenu />
+                    <>
+                        <SearchInput />
+                        <Group wrap="nowrap" gap={0}>
+                            <FilterMenu />
 
-                        <ToggleActionIcon
-                            classNames={{ icon: classes.icon }}
-                            getAriaLabel={getRecentName}
-                            OnIcon={IconClockFilled}
-                            OffIcon={IconClock}
-                            onAction={handleRecentFilterOn}
-                            offAction={handleRecentFilterOff}
-                            on={recentFilterActive}
-                        />
-                    </Group>
+                            <ToggleActionIcon
+                                classNames={{ icon: classes.icon }}
+                                getAriaLabel={getRecentName}
+                                OnIcon={IconClockFilled}
+                                OffIcon={IconClock}
+                                onAction={handleRecentFilterOn}
+                                offAction={handleRecentFilterOff}
+                                on={recentFilterActive}
+                            />
+                        </Group>
+                    </>
                 )}
             </Group>
             <Group className={classes.windowControlsGroup}>

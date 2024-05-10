@@ -47,16 +47,33 @@ export const registerThirdPartyApiIpc = (
                 "https://api-free.deepl.com/v2/translate",
                 {
                     text: [text],
-                    target_lang: "RU",
+                    target_lang: targetLang,
                 },
                 {
                     headers: {
                         Authorization: `DeepL-Auth-Key ${apiKey}`,
                         "Content-Type": "application/json",
                     },
+                    validateStatus: (status) => {
+                        return status < 500; // Resolve only if the status code is less than 500
+                    },
+                    timeout: 4000,
                 }
             )
-            .then((res) => res.data.translations[0].text);
+            .then((res) => res.data.translations[0].text)
+            .catch((error) => {
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    return "Unknown";
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    return "No response. Check your internet connection.";
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    return "Error. Did you enter correct DeepL API key in the settings?";
+                }
+            });
     });
 
     // ref: https://stackoverflow.com/a/48983463/10744339
@@ -68,9 +85,14 @@ export const registerThirdPartyApiIpc = (
                 `https://api.dictionaryapi.dev/api/v2/entries/${targetLang}/${encodeURIComponent(
                     text
                 )}`,
-                {}
+                {
+                    validateStatus: (status) => {
+                        return status < 500; // Resolve only if the status code is less than 500
+                    },
+                    timeout: 4000,
+                }
             )
-            .then((res) => res.data?.[0]?.meanings?.[0]?.definitions?.[0]?.definition ?? "Unknown")
+            .then((res) => res.data[0].meanings[0].definitions[0].definition)
             .catch((error) => {
                 if (error.response) {
                     // The request was made and the server responded with a status code
@@ -78,7 +100,7 @@ export const registerThirdPartyApiIpc = (
                     return "Unknown";
                 } else if (error.request) {
                     // The request was made but no response was received
-                    return "No response";
+                    return "No response. Check your internet connection.";
                 } else {
                     // Something happened in setting up the request that triggered an Error
                     return "Error";

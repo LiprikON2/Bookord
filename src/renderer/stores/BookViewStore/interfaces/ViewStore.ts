@@ -19,6 +19,7 @@ export interface FilterTags {
     publishYears: TagCategory;
     languages: TagCategory;
     subjects: TagCategory;
+    // TODO author
 }
 
 export interface Tag {
@@ -48,8 +49,10 @@ export interface Collection {
     /** Logical operator between `filterTags` */
     logicalOp: "or" | "and";
     sort: "ascending" | "descending";
-    sortBy: "title" | "recent";
-    groupBy: keyof FilterTags | null;
+    sortBy: "title" | "recent" | "added" | "publishYears";
+    groupBy: keyof FilterTags | "author" | "added" | "none";
+    groupSort: "ascending" | "descending";
+    // TODO groupSortBy: by count or alphabetically
 }
 
 // export interface ViewStore<T> {

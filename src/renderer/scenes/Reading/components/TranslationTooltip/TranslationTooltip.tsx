@@ -27,7 +27,7 @@ export const TranslationTooltip = observer(
         // TODO make a setting https://developers.deepl.com/docs/resources/supported-languages#target-languages
         const translateTargetLang = "RU";
 
-        const { data: translation } = useQuery({
+        const { data: translation, error } = useQuery({
             queryKey: ["deepl", target.text, translateTargetLang] as [string, string, string],
             queryFn: ({ queryKey: [_, text, targetLang] }) => {
                 const deeplKey = getSetting(["General", "API", "Language", "DeepL API key"]).value;

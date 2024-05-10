@@ -2,7 +2,7 @@ import { action, computed, makeAutoObservable, toJS } from "mobx";
 import _ from "lodash";
 import Fuse from "fuse.js";
 
-import { BookMetadata } from "../BookStore";
+import { BookKey, BookMetadata } from "../BookStore";
 import type {
     Collection,
     CollectionKey,
@@ -33,7 +33,7 @@ export class BookViewStore {
     private userCollections = new Map<CollectionKey, Collection>();
 
     constructor(rootStore: RootStore) {
-        makeAutoObservable(this, { rootStore: false });
+        makeAutoObservable(this, { rootStore: false }, { autoBind: true });
         this.rootStore = rootStore;
     }
 
@@ -43,15 +43,15 @@ export class BookViewStore {
             searchTerm: "",
             filterTags,
             logicalOp: "and",
-            sort: "descending",
+            sort: "ascending",
             sortBy: "recent",
-            groupBy: null,
+            groupBy: "none",
+            groupSort: "ascending",
         };
     }
 
     private getInitFilterTags(): FilterTags {
         return {
-            // TODO handle sort of recent tags
             recent: this.getInitTagCategory("Recent", 0),
             subjects: this.getInitTagCategory("Genres", 1),
             publishYears: this.getInitTagCategory("Year", 2, "name"),
@@ -283,7 +283,10 @@ export class BookViewStore {
             const tagsCountObj: { [tag: string]: number } = {};
 
             itemsWithMetadata.forEach((item) => {
-                const itemTags = this.metadataGetter.get(categoryKey, item.metadata);
+                const itemTags = this.metadataGetter.get(categoryKey, item.metadata, {
+                    ...item.fileMetadata,
+                    openedDate: this.rootStore.bookStore.getOpenedDate(item.id),
+                });
                 itemTags.forEach((itemTag) => {
                     if (!(itemTag in tagsCountObj)) tagsCountObj[itemTag] = 1;
                     else tagsCountObj[itemTag] += 1;
@@ -330,10 +333,11 @@ export class BookViewStore {
         );
         const metaBookRecords = this.rootStore.bookStore.getBookMetadataInStorage();
         const bookGroups = this.apply(metaBookRecords, this.activeCollectionKey);
-        const visibleBookCount = bookGroups.reduce(
-            (acc, cur) => cur.items.filter((item) => item.visible).length,
-            0
-        );
+        const visibleBookCount = bookGroups.reduce((count, group) => {
+            const visibleItems = group.items.filter((item) => item.visible === true);
+            count += visibleItems.length;
+            return count;
+        }, 0);
 
         const areBooksBeingSearched = !!searchTerm;
         const areBooksBeingTagFiltered = categoriesHaveActiveTag;
@@ -418,5 +422,132 @@ export class BookViewStore {
     updateTags() {
         const metaBookRecords = this.rootStore.bookStore.getBookMetadataInStorage();
         this.populateFilterTagsAll(metaBookRecords);
+    }
+
+    getGroupBy(): Collection["groupBy"];
+    getGroupBy(collectionKey?: CollectionKey): Collection["groupBy"];
+    getGroupBy(collectionKey?: CollectionKey) {
+        const collection = this.get(collectionKey);
+        return collection.groupBy;
+    }
+    get groupBy() {
+        return this.getGroupBy(this.activeCollectionKey);
+    }
+
+    setCollectionGroupBy(groupBy: Collection["groupBy"]): void;
+    setCollectionGroupBy(groupBy: Collection["groupBy"], collectionKey?: CollectionKey): void;
+    setCollectionGroupBy(groupBy: Collection["groupBy"], collectionKey?: CollectionKey) {
+        const collection = this.get(collectionKey);
+        collection.groupBy = groupBy;
+    }
+    setGroupBy(groupBy: Collection["groupBy"]) {
+        this.setCollectionGroupBy(groupBy, this.activeCollectionKey);
+    }
+
+    getGroupByName(groupBy: Collection["groupBy"]) {
+        return this.groupByNames.find((groupByValue) => groupByValue.value === groupBy);
+    }
+    get groupByNames() {
+        return [
+            { label: "None", value: "none" },
+            { label: "Opened", value: "recent" },
+            { label: "Added", value: "added" },
+            { label: "Author", value: "author" },
+            { label: "Published", value: "publishYears" },
+        ];
+    }
+
+    getCollectionSortBy(): Collection["sortBy"];
+    getCollectionSortBy(collectionKey?: CollectionKey): Collection["sortBy"];
+    getCollectionSortBy(collectionKey?: CollectionKey) {
+        const collection = this.get(collectionKey);
+        return collection.sortBy;
+    }
+    get sortBy() {
+        return this.getCollectionSortBy(this.activeCollectionKey);
+    }
+
+    getCollectionSort(): Collection["sort"];
+    getCollectionSort(collectionKey?: CollectionKey): Collection["sort"];
+    getCollectionSort(collectionKey?: CollectionKey) {
+        const collection = this.get(collectionKey);
+        return collection.sort;
+    }
+    setCollectionSort(sort: Collection["sort"]): void;
+    setCollectionSort(sort: Collection["sort"], collectionKey?: CollectionKey): void;
+    setCollectionSort(sort: Collection["sort"], collectionKey?: CollectionKey) {
+        const collection = this.get(collectionKey);
+        collection.sort = sort;
+    }
+
+    get sort() {
+        return this.getCollectionSort(this.activeCollectionKey);
+    }
+
+    setSort(sort: Collection["sort"]) {
+        this.setCollectionSort(sort, this.activeCollectionKey);
+    }
+
+    toggleSort() {
+        if (this.sort === "ascending") {
+            this.setSort("descending");
+        } else {
+            this.setSort("ascending");
+        }
+    }
+
+    get groupSort() {
+        return this.getCollectionGroupSort(this.activeCollectionKey);
+    }
+
+    setGroupSort(groupSort: Collection["sort"]) {
+        this.setCollectionGroupSort(groupSort, this.activeCollectionKey);
+    }
+
+    toggleGroupSort() {
+        if (this.groupSort === "ascending") {
+            this.setGroupSort("descending");
+        } else {
+            this.setGroupSort("ascending");
+        }
+    }
+
+    getCollectionGroupSort(): Collection["groupSort"];
+    getCollectionGroupSort(collectionKey?: CollectionKey): Collection["groupSort"];
+    getCollectionGroupSort(collectionKey?: CollectionKey) {
+        const collection = this.get(collectionKey);
+        return collection.groupSort;
+    }
+
+    setCollectionGroupSort(groupSort: Collection["groupSort"]): void;
+    setCollectionGroupSort(groupSort: Collection["groupSort"], collectionKey?: CollectionKey): void;
+    setCollectionGroupSort(groupSort: Collection["groupSort"], collectionKey?: CollectionKey) {
+        const collection = this.get(collectionKey);
+        collection.groupSort = groupSort;
+    }
+
+    setCollectionSortBy(sortBy: Collection["sortBy"]): void;
+    setCollectionSortBy(sortBy: Collection["sortBy"], collectionKey?: CollectionKey): void;
+    setCollectionSortBy(sortBy: Collection["sortBy"], collectionKey?: CollectionKey) {
+        const collection = this.get(collectionKey);
+        collection.sortBy = sortBy;
+    }
+
+    setSortBy(sortBy: Collection["sortBy"]) {
+        this.setCollectionSortBy(sortBy, this.activeCollectionKey);
+    }
+
+    getSortByName(sortBy: Collection["sortBy"]) {
+        return this.sortByNames.find((sortByValue) => sortByValue.value === sortBy);
+    }
+
+    get sortByNames() {
+        return [
+            { label: "Title", value: "title" },
+            { label: "Opened", value: "recent" },
+            // { label: "Added", value: "added" },
+            // { label: "Author", value: "author" },
+            { label: "Published", value: "publishYears" },
+        ];
     }
 }

@@ -1,4 +1,5 @@
 import { BookMetadata } from "../../BookStore";
+import { ViewItem } from "./ViewItem";
 import { FilterTags, TagName } from "./ViewStore";
 
 // enum RelativeDateGroupings {
@@ -23,7 +24,7 @@ type RelativeDateGroupings =
     | "Last year"
     | "A long time ago";
 
-export type RecentTagName = RelativeDateGroupings | "active";
+export type RecentTagName = RelativeDateGroupings | "active" | string;
 export interface MetadataGetter<T> {
     getAuthors(metadata: T): string;
     getTitle(metadata: T): string;
@@ -31,7 +32,11 @@ export interface MetadataGetter<T> {
     getPublishYears(metadata: T): TagName[];
     getLanguages(metadata: T): TagName[];
     getSubjects(metadata: T): TagName[];
-    getRecent(metadata: T): RecentTagName[];
+    getRelativeDateGroupings(date: Date): RecentTagName[];
 
-    get(tag: keyof FilterTags, metadata: T): TagName[];
+    get(
+        tag: keyof FilterTags,
+        metadata: T | null,
+        fileMetadata: ViewItem<T>["fileMetadata"]
+    ): TagName[];
 }

@@ -1,3 +1,5 @@
+@layer mantine, custom;
+
 #app {
     display: flex;
     flex-direction: column;
