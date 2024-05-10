@@ -2,3 +2,15 @@
     width: rem(16);
     height: rem(16);
 }
+
+.tooltip {
+    max-width: 60ch;
+    z-index: 200;
+
+    @mixin dark {
+        background-color: var(--mantine-color-dark-7);
+    }
+    @mixin light {
+        background-color: var(--mantine-color-gray-3);
+    }
+}

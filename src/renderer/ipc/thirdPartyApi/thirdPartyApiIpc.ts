@@ -38,4 +38,24 @@ export const registerThirdPartyApiIpc = (
                 .then((res) => res.data.result.alternatives[0].message.text);
         }
     );
+
+    ipcMain.handle("api-deepl", async (e, text: string, targetLang: string, apiKey: string) => {
+        if (!validateSender(e)) return null;
+
+        return axios
+            .post(
+                "https://api-free.deepl.com/v2/translate",
+                {
+                    text: [text],
+                    target_lang: "RU",
+                },
+                {
+                    headers: {
+                        Authorization: `DeepL-Auth-Key ${apiKey}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            )
+            .then((res) => res.data.translations[0].text);
+    });
 };

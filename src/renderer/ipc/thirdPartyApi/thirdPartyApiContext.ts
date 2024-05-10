@@ -4,6 +4,10 @@ const thirdPartyApiContext = {
     apiYandexgpt(prompt: string, yandexIamToken: string, yandexFolderId: string): Promise<string> {
         return ipcRenderer.invoke("api-yandexgpt", prompt, yandexIamToken, yandexFolderId);
     },
+
+    apiDeepl(text: string, targetLang: string, apiKey: string): Promise<string> {
+        return ipcRenderer.invoke("api-deepl", text, targetLang, apiKey);
+    },
 };
 
 export type ThirdPartyApiContextApi = typeof thirdPartyApiContext;

@@ -33,6 +33,7 @@ interface ContextMenuEventDetail {
     startElement: ParentNode;
     startElementSelectedText: string;
     selectedText: string;
+    selectionPosition: {x: number, y: number}
 }
 
 interface BookmarkPositionsEventDetail {
@@ -428,13 +429,19 @@ export default class BookWebComponent extends HTMLElement {
                 const startElement = range.startContainer.parentNode;
                 const [startElementSelectedText] = selectedText.split("\n");
 
+                const rect = range.getBoundingClientRect();
+                const x = rect.left + rect.width / 2;
+                const y = rect.top;
+                const selectionPosition = { x, y };
+
                 if (startElement && startElementSelectedText) {
                     e.stopPropagation();
                     this.emitContextMenuEvent(
                         e,
                         startElement,
                         startElementSelectedText,
-                        selectedText
+                        selectedText,
+                        selectionPosition
                     );
                 }
             });
@@ -445,13 +452,20 @@ export default class BookWebComponent extends HTMLElement {
         event: MouseEvent,
         startElement: ParentNode,
         startElementSelectedText: string,
-        selectedText: string
+        selectedText: string,
+        selectionPosition: {x: number, y: number}
     ) {
         const contextMenuEvent = new CustomEvent<ContextMenuEventDetail>("contextMenuEvent", {
             bubbles: true,
             cancelable: false,
             composed: true,
-            detail: { event, startElement, startElementSelectedText, selectedText },
+            detail: {
+                event,
+                startElement,
+                startElementSelectedText,
+                selectedText,
+                selectionPosition,
+            },
         });
 
         this.dispatchEvent(contextMenuEvent);

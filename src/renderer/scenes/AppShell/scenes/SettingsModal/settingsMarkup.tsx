@@ -3,6 +3,7 @@ import { ColorInput, PasswordInput, Switch, TextInput } from "@mantine/core";
 import { type SettingsMarkup } from "~/renderer/scenes/Settings";
 import {
     IconAdjustments,
+    IconLanguage,
     IconPalette,
     IconRobot,
     IconRocket,
@@ -37,6 +38,11 @@ const sectionMarkup = {
         section: "AI",
         SectionIcon: () => <IconRobot {...sectionIconProps} />,
         sectionDescription: "API keys for AI-related external services.",
+    },
+    Language: {
+        section: "Language",
+        SectionIcon: () => <IconLanguage {...sectionIconProps} />,
+        sectionDescription: "API keys for language-related external services.",
     },
 };
 
@@ -76,6 +82,34 @@ export const settingsMarkup: SettingsMarkup = [
         tabHeading: "General",
         tab: "API",
         ...sectionMarkup["AI"],
+
+        Input: PasswordInput,
+        defaultValue: "",
+        canBeDisabled: false,
+    },
+    {
+        label: "YandexGPT API folder ID",
+        description:
+            "ID of the folder for which your account has the ai.languageModels.user or higher role",
+        placeholder: "Enter your folder ID here",
+        hoverDescription: "",
+        tabHeading: "General",
+        tab: "API",
+        ...sectionMarkup["AI"],
+
+        Input: PasswordInput,
+        defaultValue: "",
+        canBeDisabled: false,
+    },
+
+    {
+        label: "DeepL API key",
+        description: "Key used by translation service",
+        placeholder: "Enter your API key here",
+        hoverDescription: "",
+        tabHeading: "General",
+        tab: "API",
+        ...sectionMarkup["Language"],
 
         Input: PasswordInput,
         defaultValue: "",
