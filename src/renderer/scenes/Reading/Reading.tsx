@@ -149,6 +149,7 @@ export const Reading = observer(() => {
         else translationTooltipRef.current?.close();
     }, [translationTooltipOpened]);
 
+    // TODO detect from text or book metadata
     const definitionTargetLang = "EN";
     const [definitionTarget, setDefinitionTarget] = useState<{
         text: string | null;

@@ -5,7 +5,7 @@ import { Skeleton, SkeletonProps } from "@mantine/core";
 interface SkeletonizeProps {
     visible: boolean;
     preserveChildren?: boolean;
-    skeleton?: React.ReactNode[];
+    skeleton?: React.ReactNode;
     skeletonCount?: number;
     skeletonProps?: SkeletonProps;
     children: React.ReactNode;

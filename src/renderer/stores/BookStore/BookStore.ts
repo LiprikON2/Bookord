@@ -1,18 +1,11 @@
-import {
-    autorun,
-    getDependencyTree,
-    makeAutoObservable,
-    reaction,
-    runInAction,
-    toJS,
-    trace,
-    when,
-} from "mobx";
 import _ from "lodash";
+import { action, makeAutoObservable, runInAction, when } from "mobx";
 
-import context from "./ipc";
 import sampleCover from "~/assets/images/sampleBookCover.webp";
+import fileOperationsContext from "~/renderer/ipc/fileOperations";
+import storeContext from "./ipc";
 import { RootStore } from "../RootStore";
+import { autosave } from "../utils";
 import { RaceConditionGuard } from "./utils";
 
 export type BookState = {
@@ -140,7 +133,7 @@ export type BookStateOpened = BookStoreState & {
 
 const provideFallbackDate = (date?: any): string => {
     if (typeof date === "object") {
-        if ("_" in date && typeof date?._ === "string") {
+        if (date?._ && typeof date?._ === "string") {
             return date._;
         } else return "Unknown";
     } else if (typeof date === "string" && date) return date;
@@ -153,14 +146,14 @@ const provideFallbackCover = (cover?: any): string => {
 };
 
 const provideFallbackTitle = (filename: string, title?: any): string => {
-    if (typeof title === "object" && "_" in title) return title?._ ?? filename;
+    if (typeof title === "object" && title?._) return title?._ ?? filename;
     if (typeof title === "string" && title) return title;
     return filename;
 };
 
 const provideFallbackAuthors = (authors?: any): string => {
     if (typeof authors === "object") {
-        if ("_" in authors && typeof authors?._ === "string") {
+        if (authors?._ && typeof authors?._ === "string") {
             return authors._;
         } else return "Unknown";
     } else if (typeof authors === "string" && authors) return authors;
@@ -169,8 +162,9 @@ const provideFallbackAuthors = (authors?: any): string => {
 
 interface FileMetadata {
     addedDate: Date;
-    // openedDates: Date[] | null;
 }
+
+export type BookStoreData = BookStore["store"];
 
 /**
  * Domain store
@@ -178,6 +172,7 @@ interface FileMetadata {
  * ref: https://mobx.js.org/defining-data-stores.html#domain-stores
  */
 export class BookStore {
+    private ready = false;
     raceConditionGuard = new RaceConditionGuard();
     rootStore: RootStore;
 
@@ -196,12 +191,81 @@ export class BookStore {
     // apiMetadataRecords = new Map<BookKey, any>();
 
     constructor(rootStore: RootStore) {
-        makeAutoObservable(this, {
-            contentRecords: false,
-            rootStore: false,
-            raceConditionGuard: false,
-        });
+        makeAutoObservable(
+            this,
+            {
+                contentRecords: false,
+                rootStore: false,
+                raceConditionGuard: false,
+            },
+            // Removes the need to bind this in `autosave` call
+            { autoBind: true }
+        );
         this.rootStore = rootStore;
+
+        // ref: https://stackoverflow.com/a/40326316/10744339
+        this.load();
+        autosave(this.store, this.save);
+
+        fileOperationsContext.handleWatcherUpdate(
+            action(({ bookKeys }) => {
+                if (this.ready) this.updateBooks(bookKeys);
+            })
+        );
+    }
+
+    private get store() {
+        const store = {
+            bookMetadataRecords: this.bookMetadataRecords,
+            fileMetadataRecords: this.fileMetadataRecords,
+        };
+
+        return store;
+    }
+
+    private async save(store: BookStoreData) {
+        if (!this.ready) await when(() => this.ready);
+        this.rootStore.db.table(this.constructor.name).put({ store });
+    }
+
+    private setReady() {
+        if (this.ready) return;
+
+        this.ready = true;
+        fileOperationsContext.requestWatcherUpdate();
+    }
+
+    get isReady() {
+        return this.ready;
+    }
+    private async load() {
+        await this.rootStore.db.BookStore.toCollection()
+            .last()
+            .then(
+                action((collection: any) => {
+                    const store: BookStoreData = collection?.store;
+                    if (!store) return;
+
+                    store.fileMetadataRecords.forEach((entry) => {
+                        const [key, value] = entry as unknown as [BookKey, FileMetadata];
+                        this.setFileMetadata(key, value);
+                    });
+                    store.bookMetadataRecords.forEach((entry) => {
+                        const [key, value] = entry as unknown as [BookKey, BookMetadata];
+                        this.setBookMetadata(key, value, null);
+
+                        const storageState = this.getBookStoreState(key);
+                        this.setBookStoreState(key, {
+                            isContentRequested: Boolean(storageState?.isContentRequested),
+                            isInStorage: true,
+                        });
+                    });
+
+                    this.rootStore.bookViewStore.updateTags();
+                })
+            );
+
+        runInAction(() => this.setReady());
     }
 
     getFileMetadata(bookKey: BookKey) {
@@ -414,7 +478,7 @@ export class BookStore {
             });
         });
 
-        const metadataEntries = await context.getParsedMetadata(bookKeys);
+        const metadataEntries = await storeContext.getParsedMetadata(bookKeys);
 
         runInAction(() => {
             metadataEntries.forEach(([bookKey, metadata]) =>
@@ -467,11 +531,11 @@ export class BookStore {
         });
 
         runInAction(() => {
-            context.getParsedContent(bookKey, initSectionIndex);
+            storeContext.getParsedContent(bookKey, initSectionIndex);
             // TODO triggers warning:
             // MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 message listeners
             // added to [ForkUtilityProcess]. Use emitter.setMaxListeners() to increase limit
-            const unsub = context.handleParsedContentInit((initEvent) => {
+            const unsub = storeContext.handleParsedContentInit((initEvent) => {
                 if (initEvent.bookKey !== bookKey) return;
 
                 this.setBookContent(bookKey, initEvent.initContent);
@@ -483,7 +547,7 @@ export class BookStore {
                 runInAction(() => this.setBookContentState(bookKey, initContentState));
 
                 const content = this.getBookContent(bookKey);
-                const unsub2 = context.handleParsedContentSection((sectionContentEvent) => {
+                const unsub2 = storeContext.handleParsedContentSection((sectionContentEvent) => {
                     if (sectionContentEvent.bookKey !== bookKey) return;
 
                     this.setBookContentSection(
