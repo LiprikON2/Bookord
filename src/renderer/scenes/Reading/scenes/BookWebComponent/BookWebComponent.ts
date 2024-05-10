@@ -33,7 +33,7 @@ interface ContextMenuEventDetail {
     startElement: ParentNode;
     startElementSelectedText: string;
     selectedText: string;
-    selectionPosition: {x: number, y: number}
+    selectionPosition: { x: number; y: number };
 }
 
 interface BookmarkPositionsEventDetail {
@@ -260,7 +260,6 @@ export default class BookWebComponent extends HTMLElement {
     }
 
     private onSectionLoad(currentPos: Position) {
-        console.log("onSectionLoad");
         this.navigateToPosition(currentPos);
 
         this.emitTocState({
@@ -274,7 +273,6 @@ export default class BookWebComponent extends HTMLElement {
     }
 
     async onResize() {
-        console.log("onResize");
         const { element } = this.bestVisibleElement;
 
         if (element instanceof HTMLElement) this.shiftToElement({ element }, null);
@@ -291,7 +289,6 @@ export default class BookWebComponent extends HTMLElement {
     }
 
     async onSectionShift() {
-        console.log("onSectionShift");
         this.updateObservers();
 
         const uiState = this.getBookUiState();
@@ -326,8 +323,6 @@ export default class BookWebComponent extends HTMLElement {
         position?: Position
     ) {
         const isInitialLoad = !this.book;
-
-        console.log("load ->", sectionIndex, position);
 
         if (isInitialLoad) {
             this.book = { ...content, sectionNames, metadata };
@@ -370,8 +365,6 @@ export default class BookWebComponent extends HTMLElement {
         this.state.updateState(this.book, sectionIndex);
         // this.styleLoader.loadStyles(this.book.styles, sectionContent);
         this.loadContent(sectionContent);
-
-        console.log("loadSection>", sectionIndex, currentPos);
 
         this.onSectionLoad(currentPos);
     }
@@ -453,7 +446,7 @@ export default class BookWebComponent extends HTMLElement {
         startElement: ParentNode,
         startElementSelectedText: string,
         selectedText: string,
-        selectionPosition: {x: number, y: number}
+        selectionPosition: { x: number; y: number }
     ) {
         const contextMenuEvent = new CustomEvent<ContextMenuEventDetail>("contextMenuEvent", {
             bubbles: true,
@@ -971,7 +964,6 @@ export default class BookWebComponent extends HTMLElement {
     // );
 
     disconnectedCallback() {
-        console.log("disconnectedCallback");
         this.resizeObserver.disconnect();
         this.bookmarkObserver.disconnect();
         this.focusableObserver.disconnect();

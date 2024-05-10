@@ -87,20 +87,6 @@ export const settingsMarkup: SettingsMarkup = [
         defaultValue: "",
         canBeDisabled: false,
     },
-    {
-        label: "YandexGPT API folder ID",
-        description:
-            "ID of the folder for which your account has the ai.languageModels.user or higher role",
-        placeholder: "Enter your folder ID here",
-        hoverDescription: "",
-        tabHeading: "General",
-        tab: "API",
-        ...sectionMarkup["AI"],
-
-        Input: PasswordInput,
-        defaultValue: "",
-        canBeDisabled: false,
-    },
 
     {
         label: "DeepL API key",

@@ -107,11 +107,11 @@ interface VoiceOptions {
     /**
      * StartCallback
      */
-    onStart?: () => void;
+    onstart?: () => void;
     /**
      * EndCallback
      */
-    onEnd?: () => void;
+    onend?: () => void;
 }
 
 interface TextReplacementOptions {
@@ -202,7 +202,7 @@ interface ResponsiveVoice {
     /**
      * Returns a list of available voices
      */
-    getVoices(): VoiceType[];
+    getVoices(): { name: VoiceType }[];
     /**
      * Allows setting a default voice, which will be used by responsiveVoice.speak whenever a voice is not specified as a parameter.
      */

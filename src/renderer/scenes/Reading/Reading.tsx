@@ -1,17 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useClickOutside, useDisclosure, useHotkeys, useMergedRef } from "@mantine/hooks";
-import { useContextMenu } from "mantine-contextmenu";
-import { IconCopy, IconLanguage, IconSpeakerphone, IconVocabulary } from "@tabler/icons-react";
+import React, { useEffect, useState } from "react";
+import { useDisclosure, useHotkeys, useMergedRef } from "@mantine/hooks";
 import { observer } from "mobx-react-lite";
 import { action, when } from "mobx";
-import { useQuery } from "@tanstack/react-query";
-import { Tooltip, TooltipRefProps } from "react-tooltip";
 
-import context from "~/renderer/ipc/thirdPartyApi";
-import { getSetting } from "~/renderer/stores";
 import { useBookReadStore } from "~/renderer/stores/hooks";
 import { bookKeyRoute } from "~/renderer/appRenderer";
-import { useCallbackRef, useEvents, useReadingEvents, useTimeTracker } from "./hooks";
+import { useCallbackRef, useReadingEvents, useTimeTracker } from "./hooks";
 import {
     BookSkeleton,
     BookUi,
@@ -21,15 +15,9 @@ import {
 } from "./components";
 import "./scenes/BookWebComponent";
 import type BookWebComponent from "./scenes/BookWebComponent";
-import type { BookWebComponentEventMap } from "./scenes/BookWebComponent";
 import classes from "./Reading.module.css";
-import { Overlay, Portal } from "@mantine/core";
-import { useColorScheme } from "~/renderer/hooks";
-
-// TODO https://eisenbergeffect.medium.com/web-components-2024-winter-update-445f27e7613a
 
 // TODO fix images displaying over text https://i.imgur.com/7nlOjZt.png
-
 export const Reading = observer(() => {
     const { bookKey } = bookKeyRoute.useParams();
     const bookReadStore = useBookReadStore();

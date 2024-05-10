@@ -32,15 +32,7 @@ export const useReadingEvents = (
                     icon: <IconCopy className={classNames?.icon} />,
                     onClick: () => navigator.clipboard.writeText(e.detail.selectedText),
                 },
-                {
-                    key: "tts",
-                    icon: <IconSpeakerphone className={classNames?.icon} />,
-                    title: "Text-to-Speech",
-                    onClick: () => {
-                        const { startElement, startElementSelectedText } = e.detail;
-                        bookReadStore.setTtsTarget({ startElement, startElementSelectedText });
-                    },
-                },
+
                 {
                     key: "translate",
                     icon: <IconLanguage className={classNames?.icon} />,
@@ -63,6 +55,15 @@ export const useReadingEvents = (
                             text: selectedText,
                             position: selectionPosition,
                         });
+                    },
+                },
+                {
+                    key: "tts",
+                    icon: <IconSpeakerphone className={classNames?.icon} />,
+                    title: "Text-to-Speech",
+                    onClick: () => {
+                        const { startElement, startElementSelectedText } = e.detail;
+                        bookReadStore.setTtsTarget({ startElement, startElementSelectedText });
                     },
                 },
             ])(e.detail.event as any);

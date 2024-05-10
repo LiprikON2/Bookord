@@ -11,6 +11,7 @@ import {
     InputBase,
     Kbd,
     ScrollArea,
+    SegmentedControl,
     Stack,
     Text,
     useCombobox,
@@ -25,7 +26,14 @@ import {
 
 import { isDev } from "~/common/helpers";
 import { usePlatform } from "~/renderer/hooks";
-import { useTts, useTtsVoices } from "./hooks";
+import {
+    GenericVoice,
+    TtsApisTypes,
+    useNativeTts,
+    useNativeVoices,
+    useResponsiveVoices,
+    useTts,
+} from "./hooks";
 import { SliderInput } from "./components";
 import classes from "./TextToSpeech.module.css";
 
@@ -36,8 +44,18 @@ export const TextToSpeech = observer(() => {
 
     const platform = usePlatform();
 
-    const { selectedVoice, handleVoiceChange, voicesGroups } = useTtsVoices();
-    const { ttsStatus, pauseTts, resumeTts, stopTts } = useTts(selectedVoice, pitch, rate);
+    const {
+        ttsApi,
+        toggleTtsApi,
+        ttsApis,
+        handleVoiceChange,
+        voiceGroups,
+        selectedVoice,
+        ttsStatus,
+        pauseTts,
+        resumeTts,
+        stopTts,
+    } = useTts(pitch, rate);
 
     const combobox = useCombobox({
         onDropdownClose: () => combobox.resetSelectedOption(),
@@ -45,24 +63,25 @@ export const TextToSpeech = observer(() => {
 
     return (
         <>
-            {isDev() && (
-                <button
-                    onClick={() => {
-                        // responsiveVoice.speak("hello world");
-                        // responsiveVoice.speak("hello world", "Fallback UK Female");
-                        // responsiveVoice.speak("hello world", "Welsh Male");
-                        responsiveVoice.speak("Привет мир", "Russian Female");
-                    }}
-                >
-                    Test
-                </button>
-            )}
             <Stack pl="sm" pr="md">
+                <Stack gap={0}>
+                    <Text size="sm" fw={500} mt={3}>
+                        Select speech synthesizer
+                    </Text>
+                    <SegmentedControl
+                        disabled={ttsStatus !== "standby"}
+                        classNames={{ label: classes.label }}
+                        fullWidth
+                        onChange={(val: TtsApisTypes) => toggleTtsApi(val)}
+                        data={ttsApis}
+                    />
+                </Stack>
+
                 <Combobox
                     disabled={ttsStatus !== "standby"}
                     size="xs"
                     store={combobox}
-                    withinPortal={false}
+                    withinPortal
                     onOptionSubmit={(value) => {
                         handleVoiceChange(value);
                         combobox.closeDropdown();
@@ -70,6 +89,7 @@ export const TextToSpeech = observer(() => {
                 >
                     <Combobox.Target>
                         <InputBase
+                            label="Select voice"
                             disabled={ttsStatus !== "standby"}
                             size="sm"
                             component="button"
@@ -94,8 +114,8 @@ export const TextToSpeech = observer(() => {
                                 offsetScrollbars
                                 scrollbarSize={4}
                             >
-                                {voicesGroups.map(
-                                    ([groupName, voices]: [string, SpeechSynthesisVoice[]]) => (
+                                {voiceGroups.map(
+                                    ([groupName, voices]: [string, GenericVoice[]]) => (
                                         <Combobox.Group
                                             key={groupName}
                                             label={groupName}
@@ -114,7 +134,7 @@ export const TextToSpeech = observer(() => {
                                         </Combobox.Group>
                                     )
                                 )}
-                                {voicesGroups.length === 0 && (
+                                {voiceGroups.length === 0 && (
                                     <Combobox.Empty>
                                         <Text inherit>No voices found.</Text>
                                         {platform === "linux" && <LinuxNoVoices />}
@@ -136,7 +156,6 @@ export const TextToSpeech = observer(() => {
                     value={rate}
                     onChange={setRate}
                 />
-
                 <Group>
                     {ttsStatus !== "standby" && (
                         <>

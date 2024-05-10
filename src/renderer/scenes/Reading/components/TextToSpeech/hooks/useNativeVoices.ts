@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 
-export const useTtsVoices = () => {
+export const useNativeVoices = () => {
     const voices = speechSynthesis.getVoices();
-    const voicesGroups = Object.entries(Object.groupBy(voices, ({ lang }) => lang)).sort(
+    const voiceGroups = Object.entries(Object.groupBy(voices, ({ lang }) => lang)).sort(
         ([voiceGroupA], [voiceGroupB]) => voiceGroupA.localeCompare(voiceGroupB)
     );
 
-    const defaultVoice = voicesGroups?.[0]?.[1]?.[0];
+    const defaultVoice = voiceGroups?.[0]?.[1]?.[0];
 
     const [selectedVoice, setSelectedVoice] = useState(defaultVoice);
     useEffect(() => {
@@ -18,5 +18,5 @@ export const useTtsVoices = () => {
         setSelectedVoice(voice);
     };
 
-    return { handleVoiceChange, voicesGroups, selectedVoice };
+    return { handleVoiceChange, voiceGroups, selectedVoice };
 };
