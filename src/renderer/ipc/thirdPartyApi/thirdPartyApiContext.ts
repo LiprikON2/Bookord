@@ -8,6 +8,9 @@ const thirdPartyApiContext = {
     apiDeepl(text: string, targetLang: string, apiKey: string): Promise<string> {
         return ipcRenderer.invoke("api-deepl", text, targetLang, apiKey);
     },
+    apiDictionary(text: string, targetLang: string): Promise<string> {
+        return ipcRenderer.invoke("api-dictionary", text, targetLang);
+    },
 };
 
 export type ThirdPartyApiContextApi = typeof thirdPartyApiContext;

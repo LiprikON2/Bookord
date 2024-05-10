@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useClickOutside, useHotkeys, useMergedRef } from "@mantine/hooks";
 import { useContextMenu } from "mantine-contextmenu";
-import { IconCopy, IconLanguage, IconSpeakerphone } from "@tabler/icons-react";
+import { IconCopy, IconLanguage, IconSpeakerphone, IconVocabulary } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
 import { action, when } from "mobx";
 import { useQuery } from "@tanstack/react-query";
@@ -63,27 +63,33 @@ export const Reading = observer(() => {
         })
     );
     const handleNextPage = action(() => {
-        dismissTooltip();
+        dismissTranslation();
+        dismissDefinition();
         bookReadStore.bookComponent?.pageForward?.();
     });
     const handlePrevPage = action(() => {
-        dismissTooltip();
+        dismissTranslation();
+        dismissDefinition();
         bookReadStore.bookComponent?.pageBackward?.();
     });
     const handleNextFivePage = action(() => {
-        dismissTooltip();
+        dismissTranslation();
+        dismissDefinition();
         bookReadStore.bookComponent?.flipNPages?.(5);
     });
     const handlePrevFivePage = action(() => {
-        dismissTooltip();
+        dismissTranslation();
+        dismissDefinition();
         bookReadStore.bookComponent?.flipNPages?.(-5);
     });
     const handleNextSection = action(() => {
-        dismissTooltip();
+        dismissTranslation();
+        dismissDefinition();
         bookReadStore.bookComponent?.sectionForward?.();
     });
     const handlePrevSection = action(() => {
-        dismissTooltip();
+        dismissTranslation();
+        dismissDefinition();
         bookReadStore.bookComponent?.sectionBackward?.();
     });
 
@@ -103,7 +109,8 @@ export const Reading = observer(() => {
 
     const { showContextMenu } = useContextMenu();
 
-    const targetLang = "RU";
+    // TODO make a setting https://developers.deepl.com/docs/resources/supported-languages#target-languages
+    const translateTargetLang = "RU";
     const [translateTarget, setTranslateTarget] = useState<{
         text: string | null;
         position: { x: number; y: number } | null;
@@ -113,7 +120,7 @@ export const Reading = observer(() => {
     });
 
     const { data: translation } = useQuery({
-        queryKey: ["deepl", translateTarget.text, targetLang] as [string, string, string],
+        queryKey: ["deepl", translateTarget.text, translateTargetLang] as [string, string, string],
         queryFn: ({ queryKey: [_, text, targetLang] }) => {
             const deeplKey = getSetting(["General", "API", "Language", "DeepL API key"]).value;
             return context.apiDeepl(text, targetLang, deeplKey);
@@ -122,22 +129,66 @@ export const Reading = observer(() => {
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
         retry: false,
-        enabled: translateTarget !== null,
+        enabled: translateTarget.text !== null,
     });
 
     useEffect(() => {
-        if (translation) setTooltipOpened(true);
+        if (translation) setTranslationTooltipOpened(true);
     }, [translation]);
 
-    const tooltipRef = useRef<TooltipRefProps>(null);
-    const [tooltipOpened, setTooltipOpened] = useState(false);
-    const dismissTooltip = () => setTooltipOpened(false);
+    const translationTooltipRef = useRef<TooltipRefProps>(null);
+    const [translationTooltipOpened, setTranslationTooltipOpened] = useState(false);
+    const dismissTranslation = () => setTranslationTooltipOpened(false);
 
     useEffect(() => {
-        if (tooltipOpened)
-            tooltipRef.current?.open({ content: translation, position: translateTarget.position });
-        else tooltipRef.current?.close();
-    }, [tooltipOpened]);
+        if (translationTooltipOpened)
+            translationTooltipRef.current?.open({
+                content: translation,
+                position: translateTarget.position,
+            });
+        else translationTooltipRef.current?.close();
+    }, [translationTooltipOpened]);
+
+    const definitionTargetLang = "EN";
+    const [definitionTarget, setDefinitionTarget] = useState<{
+        text: string | null;
+        position: { x: number; y: number } | null;
+    }>({
+        text: null,
+        position: null,
+    });
+
+    const { data: definition } = useQuery({
+        queryKey: ["dictionary", definitionTarget.text, definitionTargetLang] as [
+            string,
+            string,
+            string
+        ],
+        queryFn: ({ queryKey: [_, text, targetLang] }) => context.apiDictionary(text, targetLang),
+        // select: (data: any) => data?.meanings?.[0]?.definitions?.[0]?.definition,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+        retry: false,
+        enabled: definitionTarget.text !== null,
+    });
+
+    useEffect(() => {
+        if (definition) setDefinitionTooltipOpened(true);
+    }, [definition]);
+
+    const definitionTooltipRef = useRef<TooltipRefProps>(null);
+    const [definitionTooltipOpened, setDefinitionTooltipOpened] = useState(false);
+    const dismissDefinition = () => setDefinitionTooltipOpened(false);
+
+    useEffect(() => {
+        if (definitionTooltipOpened)
+            definitionTooltipRef.current?.open({
+                content: definition,
+                position: definitionTarget.position,
+            });
+        else definitionTooltipRef.current?.close();
+    }, [definitionTooltipOpened]);
 
     const eventsRef = useEvents<BookWebComponentEventMap, BookWebComponent>({
         imgClickEvent: (e) => console.log("click"),
@@ -175,6 +226,18 @@ export const Reading = observer(() => {
                         });
                     },
                 },
+                {
+                    key: "definition",
+                    icon: <IconVocabulary className={classes.icon} />,
+                    onClick: () => {
+                        const { selectedText, selectionPosition } = e.detail;
+
+                        setDefinitionTarget({
+                            text: selectedText,
+                            position: selectionPosition,
+                        });
+                    },
+                },
             ])(e.detail.event as any);
         },
     });
@@ -203,12 +266,23 @@ export const Reading = observer(() => {
                 <Tooltip
                     id="translation"
                     className={classes.tooltip}
-                    ref={tooltipRef}
+                    ref={translationTooltipRef}
                     imperativeModeOnly
                     variant={colorSceme}
                     opacity={1}
                 />
-                {tooltipOpened && <Overlay onClick={dismissTooltip} opacity={0} />}
+                {translationTooltipOpened && <Overlay onClick={dismissTranslation} opacity={0} />}
+            </Portal>
+            <Portal>
+                <Tooltip
+                    id="definition"
+                    className={classes.tooltip}
+                    ref={definitionTooltipRef}
+                    imperativeModeOnly
+                    variant={colorSceme}
+                    opacity={1}
+                />
+                {definitionTooltipOpened && <Overlay onClick={dismissDefinition} opacity={0} />}
             </Portal>
         </>
     );
