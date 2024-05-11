@@ -244,6 +244,7 @@ export class BookStore {
 
     private get store() {
         const store = {
+            id: "1",
             bookMetadataRecords: this.bookMetadataRecords,
             fileMetadataRecords: this.fileMetadataRecords,
             interactionRecords: this.interactionRecords,
@@ -254,7 +255,7 @@ export class BookStore {
 
     private async save(store: BookStoreData) {
         if (!this.ready) await when(() => this.ready);
-        this.rootStore.db.table(this.constructor.name).put({ store });
+        this.rootStore.db.table(this.constructor.name).put({ store }, store.id);
     }
 
     private setReady() {

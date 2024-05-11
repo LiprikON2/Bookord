@@ -33,6 +33,7 @@
     overflow: hidden;
     text-overflow: clip;
     word-break: break-word;
+    position: absolute;
 
     @mixin dark {
         color: var(--mantine-color-white);
@@ -54,4 +55,7 @@
     text-decoration: none;
     width: 100%;
     height: 100%;
+
+    user-select: none;
+    -webkit-user-drag: none;
 }

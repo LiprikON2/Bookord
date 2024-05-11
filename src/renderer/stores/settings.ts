@@ -2,8 +2,7 @@ import { action, observable, autorun, set, toJS } from "mobx";
 import _ from "lodash";
 
 import { isDev } from "~/common/helpers";
-import { type SettingsState } from "~/renderer/scenes/Settings";
-import { type MappedSettingsMarkup } from "../scenes/Settings/hooks";
+import { MappedSettingsMarkup, type SettingsState } from "~/renderer/scenes/Settings";
 
 declare global {
     interface Window {
@@ -15,15 +14,33 @@ const settingsStore = observable<SettingsState>({});
 let isInitialized = false;
 const settingsStoreKey = "settingsStore";
 
+/**
+ * [tabHeading, tab, sectionMarkup, label]
+ */
 export const getSetting = action((settingKeyList: string[]) => {
     const nestedValue = settingKeyList.reduce((obj: any, k: any) => obj[k], settingsStore.data);
     return nestedValue;
 });
 
-export const setSetting = action((settingKeyList: string[], key: string, value: any) => {
+const instantSetSetting = action((settingKeyList: string[], key: string, value: any) => {
     const nestedValue = settingKeyList.reduce((obj: any, k: any) => obj[k], settingsStore.data);
     nestedValue[key] = value;
 });
+
+const debounceSetSetting = _.debounce(
+    (settingKeyList: string[], key: string, value: any) => {
+        instantSetSetting(settingKeyList, key, value);
+    },
+    250,
+    { maxWait: 250 }
+);
+
+export const setSetting = action(
+    (settingKeyList: string[], key: string, value: any, debounce = false) => {
+        if (debounce) debounceSetSetting(settingKeyList, key, value);
+        else instantSetSetting(settingKeyList, key, value);
+    }
+);
 
 export const getSettingsStore = (mappedSettings: MappedSettingsMarkup) => {
     if (!isInitialized) {

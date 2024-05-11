@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
 
 import { LanguagePicker } from "~/renderer/components";
-import { getSetting } from "~/renderer/stores";
+import { useSettingsStore } from "~/renderer/stores";
 import flags from "~/assets/images/flags/language";
 import context from "~/renderer/ipc/thirdPartyApi";
 import classes from "./SummaryModal.module.css";
@@ -67,6 +67,8 @@ export const SummaryModal = observer(
     ({ opened = false, getTitle, getAuthor, onClose }: SummaryModalProps) => {
         const [selectedLang, setSelectedLang] = useState(selectLanguageData[0]);
         const [selectedLen, setSelectedLen] = useState(selectLengthData[0]);
+
+        const { getSetting } = useSettingsStore();
 
         const title = getTitle();
         const authors = getAuthor();

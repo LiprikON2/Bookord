@@ -1,4 +1,25 @@
-@layer mantine, custom;
+/* @layer mantine, custom; */
+/* TODO fix postcss mixins not working in this file */
+
+/* MANTINE GLOBAL OVERRIDE */
+:root {
+    --mantine-scale: 1;
+
+    --selection-background-color: var(--mantine-primary-color-filled);
+}
+
+:root[data-mantine-color-scheme="dark"] {
+    --mantine-color-dimmed: var(--mantine-color-dark-2);
+    --mantine-color-placeholder: var(--mantine-color-dark-2);
+
+    --selection-color: var(--mantine-color-white);
+}
+:root[data-mantine-color-scheme="light"] {
+    --mantine-color-dimmed: var(--mantine-color-gray-6);
+    --mantine-color-placeholder: var(--mantine-color-gray-6);
+
+    --selection-color: var(--mantine-color-black);
+}
 
 #app {
     display: flex;
@@ -7,31 +28,11 @@
     height: 100%;
 }
 
-/* MANTINE GLOBAL OVERRIDE */
-html:root {
-    --mantine-scale: 1;
-}
-
-html:root[data-mantine-color-scheme="dark"] {
-    --mantine-color-dimmed: var(--mantine-color-dark-2);
-    --mantine-color-placeholder: var(--mantine-color-dark-2);
-}
-html:root[data-mantine-color-scheme="light"] {
-    --mantine-color-dimmed: var(--mantine-color-gray-6);
-    --mantine-color-placeholder: var(--mantine-color-gray-6);
-}
-
 .mantine-contextmenu {
     --paper-radius: var(--mantine-radius-md) !important;
 }
 
 ::selection {
-    background-color: var(--mantine-primary-color-filled);
-
-    @mixin light {
-        color: var(--mantine-color-black);
-    }
-    @mixin dark {
-        color: var(--mantine-color-white);
-    }
+    background-color: var(--selection-background-color);
+    color: var(--selection-color);
 }

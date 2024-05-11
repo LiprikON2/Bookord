@@ -49,11 +49,12 @@ export const getInputStateProps = ({ Input, ...setting }: RootSettingMarkup) => 
             };
         } else {
             // NarrowedInput = Input as ValueInputTypes;
+            const toDebounce = Input.displayName === "@mantine/core/ColorInput";
 
             inputStateProps = {
                 disabled: setting.canBeDisabled && getSetting(keyList).disabled,
                 value: getSetting(keyList).value,
-                onChange: (value: any) => setSetting(keyList, "value", value),
+                onChange: (value: any) => setSetting(keyList, "value", value, toDebounce),
             };
         }
     }

@@ -363,7 +363,7 @@ export default class BookWebComponent extends HTMLElement {
         if (!sectionContent) return;
 
         this.state.updateState(this.book, sectionIndex);
-        // this.styleLoader.loadStyles(this.book.styles, sectionContent);
+        this.styleLoader.loadStyles(this.book.styles, sectionContent);
         this.loadContent(sectionContent);
 
         this.onSectionLoad(currentPos);

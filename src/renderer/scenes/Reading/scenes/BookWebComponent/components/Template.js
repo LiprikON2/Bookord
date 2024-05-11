@@ -1,11 +1,5 @@
 export const style = /*css*/ `
     :host {
-        
-        /* todo */
-        --columns-count: 2; 
-        --column-gap: 2rem;
-
-
         --columns-count: 1;
         --column-gap: 50px;
 
@@ -13,39 +7,55 @@ export const style = /*css*/ `
 
         --book-component-width: calc(calc(30rem * var(--columns-count)) + var(--column-gap-total));
     }
+    
+    :host {
+        font-family: var(--mantine-font-family) !important;
+        color: var(--mantine-color-text) !important;
+        /* font-size: var(--fs-book-global) !important; */
+    }
 
     :any-link {
-        color: var(--clr-link) !important;
-    }
-    :host {
-        font-size: var(--fs-book-global) !important;
-        font-family: var(--ff-book-global) !important;
-    }
-    p {
-        font-size: var(--fs-book-paragraph) !important;
-    }
-    h1 {
-        font-size: var(--fs-book-h1) !important;
-    }
-    h2 {
-        font-size: var(--fs-book-h2) !important;
-    }
-    h3 {
-        font-size: var(--fs-book-h3) !important;
-    }
-    h4 {
-        font-size: var(--fs-book-h4) !important;
-    }
-    h5 {
-        font-size: var(--fs-book-h5) !important;
-    }
-    h6 {
-        font-size: var(--fs-book-h6) !important;
+        color: var(--mantine-color-anchor) !important;
     }
 
-    p, h1, h2, h3, h4, h5, h6 { 
-        line-height: var(--lh-book-global, 1.33) !important;
-        font-family: var(--ff-book-global, unset) !important;
+        
+    h1 {
+        font-size: var(--mantine-h1-font-size) !important;
+        line-height: var(--mantine-h1-line-height) !important;
+        /* font-weight: var(--mantine-h1-font-weight) !important; */
+    }
+    h2 {
+        font-size:var(--mantine-h2-font-size) !important;
+        line-height: var(--mantine-h2-line-height) !important;
+        /* font-weight: var(--mantine-h2-font-weight) !important; */
+    }
+    h3 {
+        font-size: var(--mantine-h3-font-size) !important;
+        line-height: var(--mantine-h3-line-height) !important;
+        /* font-weight: var(--mantine-h3-font-weight) !important; */
+    }
+    h4 {
+        font-size: var(--mantine-h4-font-size) !important;
+        line-height: var(--mantine-h4-line-height) !important;
+        /* font-weight: var(--mantine-h4-font-weight) !important; */
+    }
+    h5 {
+        font-size: var(--mantine-h5-font-size) !important;
+        line-height: var(--mantine-h5-line-height) !important;
+        /* font-weight: var(--mantine-h5-font-weight) !important; */
+    }
+    h6 {
+        font-size: var(--mantine-h6-font-size) !important;
+        line-height: var(--mantine-h6-line-height) !important;
+        /* font-weight: var(--mantine-h6-font-weight) !important; */
+    }
+
+    h1, h2, h3, h4, h5, h6 { 
+        font-family: var(--mantine-font-family-headings) !important;
+    }
+
+    p {
+        /* font-size: var(--fs-book-paragraph) !important; */
     }
 
     .book-container {
@@ -81,8 +91,10 @@ export const style = /*css*/ `
     }
 
     ::selection {
-        /* background-color: #e8590c; */
+        background-color: var(--selection-background-color) !important;
+        color: var(--selection-color) !important;
     }
+
 `;
 
 export const template = document.createElement("template");

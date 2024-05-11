@@ -194,12 +194,12 @@ export class BookFilter<T extends BookMetadata> implements Filter<T> {
             const entries = Object.entries(
                 Object.groupBy(searchedItems, ({ fileMetadata }) =>
                     this.metadataGetter
-                        .getRelativeDateGroupings(fileMetadata.openedDate, "Never")
+                        .getRelativeDateGroupings(fileMetadata.openedDate, "New")
                         .at(-1)
                 )
             );
 
-            const relativeGroupings = this.metadataGetter.getRelativeGroupingsList("Never");
+            const relativeGroupings = this.metadataGetter.getRelativeGroupingsList("New");
 
             let sortedEntries: typeof entries;
             if (groupSort === "ascending") {

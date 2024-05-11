@@ -3,12 +3,12 @@ import { observer } from "mobx-react-lite";
 import { useQuery } from "@tanstack/react-query";
 import { Tooltip, TooltipRefProps } from "react-tooltip";
 
-import { getSetting } from "~/renderer/stores";
 import context from "~/renderer/ipc/thirdPartyApi";
 
 import classes from "./TranslationTooltip.module.css";
 import { Overlay, Portal } from "@mantine/core";
 import { useColorScheme } from "~/renderer/hooks";
+import { useSettingsStore } from "~/renderer/stores";
 
 export interface TooltipTarget {
     text: string | null;
@@ -26,6 +26,8 @@ export const TranslationTooltip = observer(
     ({ target, opened, onOpen, onClose }: TranslationTooltipProps) => {
         // TODO make a setting https://developers.deepl.com/docs/resources/supported-languages#target-languages
         const translateTargetLang = "RU";
+
+        const { getSetting } = useSettingsStore();
 
         const { data: translation, error } = useQuery({
             queryKey: ["deepl", target.text, translateTargetLang] as [string, string, string],

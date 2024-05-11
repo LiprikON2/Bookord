@@ -11,10 +11,10 @@ import {
 import type { Icon } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
 
-import { useMapSettings } from "./hooks";
-import classes from "./Settings.module.css";
-import { SettingsPanels, SettingsSections, SettingsTabs } from "./components";
 import { SettingsInputs } from "./scenes";
+import { SettingsPanels, SettingsSections, SettingsTabs } from "./components";
+import classes from "./Settings.module.css";
+import { useMapSettings } from "./hooks";
 
 export type CheckedInputTypes = typeof Switch;
 export type ValueInputTypes =

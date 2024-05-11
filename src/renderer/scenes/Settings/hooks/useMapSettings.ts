@@ -1,4 +1,4 @@
-import { type SettingsMarkup } from "../Settings";
+import { SettingsMarkup } from "~/renderer/scenes";
 
 export interface MappedSettingsMarkup {
     [tabHeading: string]: {

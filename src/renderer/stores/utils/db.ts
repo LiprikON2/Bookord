@@ -9,7 +9,8 @@ export class AppDatabase extends Dexie {
         super("AppDatabase");
         this.version(1).stores({
             // Keys to be indexed https://dexie.org/docs/Version/Version.stores()
-            BookStore: "++id",
+            // BookStore: "++id",
+            BookStore: "",
         });
         this.open().catch((err) => {
             console.error("Failed to open db: " + (err.stack || err));

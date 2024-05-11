@@ -6,10 +6,8 @@ import clsx from "clsx";
 import { observer } from "mobx-react-lite";
 
 import { Settings } from "~/renderer/scenes";
+import { useSettingsStore } from "~/renderer/stores";
 import classes from "./SettingsModal.module.css";
-import { settingsMarkup } from "./settingsMarkup";
-// TODO move it
-import { useSettingsStore } from "~/renderer/scenes/Settings/hooks";
 
 export const SettingsModal = observer(
     ({
@@ -18,7 +16,7 @@ export const SettingsModal = observer(
         classNames?: { button?: string; buttonIcon?: string; modalIcon?: string };
     }) => {
         const [opened, { open, close }] = useDisclosure(false);
-        const { isLoading } = useSettingsStore(settingsMarkup);
+        const { isLoading, settingsMarkup } = useSettingsStore();
 
         return (
             <>

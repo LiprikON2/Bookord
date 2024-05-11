@@ -11,7 +11,7 @@ import {
     type TablerIconsProps,
 } from "@tabler/icons-react";
 
-import classes from "./SettingsModal.module.css";
+import classes from "./settingsMarkup.module.css";
 
 const sectionIconProps: TablerIconsProps = {
     className: classes.sectionIcon,
@@ -32,7 +32,7 @@ const sectionMarkup = {
     "Main app colors": {
         section: "Main app colors",
         SectionIcon: () => <IconPalette {...sectionIconProps} />,
-        sectionDescription: "Style the look and size of the text.",
+        sectionDescription: "Style the look and feel of the app.",
     },
     AI: {
         section: "AI",
@@ -105,105 +105,40 @@ export const settingsMarkup: SettingsMarkup = [
     {
         label: "Accent color",
         description: "The color of accented elements.",
-        placeholder: "#ffffff",
+        placeholder: "#FD7E14",
         hoverDescription: "",
         tabHeading: "Appearance",
         tab: "App colors",
         ...sectionMarkup["Main app colors"],
 
         Input: ColorInput,
-        defaultValue: "#fff",
+        defaultValue: "#FD7E14",
         canBeDisabled: true,
     },
     {
-        label: "Accent color1",
-        description: "The color of accented elements.",
-        placeholder: "#ffffff",
+        label: "Dark colors",
+        description: "Used to generate background shades on the dark theme.",
+        placeholder: "#202020",
         hoverDescription: "",
         tabHeading: "Appearance",
         tab: "App colors",
         ...sectionMarkup["Main app colors"],
 
         Input: ColorInput,
-        defaultValue: "#fff",
+        defaultValue: "#202020",
         canBeDisabled: true,
     },
     {
-        label: "Accent color2",
-        description: "The color of accented elements.",
-        placeholder: "#ffffff",
+        label: "Light colors",
+        description: "Used to generates background shades on the light theme.",
+        placeholder: "#868E96",
         hoverDescription: "",
         tabHeading: "Appearance",
         tab: "App colors",
         ...sectionMarkup["Main app colors"],
 
         Input: ColorInput,
-        defaultValue: "#fff",
-        canBeDisabled: true,
-    },
-    {
-        label: "Accent color3",
-        description: "The color of accented elements.",
-        placeholder: "#ffffff",
-        hoverDescription: "",
-        tabHeading: "Appearance",
-        tab: "App colors",
-        ...sectionMarkup["Main app colors"],
-
-        Input: ColorInput,
-        defaultValue: "#fff",
-        canBeDisabled: true,
-    },
-    {
-        label: "Accent color4",
-        description: "The color of accented elements.",
-        placeholder: "#ffffff",
-        hoverDescription: "",
-        tabHeading: "Appearance",
-        tab: "App colors",
-        ...sectionMarkup["Main app colors"],
-
-        Input: ColorInput,
-        defaultValue: "#fff",
-        canBeDisabled: true,
-    },
-    {
-        label: "Accent color5",
-        description: "The color of accented elements.",
-        placeholder: "#ffffff",
-        hoverDescription: "",
-        tabHeading: "Appearance",
-        tab: "App colors",
-        ...sectionMarkup["Main app colors"],
-
-        Input: ColorInput,
-        defaultValue: "#fff",
-        canBeDisabled: true,
-    },
-    {
-        label: "Accent color6",
-        description: "The color of accented elements.",
-        placeholder: "#ffffff",
-        hoverDescription: "",
-        tabHeading: "Appearance",
-        tab: "App colors",
-        ...sectionMarkup["Main app colors"],
-
-        Input: ColorInput,
-        defaultValue: "#fff",
-        canBeDisabled: true,
-    },
-    {
-        label: "Accent color7",
-        description: "The color of accented elements.",
-        placeholder: "#ffffff",
-        hoverDescription: "",
-        tabHeading: "Appearance",
-        tab: "App colors",
-        ...sectionMarkup["Main app colors"],
-
-        Input: ColorInput,
-        defaultValue: "#fff",
+        defaultValue: "#868E96",
         canBeDisabled: true,
     },
 ];

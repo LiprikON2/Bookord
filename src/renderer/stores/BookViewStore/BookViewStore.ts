@@ -450,7 +450,7 @@ export class BookViewStore {
     get groupByNames() {
         return [
             { label: "None", value: "none" },
-            { label: "Opened", value: "recent" },
+            { label: "Recent", value: "recent" },
             { label: "Added", value: "added" },
             { label: "Author", value: "author" },
             { label: "Published", value: "publishYears" },
@@ -544,7 +544,7 @@ export class BookViewStore {
     get sortByNames() {
         return [
             { label: "Title", value: "title" },
-            { label: "Opened", value: "recent" },
+            { label: "Recent", value: "recent" },
             // { label: "Added", value: "added" },
             // { label: "Author", value: "author" },
             { label: "Published", value: "publishYears" },

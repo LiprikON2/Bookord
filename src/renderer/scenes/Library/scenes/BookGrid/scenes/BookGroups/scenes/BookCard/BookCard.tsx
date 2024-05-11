@@ -94,7 +94,7 @@ export const BookCard = observer(({ bookKey, onClick, visible = true }: BookCard
                                 style={{ flexGrow: 1 }}
                                 h="100%"
                                 p="0.5rem"
-                                styles={{ root: { display: "flex" } }}
+                                styles={{ root: { display: "flex", position: "relative" } }}
                             >
                                 <TitleObserver order={3} className={classes.title}>
                                     {() => metadata.title}
