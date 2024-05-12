@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import GiscusReact from "@giscus/react";
+import { useLocalStorage, useWindowEvent } from "@mantine/hooks";
 import { observer } from "mobx-react-lite";
 
-import classes from "./Giscus.module.css";
 import context from "~/renderer/ipc/thirdPartyApi";
-import { useLocalStorage, useWindowEvent } from "@mantine/hooks";
 import { useColorScheme } from "~/renderer/hooks";
+import classes from "./Giscus.module.css";
 
 interface GiscusProps {
     //
@@ -25,9 +25,9 @@ export const Giscus = observer(({}: GiscusProps) => {
         return () => unsub();
     }, []);
 
-    useWindowEvent("message", (e) => {
-        console.log("data", e.data?.giscus);
-    });
+    // useWindowEvent("message", (e) => {
+    //     console.log("data", e.data?.giscus);
+    // });
 
     return (
         <GiscusReact

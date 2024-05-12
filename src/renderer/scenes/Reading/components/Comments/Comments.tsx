@@ -2,11 +2,11 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import { Text, Button, Drawer, ScrollArea, SegmentedControl } from "@mantine/core";
 import { useDisclosure, useDocumentTitle, useToggle } from "@mantine/hooks";
+import { IconMessages } from "@tabler/icons-react";
 
 import { Giscus } from "~/renderer/components";
-import classes from "./Comments.module.css";
 import { useBookReadStore } from "~/renderer/stores";
-import { IconMessages } from "@tabler/icons-react";
+import classes from "./Comments.module.css";
 
 interface CommentsProps {
     //
