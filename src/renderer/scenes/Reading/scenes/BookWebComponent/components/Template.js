@@ -52,6 +52,7 @@ export const style = /*css*/ `
 
     h1, h2, h3, h4, h5, h6 { 
         font-family: var(--mantine-font-family-headings) !important;
+        background-color: unset !important;
     }
 
     p {

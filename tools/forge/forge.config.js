@@ -100,7 +100,7 @@ module.exports = {
             config: {
                 // Fix content-security-policy error when image or video src isn't same origin
                 // Remove 'unsafe-eval' to get rid of console warning in development mode.
-                devContentSecurityPolicy: `default-src 'self' 'unsafe-inline' data: https://*.responsivevoice.org/; script-src 'self' 'unsafe-inline' data: https://*.responsivevoice.org/`,
+                devContentSecurityPolicy: `default-src 'self' 'unsafe-inline' data: https://*.responsivevoice.org/ https://giscus.app/; script-src 'self' 'unsafe-inline' data: https://*.responsivevoice.org/ https://giscus.app/`,
                 // Ports
                 port: 3000, // Webpack Dev Server port
                 loggerPort: 9000, // Logger port

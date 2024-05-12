@@ -77,6 +77,7 @@
         "webpack": "5.91.0"
     },
     "dependencies": {
+        "@giscus/react": "^3.0.0",
         "@mantine/colors-generator": "^7.9.0",
         "@mantine/core": "7.9.0",
         "@mantine/dropzone": "7.9.0",

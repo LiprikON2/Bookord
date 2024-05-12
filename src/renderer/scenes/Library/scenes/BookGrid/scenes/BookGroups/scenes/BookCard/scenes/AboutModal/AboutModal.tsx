@@ -1,17 +1,11 @@
 import React from "react";
 import {
-    Text,
     Container,
-    Group,
     Modal,
     Paper,
     rem,
     ThemeIcon,
-    Progress,
-    Badge,
     ScrollArea,
-    Anchor,
-    Skeleton,
     Divider,
     CloseButton,
 } from "@mantine/core";
@@ -19,7 +13,7 @@ import { IconNotebook } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
 
 import { BookKey, useBookReadStore, useBookStore, useBookViewStore } from "~/renderer/stores";
-import { Skeletonize } from "~/renderer/components";
+import { Giscus, Skeletonize } from "~/renderer/components";
 import { DatesGroup, DescriptionGroup, ProgressGroup, TagsGroup, TitleGroup } from "./components";
 import classes from "./AboutModal.module.css";
 

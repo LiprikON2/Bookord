@@ -117,7 +117,7 @@ if (!rootElement.innerHTML) {
     const root = createRoot(rootElement);
     root.render(
         <>
-            <TanStackRouterDevtools router={router} position="bottom-right" />
+            {/* <TanStackRouterDevtools router={router} position="bottom-right" /> */}
             <RouterProvider router={router} />
         </>
     );

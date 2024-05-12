@@ -28,6 +28,7 @@ export type LayoutMarkup = {
     navbarTopSection: React.ReactNode;
     getAsideMarkup: () => SidebarMarkup;
     asideTopSection: React.ReactNode;
+    asideBottomSection: React.ReactNode;
     scrollArea: boolean;
 };
 
@@ -59,6 +60,7 @@ export const AppShell = observer(({ layoutMarkup, children }: AppShellProps) => 
             </MantineAppShell.Header>
             <MantineAppShell.Navbar>
                 <Sidebar
+                    position="left"
                     topSection={layoutMarkup.navbarTopSection}
                     getMarkup={layoutMarkup.getNavbarMarkup}
                     onChangeTab={mobileCloseNavbar}
@@ -69,10 +71,13 @@ export const AppShell = observer(({ layoutMarkup, children }: AppShellProps) => 
             </MantineAppShell.Navbar>
             <MantineAppShell.Aside>
                 <Sidebar
+                    position="right"
                     topSection={layoutMarkup.asideTopSection}
                     getMarkup={layoutMarkup.getAsideMarkup}
                     onChangeTab={mobileCloseAside}
-                />
+                >
+                    {layoutMarkup.asideBottomSection}
+                </Sidebar>
             </MantineAppShell.Aside>
             <MantineAppShell.Main>
                 {openedNavbar && isMobile && (

@@ -17,6 +17,7 @@ const libraryLayoutMarkup: LayoutMarkup = {
     getAsideMarkup: () => [],
     asideTopSection: null,
     scrollArea: true,
+    asideBottomSection: null,
 };
 
 export const LayoutLibrary = observer(() => {

@@ -69,7 +69,7 @@ export const Root = observer(() => {
         "Light colors",
     ]);
 
-    // TODO don't affect dark gray colors with light setting and vice versa
+    // TODO don't affect gray colors while theme is dark and vice versa. (problem: useColorScheme relies on MantineProvider)
     const isAccentOverriden = !accentColorSetting.disabled && isValidHex(accentColorSetting.value);
     const isDarkOverriden = !darkColorSetting.disabled && isValidHex(darkColorSetting.value);
     const isLightOverriden = !lightColorSetting.disabled && isValidHex(lightColorSetting.value);

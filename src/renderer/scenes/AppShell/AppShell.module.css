@@ -67,3 +67,12 @@
         padding-right: 0;
     }
 }
+.aside {
+    padding-inline: var(--mantine-spacing-sm);
+    padding-block: var(--mantine-spacing-md);
+    padding-top: calc(var(--mantine-spacing-sm) / 2);
+
+    @media (min-width: $mantine-breakpoint-sm) {
+        padding-left: 0;
+    }
+}

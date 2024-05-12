@@ -1,4 +1,5 @@
 export * from "./DetailedTitle";
+export * from "./Giscus";
 export * from "./Icons";
 export * from "./LanguagePicker";
 export * from "./Skeletonize";

@@ -1,5 +1,5 @@
 import React from "react";
-import { Stack, Tabs } from "@mantine/core";
+import { Group, Stack, Tabs } from "@mantine/core";
 import { type ToOptions } from "@tanstack/react-router";
 import { type Icon } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
@@ -37,6 +37,7 @@ export type SidebarMarkup = {
 }[];
 
 interface SidebarProps {
+    position?: "left" | "right";
     getMarkup: (openedBookRecords: BookStateOpened[]) => SidebarMarkup;
     topSection?: React.ReactNode;
     onChangeTab: () => void;
@@ -45,7 +46,7 @@ interface SidebarProps {
 
 // TODO consider using another router (<Outlet/>) to render Sidebar tabs' content
 export const Sidebar = observer(
-    ({ getMarkup, topSection, onChangeTab, children }: SidebarProps) => {
+    ({ position = "left", getMarkup, topSection, onChangeTab, children }: SidebarProps) => {
         const bookStore = useBookStore();
 
         const markup = getMarkup(bookStore.getBookStateOpened());
@@ -89,7 +90,10 @@ export const Sidebar = observer(
                         </Tabs.Panel>
                     ))}
                 </Tabs>
-                <Bottom>{children}</Bottom>
+
+                <Group className={classes.bottom} data-position={position} mt="xs">
+                    {children}
+                </Group>
             </>
         );
     }

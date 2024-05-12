@@ -3,7 +3,7 @@ import { Outlet } from "@tanstack/react-router";
 import { IconBookmarks, IconList, IconSpeakerphone } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
 
-import { Toc, AppShell, LayoutMarkup, TextToSpeech, Bookmarks } from "~/renderer/scenes";
+import { Toc, AppShell, LayoutMarkup, TextToSpeech, Bookmarks, Comments } from "~/renderer/scenes";
 import { getHomeMarkup } from "./sharedLayoutMarkup";
 
 const readingLayoutMarkup: LayoutMarkup = {
@@ -37,8 +37,15 @@ const readingLayoutMarkup: LayoutMarkup = {
             innerTabs: [],
             Component: TextToSpeech,
         },
+        // {
+        //     name: "Comments",
+        //     Icon: IconMessages,
+        //     innerTabs: [],
+        //     Component: Comments,
+        // },
     ],
     asideTopSection: null,
+    asideBottomSection: <Comments />,
 
     scrollArea: false,
 };

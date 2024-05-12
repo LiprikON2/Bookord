@@ -20,7 +20,7 @@ declare const APP_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 export type MainWindow = BrowserWindow & { watcher?: Watcher };
 
-let mainWindow: MainWindow;
+export let mainWindow: MainWindow;
 
 /**
  * Create Application Window

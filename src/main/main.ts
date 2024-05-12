@@ -1,5 +1,7 @@
-import { app, BrowserWindow, session } from "electron";
-import { createMainWindow } from "./mainWindow";
+import { app, BrowserWindow, dialog, session, shell } from "electron";
+import { createMainWindow, mainWindow } from "./mainWindow";
+
+import { getCustomProtocol, handleOauth, registerCustomProtocol } from "./utils";
 
 // Electron Forge automatically creates it
 declare const APP_WINDOW_WEBPACK_ENTRY: string;
@@ -10,12 +12,42 @@ declare const APP_WINDOW_WEBPACK_ENTRY: string;
 /** Handle creating/removing shortcuts on Windows when installing/uninstalling. */
 if (require("electron-squirrel-startup")) app.quit();
 
-/**
- * This method will be called when Electron has finished
- * initialization and is ready to create browser windows.
- * Some APIs can only be used after this event occurs.
- */
-app.on("ready", createMainWindow);
+registerCustomProtocol();
+
+// ref: https://www.electronjs.org/docs/latest/tutorial/launch-app-from-url-in-another-app
+if (process.platform !== "darwin") {
+    const gotTheLock = app.requestSingleInstanceLock();
+    if (!gotTheLock) {
+        app.quit();
+    } else {
+        app.on("second-instance", (event, commandLine, workingDirectory) => {
+            // Someone tried to run a second instance, we should focus our window.
+            if (mainWindow) {
+                if (mainWindow.isMinimized()) mainWindow.restore();
+                mainWindow.focus();
+            }
+            const url = commandLine.pop();
+            handleOauth(url);
+        });
+
+        /**
+         * This method will be called when Electron has finished
+         * initialization and is ready to create browser windows.
+         * Some APIs can only be used after this event occurs.
+         */
+        app.on("ready", createMainWindow);
+    }
+} else {
+    /**
+     * This method will be called when Electron has finished
+     * initialization and is ready to create browser windows.
+     * Some APIs can only be used after this event occurs.
+     */
+    app.on("ready", createMainWindow);
+
+    // Handle the protocol on macos.
+    app.on("open-url", (event, url) => handleOauth(url));
+}
 
 /**
  * Emitted when the application is activated. Various actions can
@@ -39,8 +71,19 @@ app.on("web-contents-created", (event, contents) => {
      * https://www.electronjs.org/docs/latest/tutorial/security#13-disable-or-limit-navigation
      */
     contents.on("will-navigate", (contentsEvent, navigationUrl) => {
-        console.log("Attempted to navigate to url:", navigationUrl);
-        contentsEvent.preventDefault();
+        console.log("\nAttempted to navigate to url:", navigationUrl, "\n");
+
+        const whitelist = ["giscus.app", "github.com", "guides.github.com"];
+        const url = new URL(navigationUrl);
+
+        if (url.hostname === "giscus.app") {
+            // Change giscus' redirect param to deep link to the app
+            url.searchParams.set("redirect_uri", getCustomProtocol());
+            contentsEvent.preventDefault();
+        }
+
+        if (whitelist.includes(url.hostname)) shell.openExternal(url.toString());
+        // contentsEvent.preventDefault();
     });
 
     /**
@@ -48,7 +91,7 @@ app.on("web-contents-created", (event, contents) => {
      * https://www.electronjs.org/docs/latest/tutorial/security#13-disable-or-limit-navigation
      */
     contents.on("will-redirect", (contentsEvent, navigationUrl) => {
-        console.log("Attempted to redirect to url:", navigationUrl);
+        console.log("\nAttempted to redirect to url:", navigationUrl, "\n");
         contentsEvent.preventDefault();
     });
 
@@ -57,7 +100,13 @@ app.on("web-contents-created", (event, contents) => {
      * https://www.electronjs.org/docs/latest/tutorial/security#13-disable-or-limit-navigation
      */
     contents.setWindowOpenHandler(({ url }) => {
-        console.log("Attempted to open url:", url);
+        console.log("\nAttempted to open url in a new window:", url, "\n");
+
+        const whitelist = ["giscus.app", "github.com", "guides.github.com"];
+        const domain = new URL(url).hostname;
+
+        if (whitelist.includes(domain)) shell.openExternal(url);
+
         return { action: "deny" };
     });
 
@@ -66,7 +115,7 @@ app.on("web-contents-created", (event, contents) => {
      * https://www.electronjs.org/docs/latest/tutorial/security#12-verify-webview-options-before-creation
      */
     contents.on("will-attach-webview", (event, webPreferences, params) => {
-        console.log("Attempted to create webview");
+        console.log("\nAttempted to create webview\n");
         event.preventDefault();
     });
 
@@ -76,7 +125,9 @@ app.on("web-contents-created", (event, contents) => {
      */
     session.defaultSession.webRequest.onHeadersReceived(
         // https://texttospeech.responsivevoice.org/
-        { urls: ["*://*.responsivevoice.org/*"] },
+        {
+            urls: ["*://*.responsivevoice.org/*" /* "*://giscus.app/*" */],
+        },
         (details, callback) => {
             details.responseHeaders["Access-Control-Allow-Origin"] = [
                 new URL(APP_WINDOW_WEBPACK_ENTRY).host,

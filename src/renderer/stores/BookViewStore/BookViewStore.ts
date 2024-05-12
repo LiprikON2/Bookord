@@ -453,7 +453,7 @@ export class BookViewStore {
             { label: "Recent", value: "recent" },
             { label: "Added", value: "added" },
             { label: "Author", value: "author" },
-            { label: "Published", value: "publishYears" },
+            { label: "Year", value: "publishYears" },
         ];
     }
 
@@ -543,11 +543,11 @@ export class BookViewStore {
 
     get sortByNames() {
         return [
-            { label: "Title", value: "title" },
             { label: "Recent", value: "recent" },
+            { label: "Title", value: "title" },
             // { label: "Added", value: "added" },
             // { label: "Author", value: "author" },
-            { label: "Published", value: "publishYears" },
+            { label: "Year", value: "publishYears" },
         ];
     }
 }
