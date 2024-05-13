@@ -89,7 +89,7 @@ app.on("web-contents-created", (event, contents) => {
         }
 
         if (whitelist.includes(url.hostname)) shell.openExternal(url.toString());
-        // contentsEvent.preventDefault();
+        contentsEvent.preventDefault();
     });
 
     /**
@@ -138,6 +138,7 @@ app.on("web-contents-created", (event, contents) => {
             console.log("onHeadersReceived", domain);
 
             if (domain === "giscus.app") {
+                // TODO handle gicus header `frame-ancestors * null` properly
                 console.log("deleting csp for giscus");
                 delete details.responseHeaders["content-security-policy"];
                 // details.responseHeaders["Content-Security-Policy"] = [

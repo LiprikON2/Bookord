@@ -31,8 +31,8 @@ const debounceSetSetting = _.debounce(
     (settingKeyList: string[], key: string, value: any) => {
         instantSetSetting(settingKeyList, key, value);
     },
-    250,
-    { maxWait: 250 }
+    100,
+    { maxWait: 100 }
 );
 
 export const setSetting = action(

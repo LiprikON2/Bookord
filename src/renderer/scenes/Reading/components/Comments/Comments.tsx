@@ -39,6 +39,7 @@ export const Comments = observer(({}: CommentsProps) => {
                         Discussion for {giscusTitle}
                     </Text>
                 }
+                keepMounted
                 scrollAreaComponent={ScrollArea.Autosize}
                 position="right"
                 withCloseButton={false}

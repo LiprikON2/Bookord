@@ -14,7 +14,7 @@ export const style = /*css*/ `
         /* font-size: var(--fs-book-global) !important; */
     }
 
-    :any-link {
+    :any-link, :any-link * {
         color: var(--mantine-color-anchor) !important;
     }
 

@@ -72,7 +72,7 @@ export const settingsMarkup: SettingsMarkup = [
                 >
                     here
                 </Anchor>
-                . It lasts for a year.
+                . It stays valid for a year.
             </>
         ),
         placeholder: "Enter your Oauth token here",
