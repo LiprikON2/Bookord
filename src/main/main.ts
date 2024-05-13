@@ -66,6 +66,13 @@ app.on("activate", () => {
 });
 
 app.on("web-contents-created", (event, contents) => {
+    const whitelist = [
+        "giscus.app",
+        "github.com",
+        "guides.github.com",
+        "oauth.yandex.com",
+        "yandex.cloud",
+    ];
     /**
      * URL navigation
      * https://www.electronjs.org/docs/latest/tutorial/security#13-disable-or-limit-navigation
@@ -73,7 +80,6 @@ app.on("web-contents-created", (event, contents) => {
     contents.on("will-navigate", (contentsEvent, navigationUrl) => {
         console.log("\nAttempted to navigate to url:", navigationUrl, "\n");
 
-        const whitelist = ["giscus.app", "github.com", "guides.github.com"];
         const url = new URL(navigationUrl);
 
         if (url.hostname === "giscus.app") {
@@ -102,7 +108,6 @@ app.on("web-contents-created", (event, contents) => {
     contents.setWindowOpenHandler(({ url }) => {
         console.log("\nAttempted to open url in a new window:", url, "\n");
 
-        const whitelist = ["giscus.app", "github.com", "guides.github.com"];
         const domain = new URL(url).hostname;
 
         if (whitelist.includes(domain)) shell.openExternal(url);

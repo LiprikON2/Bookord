@@ -1,88 +1,9 @@
-import React, { useState } from "react";
-import { Paper, Text, Title, Button, Group, rem, Modal, Container } from "@mantine/core";
-import {
-    IconBaselineDensityMedium,
-    IconBaselineDensitySmall,
-    IconRobot,
-} from "@tabler/icons-react";
-import { useQuery } from "@tanstack/react-query";
+import React from "react";
+import { Title, Group, rem, Modal } from "@mantine/core";
+import { IconRobot } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
 
-import { LanguagePicker } from "~/renderer/components";
-import { useSettingsStore } from "~/renderer/stores";
-import flags from "~/assets/images/flags/language";
-import context from "~/renderer/ipc/thirdPartyApi";
-import classes from "./SummaryModal.module.css";
-import Markdown from "react-markdown";
-
-const selectLanguageData = [
-    { label: "English", image: flags.en },
-    { label: "Russian", image: flags.ru },
-];
-const selectLengthData = [
-    { label: "Short", image: "", Icon: IconBaselineDensityMedium },
-    { label: "Long", image: "", Icon: IconBaselineDensitySmall },
-];
-
-type Language = "English" | "Russian";
-type TextLength = "Long" | "Short";
-
-const makePrompt = (title: string, authors: string, language: Language, length: TextLength) => {
-    if (language === "English") {
-        let lengthPrompt;
-        if (length === "Long") {
-            lengthPrompt = "Summary must be around 150 words or 2 paragraphs.";
-        } else if (length === "Short") {
-            lengthPrompt = "Summary must be around 50 words or 3-4 paragraphs.";
-        } else {
-            throw Error(`Length ${length} is not recognized`);
-        }
-        return `Make a short summary in English of a book called "${title}" by "${authors}". Use new lines, denoted by "\n". ${lengthPrompt}`;
-    } else if (language === "Russian") {
-        let lengthPrompt;
-        if (length === "Long") {
-            lengthPrompt = "Краткое содержание должно быть около 150 слов или 2 абзаца.";
-        } else if (length === "Short") {
-            lengthPrompt = "Краткое содержание должно быть около 50 слов или 3-4 абзаца.";
-        } else {
-            throw Error(`Length ${length} is not recognized`);
-        }
-        return `Сделай краткое содержание для книги "${title}" от "${authors}". Испольуй переходы на новые строки обозначаемые "\n". ${lengthPrompt}`;
-    } else {
-        throw Error(`Language ${language} is not recognized`);
-    }
-};
-
-const makeSystemPrompt = (language: Language, length: TextLength) => {
-    if (language === "English") {
-        let prompt = `Make summaries about books based on provided titles and authors. Use new lines, denoted by "\\n" (unicode newline character). Use markdown to format the response. `;
-        if (length === "Long") {
-            prompt += "Recap must be around 150 words or 2 paragraphs. ";
-        } else if (length === "Short") {
-            prompt += "Recap must be around 50 words or 3-4 paragraphs. ";
-        }
-        return prompt.trim();
-    } else if (language === "Russian") {
-        let prompt = `Создавай краткие пересказы о книгах на основе предоставленных названий и авторах. Используй переходы на новые строки, обозначаемые "\\n" (юникод символом новой строки). Используй маркдаун чтобы оформить ответ. `;
-        if (length === "Long") {
-            prompt += "Краткое содержание должно быть около 150 слов или 2 абзаца. ";
-        } else if (length === "Short") {
-            prompt += "Краткое содержание должно быть около 50 слов или 3-4 абзаца. ";
-        }
-        return prompt.trim();
-    }
-};
-
-const makeUserPrompt = (bookTitle: string, bookAuthor: string, language: Language) => {
-    if (language === "English") {
-        return `Make a short summary in English of a book called "${bookTitle}" by "${bookAuthor}"`;
-    } else if (language === "Russian") {
-        return `Сделай краткое содержание для книги "${bookTitle}" от "${bookAuthor}"`;
-    }
-};
-
-const yandexIamTokenSettingKeyList = ["General", "API", "AI", "YandexGPT API IAM token"];
-const yandexFolderIdSettingKeyList = ["General", "API", "AI", "YandexGPT API folder ID"];
+import { SummaryBox } from "./components";
 
 interface SummaryModalProps {
     getTitle: () => string;
@@ -94,43 +15,7 @@ interface SummaryModalProps {
 // TODO persist summaries https://tanstack.com/query/v4/docs/react/plugins/persistQueryClient
 export const SummaryModal = observer(
     ({ opened = false, getTitle, getAuthor, onClose }: SummaryModalProps) => {
-        const [selectedLang, setSelectedLang] = useState(selectLanguageData[0]);
-        const [selectedLen, setSelectedLen] = useState(selectLengthData[0]);
-
-        const { getSetting } = useSettingsStore();
-
         const title = getTitle();
-        const authors = getAuthor();
-
-        const { data, isPending, error, isFetching, isSuccess, refetch } = useQuery({
-            queryKey: [
-                "yandexGpt",
-                selectedLang.label,
-                selectedLen.label,
-                title,
-                authors,
-                yandexIamTokenSettingKeyList,
-                yandexFolderIdSettingKeyList,
-            ] as [string, Language, TextLength, string, string, string[], string[]],
-            queryFn: ({ queryKey: [_, language, length, title, authors] }) => {
-                const systemPrompt = makeSystemPrompt(language, length);
-                const userPrompt = makeUserPrompt(title, authors, language);
-
-                const yandexIamToken = getSetting(yandexIamTokenSettingKeyList).value;
-                const yandexFolderId = getSetting(yandexFolderIdSettingKeyList).value;
-                return context.apiYandexgpt(
-                    systemPrompt,
-                    userPrompt,
-                    yandexIamToken,
-                    yandexFolderId
-                );
-            },
-            enabled: false,
-            refetchOnMount: false,
-            refetchOnWindowFocus: false,
-            refetchOnReconnect: false,
-            retry: false,
-        });
 
         return (
             <Modal
@@ -156,33 +41,7 @@ export const SummaryModal = observer(
                 opened={opened}
                 onClose={onClose}
             >
-                <Container p="lg" h="100%">
-                    <Group mb="md">
-                        <Button size="md" onClick={() => refetch()}>
-                            Generate
-                        </Button>
-                        <LanguagePicker
-                            data={selectLanguageData}
-                            selected={selectedLang}
-                            setSelected={setSelectedLang}
-                        />
-                        <LanguagePicker
-                            data={selectLengthData}
-                            selected={selectedLen}
-                            setSelected={setSelectedLen}
-                        />
-                    </Group>
-                    <Paper py="xl" px="md" classNames={{ root: classes.paperRoot }}>
-                        {isPending &&
-                            !isFetching &&
-                            `Press 'generate' to generate a ${selectedLen.label.toLowerCase()} summary in ${
-                                selectedLang.label
-                            } for the "${title}".`}
-                        {isFetching && "Generating..."}
-                        {error && <Text c="red">{"An error has occurred: " + error.message}</Text>}
-                        {isSuccess && !isFetching && <Markdown>{data}</Markdown>}
-                    </Paper>
-                </Container>
+                <SummaryBox getTitle={getTitle} getAuthor={getAuthor} />
             </Modal>
         );
     }

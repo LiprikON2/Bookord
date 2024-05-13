@@ -1,5 +1,5 @@
 import React from "react";
-import { ColorInput, PasswordInput, Switch, TextInput } from "@mantine/core";
+import { Anchor, Code, ColorInput, PasswordInput, Switch, TextInput } from "@mantine/core";
 import { type SettingsMarkup } from "~/renderer/scenes/Settings";
 import {
     IconAdjustments,
@@ -61,9 +61,21 @@ export const settingsMarkup: SettingsMarkup = [
         canBeDisabled: false,
     },
     {
-        label: "YandexGPT API IAM token",
-        description: "IAM token for Yandex account",
-        placeholder: "Enter your IAM token here",
+        label: "Yandex Cloud Oauth Token",
+        description: (
+            <>
+                You can get it{" "}
+                <Anchor
+                    inherit
+                    href="https://oauth.yandex.com/authorize?response_type=token&client_id=1a6990aa636648e9b2ef855fa7bec2fb"
+                    target="_blank"
+                >
+                    here
+                </Anchor>
+                . It lasts for a year.
+            </>
+        ),
+        placeholder: "Enter your Oauth token here",
         hoverDescription: "",
         tabHeading: "General",
         tab: "API",
@@ -74,9 +86,23 @@ export const settingsMarkup: SettingsMarkup = [
         canBeDisabled: false,
     },
     {
-        label: "YandexGPT API folder ID",
-        description:
-            "ID of the folder for which your account has the ai.languageModels.user or higher role",
+        label: "Yandex Cloud folder ID",
+        description: (
+            <>
+                ID of the folder for which your account has the{" "}
+                <Code c="dimmed">ai.languageModels.user</Code>.
+                <br />
+                You can create it by following 3 steps in{" "}
+                <Anchor
+                    inherit
+                    href="https://yandex.cloud/en/docs/foundation-models/quickstart/yandexgpt#before-begin"
+                    target="_blank"
+                >
+                    getting started
+                </Anchor>
+                .
+            </>
+        ),
         placeholder: "Enter your folder ID here",
         hoverDescription: "",
         tabHeading: "General",

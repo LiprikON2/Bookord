@@ -15,6 +15,9 @@ const thirdPartyApiContext = {
             yandexFolderId
         );
     },
+    apiYandexCloudIamAuth(oauthToken: string): Promise<string> {
+        return ipcRenderer.invoke("api-yandex-cloud-iam-auth", oauthToken);
+    },
 
     apiDeepl(text: string, targetLang: string, apiKey: string): Promise<string> {
         return ipcRenderer.invoke("api-deepl", text, targetLang, apiKey);

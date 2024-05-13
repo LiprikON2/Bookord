@@ -49,42 +49,51 @@ export const registerThirdPartyApiIpc = (
         }
     );
 
-    ipcMain.handle("api-deepl", async (e, text: string, targetLang: string, apiKey: string) => {
+    ipcMain.handle("api-yandex-cloud-iam-auth", (e, oauth: string) => {
         if (!validateSender(e)) return null;
 
         return axios
-            .post(
-                "https://api-free.deepl.com/v2/translate",
-                {
-                    text: [text],
-                    target_lang: targetLang,
-                },
-                {
-                    headers: {
-                        Authorization: `DeepL-Auth-Key ${apiKey}`,
-                        "Content-Type": "application/json",
+            .post("https://iam.api.cloud.yandex.net/iam/v1/tokens", {
+                yandexPassportOauthToken: oauth,
+            })
+            .then((res) => res.data.iamToken);
+    }),
+        ipcMain.handle("api-deepl", async (e, text: string, targetLang: string, apiKey: string) => {
+            if (!validateSender(e)) return null;
+
+            return axios
+                .post(
+                    "https://api-free.deepl.com/v2/translate",
+                    {
+                        text: [text],
+                        target_lang: targetLang,
                     },
-                    validateStatus: (status) => {
-                        return status < 500; // Resolve only if the status code is less than 500
-                    },
-                    timeout: 4000,
-                }
-            )
-            .then((res) => res.data.translations[0].text)
-            .catch((error) => {
-                if (error.response) {
-                    // The request was made and the server responded with a status code
-                    // that falls out of the range of 2xx
-                    return "Unknown";
-                } else if (error.request) {
-                    // The request was made but no response was received
-                    return "No response. Check your internet connection.";
-                } else {
-                    // Something happened in setting up the request that triggered an Error
-                    return "Error. Did you enter correct DeepL API key in the settings?";
-                }
-            });
-    });
+                    {
+                        headers: {
+                            Authorization: `DeepL-Auth-Key ${apiKey}`,
+                            "Content-Type": "application/json",
+                        },
+                        validateStatus: (status) => {
+                            return status < 500; // Resolve only if the status code is less than 500
+                        },
+                        timeout: 4000,
+                    }
+                )
+                .then((res) => res.data.translations[0].text)
+                .catch((error) => {
+                    if (error.response) {
+                        // The request was made and the server responded with a status code
+                        // that falls out of the range of 2xx
+                        return "Unknown";
+                    } else if (error.request) {
+                        // The request was made but no response was received
+                        return "No response. Check your internet connection.";
+                    } else {
+                        // Something happened in setting up the request that triggered an Error
+                        return "Error. Did you enter correct DeepL API key in the settings?";
+                    }
+                });
+        });
 
     // ref: https://stackoverflow.com/a/48983463/10744339
     ipcMain.handle("api-dictionary", async (e, text: string, targetLang: string) => {

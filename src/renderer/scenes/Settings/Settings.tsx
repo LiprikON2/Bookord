@@ -27,7 +27,7 @@ export type InputTypes = CheckedInputTypes | ValueInputTypes;
 interface SettingMarkup {
     label: string;
     placeholder: string;
-    description: string;
+    description: string | React.ReactNode;
     hoverDescription: string;
     canBeDisabled: boolean;
 
