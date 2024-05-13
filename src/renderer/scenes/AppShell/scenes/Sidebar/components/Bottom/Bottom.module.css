@@ -1,9 +1,0 @@
-.root {
-    & > :first-child {
-        flex-grow: 1;
-    }
-
-    @media (min-width: $mantine-breakpoint-sm) {
-        margin-right: var(--mantine-spacing-sm);
-    }
-}

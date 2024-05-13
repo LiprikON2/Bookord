@@ -307,6 +307,10 @@ export default class BookWebComponent extends HTMLElement {
         ];
     }
 
+    get contentText() {
+        return this.contentElem.textContent;
+    }
+
     get contentChildren() {
         return [...this.contentElem.children];
     }

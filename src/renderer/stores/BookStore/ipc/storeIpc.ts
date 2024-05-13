@@ -68,4 +68,20 @@ export const registerStoreIpc = (
         );
         return;
     });
+
+    ipcMain.handle("get-text-analysed", async (e, text: string) => {
+        if (!validateSender(e)) return null;
+
+        const { port1, port2 } = new MessageChannelMain();
+        const textAnalysisProcess = path.resolve(__dirname, "../forks/textAnalysisProcess.mjs");
+
+        const child = utilityProcess.fork(textAnalysisProcess, [], {
+            serviceName: "Book text analysis utility process",
+        });
+
+        child.postMessage({ text }, [port1]);
+        console.info("[main] request sent");
+
+        return getResponse(child);
+    });
 };

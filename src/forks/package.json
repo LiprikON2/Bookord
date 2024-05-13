@@ -28,6 +28,7 @@
     },
     "dependencies": {
         "@liprikon/epub-parser": "^2.1.5",
+        "compromise": "^14.13.0",
         "lodash": "^4.17.21"
     }
 }

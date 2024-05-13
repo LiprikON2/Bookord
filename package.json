@@ -77,6 +77,8 @@
         "webpack": "5.91.0"
     },
     "dependencies": {
+        "@dicebear/collection": "^8.0.1",
+        "@dicebear/core": "^8.0.1",
         "@giscus/react": "^3.0.0",
         "@mantine/colors-generator": "^7.9.0",
         "@mantine/core": "7.9.0",
@@ -107,6 +109,7 @@
         "react": "18.2.0",
         "react-dom": "18.2.0",
         "react-idle-timer": "^5.7.2",
+        "react-markdown": "^9.0.1",
         "react-tooltip": "^5.26.4"
     }
 }

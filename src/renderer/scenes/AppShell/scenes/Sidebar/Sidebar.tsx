@@ -5,7 +5,7 @@ import { type Icon } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
 
 import { BookKey, BookStateOpened, useBookStore } from "~/renderer/stores";
-import { Bottom, PanelContent, PanelTabsContent, SegmentedTabList } from "./components";
+import { PanelContent, PanelTabsContent, SegmentedTabList } from "./components";
 import classes from "./Sidebar.module.css";
 
 export type Params = ToOptions["params"] & { bookKey?: BookKey };

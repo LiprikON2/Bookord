@@ -1,6 +1,7 @@
 export * from "./Bookmarks";
 export * from "./BookSkeleton";
 export * from "./BookUi";
+export * from "./Characters";
 export * from "./Comments";
 export * from "./DictionaryTooltip";
 export * from "./TextToSpeech";

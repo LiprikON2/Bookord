@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { action, makeAutoObservable, runInAction, when } from "mobx";
+import { action, makeAutoObservable, runInAction, toJS, when } from "mobx";
 
 import sampleCover from "~/assets/images/sampleBookCover.webp";
 import fileOperationsContext from "~/renderer/ipc/fileOperations";
@@ -8,6 +8,7 @@ import { RootStore } from "../RootStore";
 import { autosave } from "../utils";
 import { RaceConditionGuard } from "./utils";
 import { Bookmark } from "../BookReadStore";
+import context from "./ipc/storeContextApi";
 
 export type BookState = {
     isInStorage: boolean;
@@ -190,6 +191,29 @@ export interface BookInteractionState {
 
 export type BookmarkTypes = keyof BookInteractionState["bookmarks"];
 
+interface Offset {
+    index: number;
+    start: number;
+    length: number;
+    string: string;
+    trimmedStart: number;
+    trimmedString: string;
+    trimmedLength: number;
+    sentenceIndex: number;
+    context: string;
+}
+export interface People {
+    uniqueNames: string[];
+    nameOffsets: { [normal: string]: Offset[] };
+    displayNames: { [normal: string]: string };
+}
+
+interface AnalysisEntry {
+    sectionIndex: number;
+    isAnalysisRequested: boolean;
+    people: People | null;
+}
+
 /**
  * Domain store
  *
@@ -214,6 +238,7 @@ export class BookStore {
      */
     interactionRecords = new Map<BookKey, BookInteractionState>();
 
+    textAnalysisRecords = new Map<BookKey, AnalysisEntry[]>();
     // TODO split:
     //
     // fileMetadataRecords = new Map<BookKey, BookMetadata>();
@@ -255,7 +280,7 @@ export class BookStore {
 
     private async save(store: BookStoreData) {
         if (!this.ready) await when(() => this.ready);
-        this.rootStore.db.table(this.constructor.name).put({ store }, store.id);
+        this.rootStore.db.table("BookStore").put({ store }, store.id);
     }
 
     private setReady() {
@@ -445,6 +470,68 @@ export class BookStore {
     setBookContent(bookKey: BookKey, content: BookContent) {
         this.contentRecords.set(bookKey, content);
     }
+
+    getTextAnalysis(bookKey: BookKey): AnalysisEntry[] {
+        const textAnalysisRecord = this.textAnalysisRecords.get(bookKey);
+        if (!textAnalysisRecord) return null;
+
+        return textAnalysisRecord.toSorted((a, b) => a.sectionIndex - b.sectionIndex);
+    }
+    private setTextAnalysis(bookKey: BookKey, analysisRecord: AnalysisEntry[]) {
+        this.textAnalysisRecords.set(bookKey, analysisRecord);
+    }
+
+    addTextAnalysisEntry(bookKey: BookKey, sectionIndex: number, people: People) {
+        this.getTextAnalysis(bookKey)[sectionIndex].people = people;
+    }
+
+    getTextAnalysisProgress(bookKey: BookKey) {
+        const contentState = this.getBookContentState(bookKey);
+        if (contentState.isInitSectionParsed) return 0;
+
+        const textAnalysisRecord = this.getTextAnalysis(bookKey);
+        return (
+            textAnalysisRecord.filter((section) => section.people !== null).length /
+            contentState.sectionNames.length
+        );
+    }
+
+    async requestTextAnalysis(bookKey: BookKey, sectionIndex: number, text: string) {
+        let textAnalysisRecord = this.textAnalysisRecords.get(bookKey);
+        if (!textAnalysisRecord) {
+            const contentState = this.getBookContentState(bookKey);
+            if (!contentState.isInitSectionParsed) return;
+
+            this.setTextAnalysis(
+                bookKey,
+                contentState.sectionNames.map((_, sectionIndex) => ({
+                    sectionIndex,
+                    isAnalysisRequested: false,
+                    people: null,
+                }))
+            );
+            textAnalysisRecord = this.textAnalysisRecords.get(bookKey);
+        }
+        textAnalysisRecord[sectionIndex].isAnalysisRequested = true;
+
+        let people: People = null;
+        if (text !== "") people = await context.getTextAnalysed(text);
+
+        const analysisEntry = {
+            sectionIndex,
+            people,
+        };
+        console.log(
+            "bookKey",
+            bookKey,
+            "sectionIndex",
+            sectionIndex,
+            "analysisEntry",
+            analysisEntry
+        );
+        runInAction(() => this.addTextAnalysisEntry(bookKey, sectionIndex, people));
+    }
+
     setBookContentSection(
         bookKey: BookKey,
         sectionIndex: number,

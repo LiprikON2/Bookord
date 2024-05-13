@@ -1,0 +1,12 @@
+.inner {
+    justify-content: flex-start;
+}
+
+.root {
+    width: 100%;
+}
+
+.icon {
+    width: rem(16);
+    height: rem(16);
+}

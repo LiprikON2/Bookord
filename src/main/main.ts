@@ -126,12 +126,24 @@ app.on("web-contents-created", (event, contents) => {
     session.defaultSession.webRequest.onHeadersReceived(
         // https://texttospeech.responsivevoice.org/
         {
-            urls: ["*://*.responsivevoice.org/*" /* "*://giscus.app/*" */],
+            urls: ["*://*.responsivevoice.org/*", "*://giscus.app/*"],
         },
         (details, callback) => {
-            details.responseHeaders["Access-Control-Allow-Origin"] = [
-                new URL(APP_WINDOW_WEBPACK_ENTRY).host,
-            ];
+            const domain = new URL(details.url).hostname;
+            console.log("onHeadersReceived", domain);
+
+            if (domain === "giscus.app") {
+                console.log("deleting csp for giscus");
+                delete details.responseHeaders["content-security-policy"];
+                // details.responseHeaders["Content-Security-Policy"] = [
+                //     new URL(APP_WINDOW_WEBPACK_ENTRY).host,
+                // ];
+            } else {
+                details.responseHeaders["Access-Control-Allow-Origin"] = [
+                    new URL(APP_WINDOW_WEBPACK_ENTRY).host,
+                ];
+            }
+
             callback({ responseHeaders: details.responseHeaders });
         }
     );

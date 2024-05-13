@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 
-import type { BookContent, BookKey, BookMetadata } from "../..";
+import type { BookContent, BookKey, BookMetadata, People } from "../..";
 
 export type InitContentEvent = {
     bookKey: BookKey;
@@ -19,6 +19,10 @@ const storeContext = {
 
     getParsedContent(fileName: string, initSectionIndex: number): Promise<void> {
         return ipcRenderer.invoke("get-parsed-content", fileName, initSectionIndex);
+    },
+
+    getTextAnalysed(text: string): Promise<People> {
+        return ipcRenderer.invoke("get-text-analysed", text);
     },
 
     handleParsedContentInit(callback: (initContentEvent: InitContentEvent) => void) {

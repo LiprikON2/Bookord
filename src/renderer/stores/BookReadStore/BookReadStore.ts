@@ -5,6 +5,7 @@ import type BookWebComponent from "~/renderer/scenes/Reading/scenes/BookWebCompo
 import type { TocState } from "~/renderer/scenes/Reading/scenes/BookWebComponent";
 import { BookKey, TimeRecord } from "../BookStore";
 import { RootStore } from "../RootStore";
+import { Interface } from "readline/promises";
 
 export interface Bookmark {
     elementIndex: number | null;
@@ -25,6 +26,12 @@ const defaultUiState = {
     nextPage: false,
     prevPage: false,
 };
+
+export interface Person {
+    uniqueName: string;
+    displayName: string;
+    count: number;
+}
 export class BookReadStore {
     rootStore: RootStore;
     bookComponent: BookWebComponent | null = null;
@@ -361,5 +368,77 @@ export class BookReadStore {
         } else {
             return years + " years ago";
         }
+    }
+
+    get textAnalysisProgress() {
+        return this.rootStore.bookStore.getTextAnalysisProgress(this.bookKey);
+    }
+
+    get isTextAnalysisDone() {
+        return this.textAnalysisProgress === 1;
+    }
+
+    get textAnalysis() {
+        return this.rootStore.bookStore.getTextAnalysis(this.bookKey);
+    }
+
+    isSectionAnalysisReady(sectionIndex: number = this.tocState.currentSection) {
+        const textAnalysis = this.rootStore.bookStore.getTextAnalysis(this.bookKey);
+        if (textAnalysis === null) return false;
+        if (textAnalysis[sectionIndex].people === null) return false;
+
+        return true;
+    }
+
+    isSectionAnalysisRequested(sectionIndex: number = this.tocState.currentSection) {
+        const textAnalysis = this.rootStore.bookStore.getTextAnalysis(this.bookKey);
+        return Boolean(textAnalysis?.[sectionIndex]?.isAnalysisRequested);
+    }
+
+    getPersonContextRecords(
+        uniqueName: string,
+        limit = 10,
+        sectionIndex = this.tocState.currentSection
+    ) {
+        const people = this.textAnalysis?.[sectionIndex]?.people;
+        if (!people) return null;
+
+        const contexts = people.nameOffsets[uniqueName].map(
+            (nameOffset) => `...${nameOffset.context}...`
+        );
+
+        if (limit === 0 || limit >= contexts.length) return contexts;
+
+        const step = Math.floor(contexts.length / (limit + 1));
+
+        // Select elements with the most distance between them
+        const limitedContext = [];
+        for (let i = 1; i <= limit; i++) {
+            limitedContext.push(contexts[i * step]);
+        }
+
+        return limitedContext;
+    }
+
+    getPeople(sectionIndex = this.tocState.currentSection): Person[] {
+        const people = this.textAnalysis?.[sectionIndex]?.people;
+        if (!people) return [];
+
+        return people.uniqueNames
+            .map((uniqueName) => ({
+                uniqueName,
+                displayName: people.displayNames[uniqueName],
+                count: people.nameOffsets[uniqueName].length,
+            }))
+            .sort((a, b) => b.count - a.count)
+            .filter((person) => person.count > 1);
+    }
+
+    requestTextAnalysis(
+        sectionIndex: number = this.tocState.currentSection,
+        text: string = this.bookComponent?.contentText
+    ) {
+        if (!this.isInitSectionReady) return;
+        this.rootStore.bookStore.requestTextAnalysis(this.bookKey, sectionIndex, text);
     }
 }

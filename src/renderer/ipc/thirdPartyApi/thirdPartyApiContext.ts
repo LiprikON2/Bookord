@@ -1,8 +1,19 @@
 import { ipcRenderer } from "electron";
 
 const thirdPartyApiContext = {
-    apiYandexgpt(prompt: string, yandexIamToken: string, yandexFolderId: string): Promise<string> {
-        return ipcRenderer.invoke("api-yandexgpt", prompt, yandexIamToken, yandexFolderId);
+    apiYandexgpt(
+        systemPrompt: string,
+        userPrompt: string,
+        yandexIamToken: string,
+        yandexFolderId: string
+    ): Promise<string> {
+        return ipcRenderer.invoke(
+            "api-yandexgpt",
+            systemPrompt,
+            userPrompt,
+            yandexIamToken,
+            yandexFolderId
+        );
     },
 
     apiDeepl(text: string, targetLang: string, apiKey: string): Promise<string> {

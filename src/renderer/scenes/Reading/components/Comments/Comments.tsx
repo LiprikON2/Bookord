@@ -43,6 +43,7 @@ export const Comments = observer(({}: CommentsProps) => {
                 position="right"
                 withCloseButton={false}
             >
+                {/* TODO fix floating indicator, move to the right of title*/}
                 <SegmentedControl onChange={toggleMode} data={modes} />
                 <Giscus key={giscusTitle} />
             </Drawer>

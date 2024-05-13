@@ -8,14 +8,20 @@ export const registerThirdPartyApiIpc = (
 ) => {
     ipcMain.handle(
         "api-yandexgpt",
-        (e, prompt: string, yandexIamToken: string, yandexFolderId: string) => {
+        (
+            e,
+            systemPrompt: string,
+            userPrompt: string,
+            yandexIamToken: string,
+            yandexFolderId: string
+        ) => {
             if (!validateSender(e)) return null;
 
             return axios
                 .post(
                     "https://llm.api.cloud.yandex.net/foundationModels/v1/completion",
                     {
-                        modelUri: `gpt://${yandexFolderId}/yandexgpt-lite`,
+                        modelUri: `gpt://${yandexFolderId}/yandexgpt`,
                         completionOptions: {
                             stream: false,
                             temperature: 0.6,
@@ -24,7 +30,11 @@ export const registerThirdPartyApiIpc = (
                         messages: [
                             {
                                 role: "system",
-                                text: prompt,
+                                text: systemPrompt,
+                            },
+                            {
+                                role: "user",
+                                text: userPrompt,
                             },
                         ],
                     },
