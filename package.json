@@ -8,12 +8,11 @@
         "postinstall": "(cd src/forks && npm install)",
         "dev": "cross-env NODE_ENV=development electron-forge start",
         "//": "Packages into executable, then makes installer for it",
-        "package": "electron-forge package && npm run beep",
-        "make": "electron-forge make && npm run beep",
+        "package": "electron-forge package",
+        "make": "electron-forge make",
         "publish": "electron-forge publish",
         "lint": "eslint src/ --ext .ts,.js,.tsx,.jsx",
-        "update": "npx npm-check-updates -i",
-        "beep": "(cd tools/beep && node .)"
+        "update": "npx npm-check-updates -i"
     },
     "keywords": [
         "electron",
