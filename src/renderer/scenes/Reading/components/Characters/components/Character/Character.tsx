@@ -33,7 +33,7 @@ export const Character = observer(({ person }: CharacterProps) => {
                         </Text>
 
                         <Text c="dimmed" size="xs" mt={2}>
-                            {person.count} occurrences
+                            {person.count} mentions
                         </Text>
                     </div>
 
