@@ -2,6 +2,8 @@
 
 [![wakatime](https://wakatime.com/badge/github/LiprikON2/Bookord.svg)](https://wakatime.com/badge/github/LiprikON2/Bookord)
 
+[![Github All Releases](https://img.shields.io/github/downloads/liprikon2/bookord/total.svg)]()
+
 
 
 ![](assets/icons/brand/bookord-logo.svg)
