@@ -64,7 +64,7 @@ module.exports = {
                     // Same as productName
                     // ref: https://github.com/electron-userland/electron-installer-debian/issues/175#issuecomment-1558131497
                     bin: "Bookord",
-                    mimeType: ["x-scheme-handler/electron-fiddle"],
+                    mimeType: ["x-scheme-handler/bookord"],
                 },
             },
         },
@@ -76,7 +76,7 @@ module.exports = {
                 options: {
                     icon: path.resolve("assets/icons/platforms/bookord-circle@4x.png"),
                     bin: "Bookord",
-                    mimeType: ["x-scheme-handler/electron-fiddle"],
+                    mimeType: ["x-scheme-handler/bookord"],
                 },
             },
         },
