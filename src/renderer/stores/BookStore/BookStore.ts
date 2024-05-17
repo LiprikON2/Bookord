@@ -175,10 +175,6 @@ export interface TimeRecord {
     endDate: Date;
     endBookmark: Bookmark;
     progress: number;
-    // durations: {
-    //     isIdle: boolean;
-    //     duration: number;
-    // }[];
 }
 
 export interface BookInteractionState {

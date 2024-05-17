@@ -31,7 +31,7 @@ export const CharacterRecap = observer(
                     <Group p={0}>
                         <IconNotes style={{ width: rem(20), height: rem(20) }} strokeWidth={2.5} />
                         <Title order={1} size="h4" fw={600}>
-                            {`Recap of ${person.displayName} character`}
+                            {`Recap of the ${person.displayName} character`}
                         </Title>
                     </Group>
                 }
