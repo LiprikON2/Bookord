@@ -17,6 +17,13 @@ module.exports = {
         // - DPI suffix support: @1x, @1.25x, @1.33x, @1.4x, @1.5x, @1.8x, @2x, @2.5x, @3x, @4x, and @5x.
         // ref: https://www.electronforge.io/guides/create-and-add-icons
         icon: path.resolve("assets/icons/platforms/bookord-circle"),
+
+        protocols: [
+            {
+                name: "Bookord",
+                schemes: ["bookord"],
+            },
+        ],
     },
     // Forge Makers
     makers: [
@@ -57,6 +64,7 @@ module.exports = {
                     // Same as productName
                     // ref: https://github.com/electron-userland/electron-installer-debian/issues/175#issuecomment-1558131497
                     bin: "Bookord",
+                    mimeType: ["x-scheme-handler/electron-fiddle"],
                 },
             },
         },
@@ -68,6 +76,7 @@ module.exports = {
                 options: {
                     icon: path.resolve("assets/icons/platforms/bookord-circle@4x.png"),
                     bin: "Bookord",
+                    mimeType: ["x-scheme-handler/electron-fiddle"],
                 },
             },
         },
