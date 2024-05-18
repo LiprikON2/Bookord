@@ -10,17 +10,20 @@ export default class StyleLoader {
         styles: BookContent["styles"],
         sectionContent: ArrayElement<BookContent["sections"]>["content"]
     ) {
+        let stylesContent = "";
         const sectionStyles = this.getSectionStyleReferences(sectionContent);
         const inlineStyles = this.getSectionInlineStyles(sectionContent);
 
-        this.styleElem.innerHTML += inlineStyles;
+        stylesContent += inlineStyles;
 
         // Appends all of the referenced styles to the style element
         Object.values(styles).forEach((style) => {
             if (sectionStyles.includes(style.href)) {
-                this.styleElem.innerHTML += style._data;
+                stylesContent += style._data;
             }
         });
+
+        this.styleElem.innerHTML = stylesContent;
     }
 
     /**

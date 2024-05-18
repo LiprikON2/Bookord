@@ -59,6 +59,8 @@ export const style = /*css*/ `
         /* font-size: var(--fs-book-paragraph) !important; */
     }
 
+
+
     .book-container {
         max-width: var(--book-component-width);
         height: 100%;
@@ -66,7 +68,7 @@ export const style = /*css*/ `
         margin: auto;
         overflow: hidden;
     }
-    .book-container > #book-content {
+    #book-content {
         width: 100%;
         height: 100%;
 
@@ -77,19 +79,39 @@ export const style = /*css*/ `
     }
 
 
-    .book-container img {
-        cursor: zoom-in;
+    #book-content img {
+        /* cursor: zoom-in;
 
         display: block !important;
         width: auto !important;
         max-height: 100vh !important;
-        max-width: 100% !important;
+        max-width: 100% !important; */
 
 
         /* To prevent images from spanning multiple columns when they are enabled */
         /* height: 100%;
         object-fit: contain; */
     }
+
+
+    /* Make it so all non-decorative images would take full page */
+    #book-content img:not([alt=""]) {
+        cursor: zoom-in;
+        object-fit: contain;
+
+        display: block !important;
+        height: 100% !important;
+        width: 100% !important;
+    }
+
+    #book-content *:has(img:not([alt=""])) {
+        width: 100% !important;
+    }
+
+    desc {
+        display: none;
+    }
+
 
     ::selection {
         background-color: var(--selection-background-color) !important;

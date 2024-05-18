@@ -2,7 +2,6 @@ import debounce from "lodash/debounce";
 
 import PageCounter from "./components/PageCounter";
 import StyleLoader from "./components/StyleLoader";
-import BookmarkManager from "./components/BookmarkManager";
 import StateManager from "./components/StateManager";
 import { template } from "./components/Template";
 import { BookContent, BookContentState, BookMetadata, Bookmark } from "~/renderer/stores";
@@ -128,7 +127,6 @@ export default class BookWebComponent extends HTMLElement {
         this.componentStyle = getComputedStyle(this.rootElem);
 
         // this.pageCounter = new PageCounter(this);
-        // this.bookmarkManager = new BookmarkManager(this);
         this.styleLoader = new StyleLoader(this.styleElem);
         this.state = new StateManager(this);
 
@@ -249,7 +247,7 @@ export default class BookWebComponent extends HTMLElement {
         this.bookmarkObserver.disconnect();
         this.resetElementVisibilities();
 
-        this.contentChildren.forEach((childElem) => this.bookmarkObserver.observe(childElem));
+        this.contentParagraphs.forEach((childElem) => this.bookmarkObserver.observe(childElem));
     }
 
     private updateFocusableObserver() {
@@ -315,6 +313,10 @@ export default class BookWebComponent extends HTMLElement {
         return [...this.contentElem.children];
     }
 
+    get contentParagraphs() {
+        return [...this.contentElem.querySelectorAll("p")];
+    }
+
     get totalSections() {
         return this?.book?.sectionNames?.length ?? 0;
     }
@@ -378,6 +380,7 @@ export default class BookWebComponent extends HTMLElement {
      */
     private loadContent(sectionContent: ArrayElement<Book["sections"]>["content"]) {
         this.contentElem.innerHTML = "";
+
         // Remove head tag from section
         const headlessSectionContent = sectionContent.slice(1);
         this.recCreateElements(this.contentElem, headlessSectionContent);
