@@ -343,7 +343,7 @@ export class BookStore {
         if (!interactionState) {
             const defaultInteractionState: BookInteractionState = {
                 bookmarks: {
-                    auto: { elementSection: 0, elementIndex: 0 },
+                    auto: { elementSection: 0, elementIndex: 0, elementSelector: null },
                     manual: [],
                 },
                 reading: [],

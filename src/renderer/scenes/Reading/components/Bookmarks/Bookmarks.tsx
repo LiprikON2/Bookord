@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, Stack, Skeleton, Text, rem } from "@mantine/core";
+import { NavLink, Stack, Skeleton, Text, rem, CloseButton } from "@mantine/core";
 import { IconBookmark } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
 import { action } from "mobx";
@@ -15,10 +15,12 @@ interface BookmarksProps {
 export const Bookmarks = observer(({ autoscrollTargetRef }: BookmarksProps) => {
     const bookReadStore = useBookReadStore();
 
-    const navTo = action((sectionId: Structure["sectionId"], elementIndex: number) => {
-        if (!sectionId || !bookReadStore.isReady) return;
-        bookReadStore.bookComponent.navToLink(sectionId, { elementIndex });
-    });
+    const navTo = action(
+        (sectionId: Structure["sectionId"], elementIndex: number, elementSelector: string) => {
+            if (!sectionId || !bookReadStore.isReady) return;
+            bookReadStore.bookComponent.navToLink(sectionId, { elementIndex, elementSelector });
+        }
+    );
 
     if (!bookReadStore.isReady) {
         return <SkeletonSidebar />;
@@ -31,9 +33,8 @@ export const Bookmarks = observer(({ autoscrollTargetRef }: BookmarksProps) => {
             </Text>
         );
     }
-
     return bookReadStore.bookmarks.map(
-        ({ active, sectionId, label, elementIndex, elementSection }) => (
+        ({ active, sectionId, label, elementIndex, elementSelector, elementSection }) => (
             <NavLink
                 key={`${elementSection}-${elementIndex}`}
                 my={2}
@@ -46,11 +47,14 @@ export const Bookmarks = observer(({ autoscrollTargetRef }: BookmarksProps) => {
                     </Stack>
                 }
                 className={classes.navLink}
-                classNames={{ label: classes.label }}
+                classNames={{ label: classes.label, section: classes.section }}
                 label={label}
                 active={active}
                 ref={active ? autoscrollTargetRef : null}
-                onClick={() => navTo(sectionId, elementIndex)}
+                onClick={() => navTo(sectionId, elementIndex, elementSelector)}
+                rightSection={
+                    <CloseButton size="sm" onClick={() => bookReadStore.removeManualBookmark()} />
+                }
             />
         )
     );

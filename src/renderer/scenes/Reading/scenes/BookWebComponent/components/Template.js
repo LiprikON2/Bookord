@@ -9,9 +9,9 @@ export const style = /*css*/ `
     }
     
     :host {
-        font-family: var(--mantine-font-family) !important;
-        color: var(--mantine-color-text) !important;
-        /* font-size: var(--fs-book-global) !important; */
+        font-family: var(--mantine-font-family);
+        color: var(--mantine-color-text);
+        /* font-size: var(--fs-book-global); */
     }
 
     :any-link, :any-link * {
@@ -50,9 +50,12 @@ export const style = /*css*/ `
         /* font-weight: var(--mantine-h6-font-weight) !important; */
     }
 
-    h1, h2, h3, h4, h5, h6 { 
+    h1, h2, h3, h4, h5, h6, h1 *, h2 *, h3 *, h4 *, h5 *, h6 * {
         font-family: var(--mantine-font-family-headings) !important;
+    } 
+    h1, h2, h3, h4, h5, h6, p, h1 *, h2 *, h3 *, h4 *, h5 *, h6 *, p * { 
         background-color: unset !important;
+        color: var(--mantine-color-text) !important;
     }
 
     p {

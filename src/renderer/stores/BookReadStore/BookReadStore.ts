@@ -8,7 +8,10 @@ import { RootStore } from "../RootStore";
 import { Interface } from "readline/promises";
 
 export interface Bookmark {
+    /* Either direct content element index or a paragraph index */
     elementIndex: number | null;
+    /* Selector for a paragraph */
+    elementSelector: string | null;
     elementSection: number;
 }
 
@@ -118,7 +121,7 @@ export class BookReadStore {
     }
 
     load() {
-        const { elementIndex } = this.autobookmark;
+        const { elementIndex, elementSelector } = this.autobookmark;
         const { sectionNames } = this.contentState;
 
         this.bookComponent.loadBook(
@@ -126,7 +129,7 @@ export class BookReadStore {
             toJS(this.metadata),
             this.initSectionIndex,
             sectionNames,
-            { elementIndex }
+            { elementIndex, elementSelector }
         );
     }
     unload() {
@@ -245,12 +248,12 @@ export class BookReadStore {
     get currentManualBookmarks(): Bookmark[] {
         const manual = this.manualBookmarks;
 
-        const currentManuakBookmarks = _.intersectionWith(
+        const currentManualBookmarks = _.intersectionWith(
             manual,
             this.bookmarkablePositions,
             _.isEqual
         );
-        return currentManuakBookmarks;
+        return currentManualBookmarks;
     }
 
     get isManualBookmarked() {

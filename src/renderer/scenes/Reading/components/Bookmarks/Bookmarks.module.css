@@ -25,6 +25,18 @@
     &:not([data-active="true"]):hover {
         border-right: rem(1px) var(--mantine-color-default-border) solid;
     }
+
+    & .section {
+        &[data-position="right"] {
+            visibility: hidden;
+        }
+    }
+    &:hover .section,
+    &[data-active="true"] .section {
+        &[data-position="right"] {
+            visibility: visible;
+        }
+    }
 }
 
 .label {

@@ -94,12 +94,6 @@ export default class BookWebComponent extends HTMLElement {
     //     elementIndex: null,
     // };
 
-    private bestVisibleElement: ElementVisibility = {
-        element: null,
-        intersectionRatio: null,
-        elementIndex: null,
-    };
-
     private elementVisibilites: ElementVisibility[] = [];
 
     /**
@@ -134,17 +128,16 @@ export default class BookWebComponent extends HTMLElement {
         this.resizeObserver.observe(this.rootElem);
 
         this.bookmarkObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                const isVisible = entry.isIntersecting;
-                if (!isVisible) return;
+            entries.forEach(
+                (entry) => {
+                    const isVisible = entry.isIntersecting;
+                    if (!isVisible) return;
 
-                this.updateElementVisibility(entry.target, entry.intersectionRatio);
-
-                if (this.bestVisibleElement.intersectionRatio < entry.intersectionRatio) {
-                    this.setBestVisibleElement(entry.target, entry.intersectionRatio);
-                }
-                this.emitBookmarkPositions();
-            });
+                    this.updateElementVisibility(entry.target, entry.intersectionRatio);
+                    this.emitBookmarkPositions();
+                },
+                { root: this.contentElem }
+            );
         });
         this.focusableObserver = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
@@ -163,7 +156,7 @@ export default class BookWebComponent extends HTMLElement {
         });
     }
     updateElementVisibility(element: Element, intersectionRatio: number) {
-        const elementIndex = this.contentChildren.indexOf(element);
+        const elementIndex = this.contentParagraphs.indexOf(element);
 
         const elementVisibility = this.elementVisibilites.find(
             (elementVisibility) => elementVisibility.elementIndex === elementIndex
@@ -175,7 +168,6 @@ export default class BookWebComponent extends HTMLElement {
 
     resetElementVisibilities() {
         this.elementVisibilites = [];
-        this.bestVisibleElement.intersectionRatio = null;
     }
 
     get bookmarkableElements(): Bookmark[] {
@@ -184,6 +176,8 @@ export default class BookWebComponent extends HTMLElement {
             .map(({ elementIndex }) => ({
                 elementIndex,
                 elementSection: this.state.book.currentSection,
+                elementSelector:
+                    this.hasParagraphs && elementIndex ? `p:nth-child(${elementIndex + 1})` : null,
             }));
     }
 
@@ -191,13 +185,36 @@ export default class BookWebComponent extends HTMLElement {
         this.onDisconnect = onDisconnect;
     }
 
+    get bestVisibleElement(): [Element, Bookmark] {
+        const bookmarkableIndex = Math.min(1, this.bookmarkableElements.length);
+        const bestBookmarkable =
+            this.bookmarkableElements[bookmarkableIndex] ??
+            ({
+                elementIndex: null,
+                elementSelector: null,
+                elementSection: this.state.book.currentSection,
+            } as Bookmark);
+
+        const bestElement = this.contentParagraphs[bestBookmarkable.elementIndex] ?? null;
+
+        return [bestElement, this.bookmarkableElements[bookmarkableIndex]];
+    }
+
     /**
      * Emits "bookmarkPositionsEvent" with a new or updated bookmark
      */
     emitBookmarkPositions() {
+        const elementIndex =
+            this.bookmarkableElements[Math.min(1, this.bookmarkableElements.length)]
+                ?.elementIndex ?? 0;
+        const elementSection = this.state.book.currentSection;
+        const elementSelector =
+            this.hasParagraphs && elementIndex ? `p:nth-child(${elementIndex + 1})` : null;
+
         const auto: Bookmark = {
-            elementSection: this.state.book.currentSection,
-            elementIndex: this.bestVisibleElement.elementIndex,
+            elementSection,
+            elementIndex,
+            elementSelector,
         };
 
         const manual = this.bookmarkableElements;
@@ -216,26 +233,6 @@ export default class BookWebComponent extends HTMLElement {
         );
 
         this.dispatchEvent(bookmarkEvent);
-    }
-
-    private setBestVisibleElement(element: Element, intersectionRatio: number) {
-        const elementIndex = this.contentChildren.indexOf(element);
-
-        const prevBestVisible = this.bestVisibleElement;
-        const nextBestVisible = { element, intersectionRatio, elementIndex };
-        this.bestVisibleElement = nextBestVisible;
-
-        // TODO make a debug setting within UI
-        if (isDev()) {
-            if (prevBestVisible.element instanceof HTMLElement) {
-                prevBestVisible.element.style.outline = "";
-                prevBestVisible.element.style.outlineOffset = "";
-            }
-            if (nextBestVisible.element instanceof HTMLElement) {
-                nextBestVisible.element.style.outline = "3px solid pink";
-                nextBestVisible.element.style.outlineOffset = "-3px";
-            }
-        }
     }
 
     private updateObservers() {
@@ -258,7 +255,7 @@ export default class BookWebComponent extends HTMLElement {
     }
 
     private onSectionLoad(currentPos: Position) {
-        this.navigateToPosition(currentPos);
+        this.navToPos(currentPos);
 
         this.emitTocState({
             currentSectionName: this.currentSectionName,
@@ -270,23 +267,21 @@ export default class BookWebComponent extends HTMLElement {
         this.emitUiState(uiState);
     }
 
-    async onResize() {
-        const { element } = this.bestVisibleElement;
+    onResize() {
+        const [element] = this.bestVisibleElement;
 
         if (element instanceof HTMLElement) this.shiftToElement({ element }, null);
         else {
             const offset = this.getPageEdgeOffset(this.currentOffset);
             this.setOffset(offset, null);
         }
-        this.updateObservers();
-        /* Makes it so the bestVisibleElement won't change based on page resize alone */
-        if (this.bestVisibleElement.element) this.bestVisibleElement.intersectionRatio = 1;
+        this.updateFocusableObserver();
 
         const uiState = this.getBookUiState();
         this.emitUiState(uiState);
     }
 
-    async onSectionShift() {
+    onSectionShift() {
         this.updateObservers();
 
         const uiState = this.getBookUiState();
@@ -314,7 +309,14 @@ export default class BookWebComponent extends HTMLElement {
     }
 
     get contentParagraphs() {
-        return [...this.contentElem.querySelectorAll("p")];
+        const paragraphs = [...this.contentElem.querySelectorAll("p")];
+        if (paragraphs.length) return paragraphs;
+
+        return this.contentChildren;
+    }
+
+    get hasParagraphs() {
+        return Boolean(this.contentParagraphs.length);
     }
 
     get totalSections() {
@@ -505,8 +507,8 @@ export default class BookWebComponent extends HTMLElement {
         if (doesSectionExist) {
             const isWithingCurrentSection = sectionIndex === this.state.book.currentSection;
             if (isWithingCurrentSection) {
-                if (position) this.navigateToPosition(position);
-                else this.navigateToPosition({ elementIndex: 0 });
+                if (position) this.navToPos(position);
+                else this.navToPos({ elementIndex: 0 });
             } else this.loadSection(sectionIndex, position);
         }
 
@@ -716,7 +718,7 @@ export default class BookWebComponent extends HTMLElement {
         this.loadSection(targetSection, { sectionPage: { value: 0, isFromBack } });
     }
 
-    private navigateToPosition({ sectionPage, elementIndex, elementSelector }: Position) {
+    private navToPos({ sectionPage, elementIndex, elementSelector }: Position) {
         if (elementSelector || elementIndex || elementIndex === 0) {
             this.shiftToElement({ elementIndex, elementSelector });
         } else if (sectionPage) {
@@ -746,10 +748,10 @@ export default class BookWebComponent extends HTMLElement {
         { element, elementIndex, elementSelector }: Position,
         callback = () => this.onSectionShift()
     ) {
-        if (elementIndex || elementIndex === 0) {
-            element = this.getElementByIndex(elementIndex);
-        } else if (elementSelector) {
+        if (elementSelector) {
             element = this.contentElem.querySelector(elementSelector);
+        } else if (elementIndex || elementIndex === 0) {
+            element = this.getElementByIndex(elementIndex);
         }
 
         if (element) {
