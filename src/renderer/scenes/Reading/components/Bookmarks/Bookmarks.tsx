@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { action } from "mobx";
 
 import { SkeletonSidebar } from "~/renderer/components";
-import { type Structure, useBookReadStore } from "~/renderer/stores";
+import { type Structure, useBookReadStore, Bookmark } from "~/renderer/stores";
 import classes from "./Bookmarks.module.css";
 
 interface BookmarksProps {
@@ -33,29 +33,33 @@ export const Bookmarks = observer(({ autoscrollTargetRef }: BookmarksProps) => {
             </Text>
         );
     }
-    return bookReadStore.bookmarks.map(
-        ({ active, sectionId, label, elementIndex, elementSelector, elementSection }) => (
-            <NavLink
-                key={`${elementSection}-${elementIndex}`}
-                my={2}
-                leftSection={
-                    <Stack gap={2} align="center" miw={24}>
-                        <IconBookmark className={classes.icon} stroke={1.5} />
-                        <Text c="dimmed" size={rem(11)}>
-                            {elementSection}.{elementIndex}
-                        </Text>
-                    </Stack>
-                }
-                className={classes.navLink}
-                classNames={{ label: classes.label, section: classes.section }}
-                label={label}
-                active={active}
-                ref={active ? autoscrollTargetRef : null}
-                onClick={() => navTo(sectionId, elementIndex, elementSelector)}
-                rightSection={
-                    <CloseButton size="sm" onClick={() => bookReadStore.removeManualBookmark()} />
-                }
-            />
-        )
-    );
+    const removeBookmark = (
+        e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+        bookmark: Bookmark
+    ) => {
+        e.stopPropagation();
+        bookReadStore.removeManualBookmark(bookmark);
+    };
+
+    return bookReadStore.bookmarks.map(({ bookmark, active, label, sectionId }) => (
+        <NavLink
+            key={`${bookmark.elementSection}-${bookmark.elementIndex}`}
+            my={2}
+            leftSection={
+                <Stack gap={2} align="center" miw={24}>
+                    <IconBookmark className={classes.icon} stroke={1.5} />
+                    <Text c="dimmed" size={rem(11)}>
+                        {bookmark.elementSection}.{bookmark.elementIndex}
+                    </Text>
+                </Stack>
+            }
+            className={classes.navLink}
+            classNames={{ label: classes.label, section: classes.section }}
+            label={label}
+            active={active}
+            ref={active ? autoscrollTargetRef : null}
+            onClick={() => navTo(sectionId, bookmark.elementIndex, bookmark.elementSelector)}
+            rightSection={<CloseButton size="sm" onClick={(e) => removeBookmark(e, bookmark)} />}
+        />
+    ));
 });

@@ -209,10 +209,17 @@ export class BookReadStore {
             "manual"
         );
     }
-    removeManualBookmark() {
-        this.currentManualBookmarks.forEach((bookmark) =>
-            this.rootStore.bookStore.removeBookInteractionBookmark(this.bookKey, bookmark)
-        );
+
+    removeManualBookmark(): void;
+    removeManualBookmark(bookmark?: Bookmark): void;
+    removeManualBookmark(bookmark?: Bookmark) {
+        if (!bookmark) {
+            this.currentManualBookmarks.forEach((bookmark) =>
+                this.rootStore.bookStore.removeBookInteractionBookmark(this.bookKey, bookmark)
+            );
+        } else {
+            this.rootStore.bookStore.removeBookInteractionBookmark(this.bookKey, bookmark);
+        }
     }
 
     setBookmarkablePositions(bookmarkablePositions: Bookmark[]) {
@@ -230,7 +237,7 @@ export class BookReadStore {
         const currentManualBookmarks = this.currentManualBookmarks;
         return this.manualBookmarks
             .map((manualBookmark) => ({
-                ...manualBookmark,
+                bookmark: manualBookmark,
                 sectionId: this.contentState.sectionNames[manualBookmark.elementSection],
                 label: this.getSectionTitle(manualBookmark.elementSection),
                 active: _.some(currentManualBookmarks, (currentManualBookmark) =>
@@ -238,7 +245,9 @@ export class BookReadStore {
                 ),
             }))
             .toSorted(
-                (a, b) => a.elementSection - b.elementSection || a.elementIndex - b.elementIndex
+                (a, b) =>
+                    a.bookmark.elementSection - b.bookmark.elementSection ||
+                    a.bookmark.elementIndex - b.bookmark.elementIndex
             );
     }
 

@@ -8,7 +8,7 @@ module.exports = {
         // Create asar archive for main, renderer process files
         asar: true,
         // Set executable name
-        name: "bookord",
+        name: "Bookord",
         executableName: "Bookord",
         // Set application copyright
         appCopyright: "Copyright (C)",
@@ -32,7 +32,7 @@ module.exports = {
             // Windows applications and is therefore the most user friendly you can get.
             name: "@electron-forge/maker-squirrel",
             config: {
-                name: "bookord",
+                name: "Bookord",
                 // An URL to an ICO file to use as the application icon (displayed in Control Panel > Programs and Features).
                 iconUrl:
                     "https://raw.githubusercontent.com/LiprikON2/Bookord/master/assets/icons/platforms/bookord-square.ico",
@@ -49,7 +49,7 @@ module.exports = {
         {
             name: "@electron-forge/maker-dmg",
             config: {
-                name: "bookord",
+                name: "Bookord",
             },
         },
         {

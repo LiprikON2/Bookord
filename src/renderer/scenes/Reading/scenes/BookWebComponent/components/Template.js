@@ -71,7 +71,7 @@ export const style = /*css*/ `
         margin: auto;
         overflow: hidden;
     }
-    #book-content {
+    .book-content {
         width: 100%;
         height: 100%;
 
@@ -82,7 +82,7 @@ export const style = /*css*/ `
     }
 
 
-    #book-content img {
+    .book-content img {
         /* cursor: zoom-in;
 
         display: block !important;
@@ -98,7 +98,7 @@ export const style = /*css*/ `
 
 
     /* Make it so all non-decorative images would take full page */
-    #book-content img:not([alt=""]) {
+    .book-content img:not([alt=""]) {
         cursor: zoom-in;
         object-fit: contain;
 
@@ -107,7 +107,7 @@ export const style = /*css*/ `
         width: 100% !important;
     }
 
-    #book-content *:has(img:not([alt=""])) {
+    .book-content *:has(img:not([alt=""])) {
         width: 100% !important;
     }
 
@@ -131,7 +131,7 @@ template.innerHTML = /*html*/ `
             ${style}
         </style>
       
-        <div id="book-content"></div>
+        <div id="book-content" class="book-content"></div>
         
     </section>
 `;
