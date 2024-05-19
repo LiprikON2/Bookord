@@ -60,6 +60,9 @@ export const Comments = observer(({}: CommentsProps) => {
                         inner: {
                             justifyContent: "flex-start",
                         },
+                        root: {
+                            flexGrow: 1,
+                        },
                     }}
                     onClick={open}
                 >

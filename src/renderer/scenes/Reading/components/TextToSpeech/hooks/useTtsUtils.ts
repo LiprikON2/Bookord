@@ -52,7 +52,7 @@ export const useTtsUtils = () => {
 
     const continuteTtsNextSection = action(
         (onSuccess: (nextSectionElem: Element, nextSelection: Selection) => void) => {
-            bookReadStore.bookComponent?.flipNSections?.(1);
+            bookReadStore.sectionForward();
 
             const elem = bookReadStore.bookComponent?.contentChildren[0];
             // @ts-ignore

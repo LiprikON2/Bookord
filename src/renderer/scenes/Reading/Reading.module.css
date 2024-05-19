@@ -14,3 +14,12 @@
         background-color: var(--mantine-color-gray-3);
     }
 }
+
+.pageContainer {
+    position: relative;
+}
+
+.pageSkeleton {
+    position: absolute;
+    inset: 0;
+}

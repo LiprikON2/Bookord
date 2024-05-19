@@ -13,6 +13,7 @@ import {
     Characters,
 } from "~/renderer/scenes";
 import { getHomeMarkup } from "./sharedLayoutMarkup";
+import { LayoutToggle } from "../components";
 
 const readingLayoutMarkup: LayoutMarkup = {
     showFilterMenu: false,
@@ -53,7 +54,12 @@ const readingLayoutMarkup: LayoutMarkup = {
         },
     ],
     asideTopSection: null,
-    asideBottomSection: <Comments />,
+    asideBottomSection: (
+        <>
+            <LayoutToggle />
+            <Comments />
+        </>
+    ),
 
     scrollArea: false,
 };

@@ -64,7 +64,7 @@ export const Sidebar = observer(
                     defaultValue={markup[0]?.name}
                 >
                     {(topSection || markup.length > 1) && (
-                        <Stack h={48} mr="sm" justify="center">
+                        <Stack h={48} mr="sm" justify="center" align="center">
                             {topSection}
                             {markup.length > 1 && <SegmentedTabList markup={markup} />}
                         </Stack>

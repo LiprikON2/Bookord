@@ -30,15 +30,9 @@
 }
 
 .bottom {
-    & > :first-child {
-        flex-grow: 1;
-    }
-
     @media (min-width: $mantine-breakpoint-sm) {
         &[data-position="left"] {
             margin-right: var(--mantine-spacing-sm);
-        } 
+        }
     }
-
-    
 }

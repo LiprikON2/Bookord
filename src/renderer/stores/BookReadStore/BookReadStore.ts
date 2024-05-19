@@ -2,7 +2,7 @@ import _ from "lodash";
 import { makeAutoObservable, observable, runInAction, toJS, when } from "mobx";
 
 import type BookWebComponent from "~/renderer/scenes/Reading/scenes/BookWebComponent";
-import type { TocState } from "~/renderer/scenes/Reading/scenes/BookWebComponent";
+import type { Position, TocState } from "~/renderer/scenes/Reading/scenes/BookWebComponent";
 import { BookKey, TimeRecord } from "../BookStore";
 import { RootStore } from "../RootStore";
 import { Interface } from "readline/promises";
@@ -30,6 +30,7 @@ const defaultUiState = {
     prevPage: false,
 };
 
+export type Layout = "single-page" | "two-page";
 export interface Person {
     uniqueName: string;
     displayName: string;
@@ -37,7 +38,15 @@ export interface Person {
 }
 export class BookReadStore {
     rootStore: RootStore;
-    bookComponent: BookWebComponent | null = null;
+
+    layout: Layout = "two-page";
+
+    pageComponents: { left: BookWebComponent | null; right: BookWebComponent | null } = {
+        left: null,
+        right: null,
+    };
+    // bookComponent: BookWebComponent | null = null;
+    // bookComponent2: BookWebComponent | null = null;
     private bookKey: BookKey | null = null;
     tocState: TocState = {
         currentSectionName: null,
@@ -56,10 +65,14 @@ export class BookReadStore {
     constructor(rootStore: RootStore) {
         makeAutoObservable(
             this,
-            { rootStore: false, bookComponent: observable.ref },
+            { rootStore: false, pageComponents: observable.ref },
             { autoBind: true }
         );
         this.rootStore = rootStore;
+    }
+
+    get bookComponent() {
+        return this.pageComponents.left;
     }
 
     setTocState(tocState: TocState) {
@@ -124,16 +137,27 @@ export class BookReadStore {
         const { elementIndex, elementSelector } = this.autobookmark;
         const { sectionNames } = this.contentState;
 
-        this.bookComponent.loadBook(
+        this.pageComponents.right.loadBook(
+            this.content,
+            toJS(this.metadata),
+            this.initSectionIndex,
+            sectionNames,
+            { elementIndex, elementSelector },
+            1
+        );
+        this.pageComponents.left.loadBook(
             this.content,
             toJS(this.metadata),
             this.initSectionIndex,
             sectionNames,
             { elementIndex, elementSelector }
         );
+        this.pageComponents.right.setOnResize(this.syncPages);
     }
+
     unload() {
-        this.setBookComponent(null);
+        this.setLeftPageComponent(null);
+        this.setRightPageComponent(null);
         this.setBook(null);
         this.resetTtsTarget();
         this.resetUiState();
@@ -156,8 +180,11 @@ export class BookReadStore {
         runInAction(() => this.rootStore.bookStore.openBook(this.bookKey, this.initSectionIndex));
     }
 
-    setBookComponent(bookComponent: BookWebComponent) {
-        this.bookComponent = bookComponent;
+    setLeftPageComponent(pageComponent: BookWebComponent) {
+        this.pageComponents.left = pageComponent;
+    }
+    setRightPageComponent(pageComponent: BookWebComponent) {
+        this.pageComponents.right = pageComponent;
     }
 
     get metadata() {
@@ -182,7 +209,7 @@ export class BookReadStore {
     }
 
     get isBookComponentReady() {
-        return Boolean(this.bookComponent);
+        return Boolean(this.pageComponents.left);
     }
 
     get isInitSectionReady() {
@@ -448,9 +475,86 @@ export class BookReadStore {
 
     requestTextAnalysis(
         sectionIndex: number = this.tocState.currentSection,
-        text: string = this.bookComponent?.contentText
+        text: string = this.pageComponents.left?.contentText
     ) {
         if (!this.isInitSectionReady) return;
         this.rootStore.bookStore.requestTextAnalysis(this.bookKey, sectionIndex, text);
+    }
+
+    flipNPages(n: number) {
+        const { left, right } = this.pageComponents;
+        if (this.layout === "two-page") n *= 2;
+
+        left?.flipNPages?.(n);
+        this.syncPages();
+    }
+
+    pageForward() {
+        let n = 1;
+        const { left, right } = this.pageComponents;
+        if (this.layout === "two-page") n *= 2;
+
+        left?.flipNPages?.(n);
+        this.syncPages();
+    }
+    pageBackward() {
+        let n = -1;
+        const { left } = this.pageComponents;
+        if (this.layout === "two-page") n *= 2;
+
+        left?.flipNPages?.(n);
+        this.syncPages();
+    }
+    sectionForward() {
+        const { left } = this.pageComponents;
+
+        left?.sectionForward?.();
+        this.syncPages();
+    }
+    sectionBackward() {
+        const { left } = this.pageComponents;
+
+        left?.sectionBackward?.();
+        this.syncPages();
+    }
+    navToLink(sectionId: string, position?: Position) {
+        const { left } = this.pageComponents;
+
+        left?.navToLink?.(sectionId, position);
+        this.syncPages();
+    }
+
+    get layouts(): Layout[] {
+        return ["single-page", "two-page"];
+    }
+
+    setLayout(layout: Layout) {
+        this.syncPages();
+        this.layout = layout;
+    }
+
+    syncPages() {
+        if (!this.pageComponents.left || !this.pageComponents.right) return;
+        const { currentSectionPage } = this.pageComponents.left.getBookUiState();
+
+        const currentLeftSection = this.pageComponents.left.state.book.currentSection;
+        const currentRightSection = this.pageComponents.right.state.book.currentSection;
+
+        if (currentLeftSection === currentRightSection) {
+            this.pageComponents.right.navToPos({
+                sectionPage: { value: currentSectionPage, isFromBack: false },
+            });
+        } else {
+            this.pageComponents.right.loadSection(currentLeftSection, {
+                sectionPage: { value: currentSectionPage, isFromBack: false },
+            });
+        }
+    }
+
+    unloadBook() {
+        const { left, right } = this.pageComponents;
+
+        left?.unloadBook?.();
+        right?.unloadBook?.();
     }
 }

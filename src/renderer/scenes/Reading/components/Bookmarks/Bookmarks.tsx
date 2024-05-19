@@ -18,7 +18,7 @@ export const Bookmarks = observer(({ autoscrollTargetRef }: BookmarksProps) => {
     const navTo = action(
         (sectionId: Structure["sectionId"], elementIndex: number, elementSelector: string) => {
             if (!sectionId || !bookReadStore.isReady) return;
-            bookReadStore.bookComponent.navToLink(sectionId, { elementIndex, elementSelector });
+            bookReadStore.navToLink(sectionId, { elementIndex, elementSelector });
         }
     );
 

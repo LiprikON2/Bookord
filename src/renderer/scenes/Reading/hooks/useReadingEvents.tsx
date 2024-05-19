@@ -3,7 +3,7 @@ import { useContextMenu } from "mantine-contextmenu";
 import { IconCopy, IconLanguage, IconSpeakerphone, IconVocabulary } from "@tabler/icons-react";
 
 import { useBookReadStore } from "~/renderer/stores/hooks";
-import { useEvents } from "../hooks";
+import { EventMap, useEvents } from "../hooks";
 import { TooltipTarget } from "../components";
 import type BookWebComponent from "../scenes/BookWebComponent";
 import type { BookWebComponentEventMap } from "../scenes/BookWebComponent";
@@ -17,14 +17,8 @@ export const useReadingEvents = (
 
     const { showContextMenu } = useContextMenu();
 
-    const eventsRef = useEvents<BookWebComponentEventMap, BookWebComponent>({
+    const incomingEvents: EventMap<BookWebComponentEventMap> = {
         imgClickEvent: (e) => console.log("click"),
-        uiStateUpdateEvent: (e) => bookReadStore.setUiState(e.detail),
-        tocStateUpdateEvent: (e) => bookReadStore.setTocState(e.detail),
-        bookmarkPositionsEvent: (e) => {
-            bookReadStore.setBookmarkablePositions(e.detail.manual);
-            bookReadStore.setAutobookmark(e.detail.auto);
-        },
         contextMenuEvent: (e) => {
             showContextMenu([
                 {
@@ -68,7 +62,22 @@ export const useReadingEvents = (
                 },
             ])(e.detail.event as any);
         },
+    };
+
+    const incomingEventsRef1 = useEvents<BookWebComponentEventMap, BookWebComponent>(
+        incomingEvents
+    );
+    const incomingEventsRef2 = useEvents<BookWebComponentEventMap, BookWebComponent>(
+        incomingEvents
+    );
+    const outgoingEventsRef = useEvents<BookWebComponentEventMap, BookWebComponent>({
+        uiStateUpdateEvent: (e) => bookReadStore.setUiState(e.detail),
+        tocStateUpdateEvent: (e) => bookReadStore.setTocState(e.detail),
+        bookmarkPositionsEvent: (e) => {
+            bookReadStore.setBookmarkablePositions(e.detail.manual);
+            bookReadStore.setAutobookmark(e.detail.auto);
+        },
     });
 
-    return eventsRef;
+    return [outgoingEventsRef, incomingEventsRef1, incomingEventsRef2];
 };

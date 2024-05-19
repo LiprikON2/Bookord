@@ -2,6 +2,7 @@ export * from "./DetailedTitle";
 export * from "./Giscus";
 export * from "./Icons";
 export * from "./LanguagePicker";
+export * from "./LayoutToggle";
 export * from "./Skeletonize";
 export * from "./SkeletonSidebar";
 export * from "./TextObserver";

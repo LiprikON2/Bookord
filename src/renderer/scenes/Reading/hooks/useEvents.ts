@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-type EventMap<K> = {
+export type EventMap<K> = {
     [U in keyof K]?: (event: K[U]) => void;
 };
 // works but object

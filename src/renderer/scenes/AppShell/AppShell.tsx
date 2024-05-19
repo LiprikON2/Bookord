@@ -65,7 +65,7 @@ export const AppShell = observer(({ layoutMarkup, children }: AppShellProps) => 
                     getMarkup={layoutMarkup.getNavbarMarkup}
                     onChangeTab={mobileCloseNavbar}
                 >
-                    <SettingsModal />
+                    <SettingsModal classNames={{ button: classes.button }} />
                     <ThemeToggle />
                 </Sidebar>
             </MantineAppShell.Navbar>

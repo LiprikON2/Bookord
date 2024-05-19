@@ -7,7 +7,7 @@ import { template } from "./components/Template";
 import { BookContent, BookContentState, BookMetadata, Bookmark } from "~/renderer/stores";
 import { isDev } from "~/common/helpers";
 
-type Position = {
+export type Position = {
     sectionPage?: { value: number; isFromBack: boolean };
     markerId?: string;
     elementIndex?: number | null;
@@ -76,7 +76,7 @@ export default class BookWebComponent extends HTMLElement {
     private styleElem: HTMLElement;
     private componentStyle: CSSStyleDeclaration;
     private styleLoader: StyleLoader;
-    private state: StateManager;
+    state: StateManager;
     private resizeObserver: ResizeObserver;
     /**
      * Updates `bookmarkElem`, which is used to keep track of the first visible content element
@@ -100,6 +100,7 @@ export default class BookWebComponent extends HTMLElement {
      * Hides focusabel elements (mainly links) on another pages so they can't be tabbed onto without being visible
      */
     private focusableObserver: IntersectionObserver;
+    private pageOffset = 0;
 
     /**
      * TODO
@@ -107,6 +108,7 @@ export default class BookWebComponent extends HTMLElement {
     // pagePreview
 
     private onDisconnect = () => {};
+    private onResize: () => void = null;
 
     constructor() {
         super();
@@ -124,7 +126,7 @@ export default class BookWebComponent extends HTMLElement {
         this.styleLoader = new StyleLoader(this.styleElem);
         this.state = new StateManager(this);
 
-        this.resizeObserver = new ResizeObserver(() => this.onResize());
+        this.resizeObserver = new ResizeObserver(() => this.resize());
         this.resizeObserver.observe(this.rootElem);
 
         this.bookmarkObserver = new IntersectionObserver((entries) => {
@@ -267,7 +269,9 @@ export default class BookWebComponent extends HTMLElement {
         this.emitUiState(uiState);
     }
 
-    onResize() {
+    resize() {
+        if (this.onResize) return this.onResize();
+
         const [element] = this.bestVisibleElement;
 
         if (element instanceof HTMLElement) this.shiftToElement({ element }, null);
@@ -279,6 +283,10 @@ export default class BookWebComponent extends HTMLElement {
 
         const uiState = this.getBookUiState();
         this.emitUiState(uiState);
+    }
+
+    setOnResize(onResize: () => void) {
+        this.onResize = onResize;
     }
 
     onSectionShift() {
@@ -328,11 +336,13 @@ export default class BookWebComponent extends HTMLElement {
         metadata: BookMetadata,
         sectionIndex: number,
         sectionNames: BookContentState["sectionNames"],
-        position?: Position
+        position?: Position,
+        pageOffset = 0
     ) {
         const isInitialLoad = !this.book;
 
         if (isInitialLoad) {
+            this.pageOffset = pageOffset;
             this.book = { ...content, sectionNames, metadata };
             this.loadSection(sectionIndex, position);
             this.state.setInitBookInfo(this.book.sectionNames.length);
@@ -341,6 +351,7 @@ export default class BookWebComponent extends HTMLElement {
 
     unloadBook() {
         this.book = null;
+        this.pageOffset = 0;
         this.state = new StateManager(this);
         this.resetElementVisibilities();
     }
@@ -364,7 +375,7 @@ export default class BookWebComponent extends HTMLElement {
     /**
      * Loads specified book section along with its styles, sets event listeners, updates UI and saves interaction progress
      */
-    private loadSection(sectionIndex: number, position?: Position) {
+    loadSection(sectionIndex: number, position?: Position) {
         const currentPos = { ...this.initPosition, ...position };
 
         const sectionContent = this.getSection(sectionIndex);
@@ -718,7 +729,7 @@ export default class BookWebComponent extends HTMLElement {
         this.loadSection(targetSection, { sectionPage: { value: 0, isFromBack } });
     }
 
-    private navToPos({ sectionPage, elementIndex, elementSelector }: Position) {
+    navToPos({ sectionPage, elementIndex, elementSelector }: Position) {
         if (elementSelector || elementIndex || elementIndex === 0) {
             this.shiftToElement({ elementIndex, elementSelector });
         } else if (sectionPage) {
@@ -847,7 +858,8 @@ export default class BookWebComponent extends HTMLElement {
     /**
      * Sets pixel offset as a way to advance pages within a section
      */
-    private setOffset(nextOffset: string | number, callback = () => this.onSectionShift()) {
+    private setOffset(offset: number, callback = () => this.onSectionShift()) {
+        const nextOffset = Number(offset) + this.pageOffset * this.displayWidth;
         this.contentElem.style.transform = `translate(-${nextOffset}px)`;
 
         callback?.();

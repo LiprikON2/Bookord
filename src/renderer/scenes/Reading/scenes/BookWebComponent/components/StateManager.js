@@ -3,6 +3,9 @@ class BookState {
 
     title = "";
     sectionCount = 0;
+    /**
+     * @type {number}
+     */
     currentSection;
 
     get currentPage() {
@@ -22,10 +25,10 @@ class SectionState {
     title = "";
 
     get currentPage() {
-        const displayWidth = this.#parentComponent.displayWidth;
-        const currentOffset = this.#parentComponent.currentOffset;
+        const { currentOffset, displayWidth, pageOffset } = this.#parentComponent;
+        const finalCurrentOffset = currentOffset - pageOffset * displayWidth;
 
-        const unroundedCurrentPage = currentOffset / displayWidth;
+        const unroundedCurrentPage = finalCurrentOffset / displayWidth;
         const roundedCurrentPage = Math.round(unroundedCurrentPage);
 
         return roundedCurrentPage;

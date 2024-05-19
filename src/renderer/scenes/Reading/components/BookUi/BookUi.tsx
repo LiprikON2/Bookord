@@ -1,20 +1,17 @@
 import React, { forwardRef } from "react";
-import { Box, Group, Stack, Text } from "@mantine/core";
+import { Box, Group, SegmentedControl, Stack, Text, VisuallyHidden } from "@mantine/core";
+import { IconBookmark, IconBookmarkFilled, IconColumns1, IconColumns2 } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
-
-import classes from "./BookUi.module.css";
-import { ToggleActionIcon } from "~/renderer/components";
-import { IconBookmark, IconBookmarkFilled } from "@tabler/icons-react";
 import clsx from "clsx";
+
+import { Layout, useBookReadStore } from "~/renderer/stores";
+import { ToggleActionIcon } from "~/renderer/components";
 import { FlipPageButton } from "./components";
 import { useKeyboardStrength } from "./hooks";
+import classes from "./BookUi.module.css";
 
 interface BookUiProps {
-    title: string;
-    uiState: UiState;
-    isReady?: boolean;
     children?: React.ReactNode;
-    bookmarked: boolean;
     onAddBookmark?: () => void;
     onRemoveBookmark?: () => void;
     onNextPage?: () => void;
@@ -30,12 +27,8 @@ const BookUi = observer(
     forwardRef(
         (
             {
-                title,
-                uiState,
                 onAddBookmark,
                 onRemoveBookmark,
-                bookmarked = false,
-                isReady = true,
                 children,
                 onNextPage,
                 onNextFivePage,
@@ -46,6 +39,8 @@ const BookUi = observer(
             }: BookUiProps,
             ref: React.ForwardedRef<HTMLDivElement>
         ) => {
+            const bookReadStore = useBookReadStore();
+
             const keyboardStrength = useKeyboardStrength();
 
             return (
@@ -57,9 +52,9 @@ const BookUi = observer(
                             ta="center"
                             fw={500}
                         >
-                            {title}
+                            {bookReadStore.metadata.title}
                         </Text>
-                        {isReady && (
+                        {bookReadStore.isReady && (
                             <ToggleActionIcon
                                 pos="absolute"
                                 iconSize="85%"
@@ -69,7 +64,7 @@ const BookUi = observer(
                                 OffIcon={IconBookmark}
                                 variant="transparent"
                                 ariaLabel="bookmark"
-                                on={bookmarked}
+                                on={bookReadStore.isManualBookmarked}
                                 onAction={onAddBookmark}
                                 offAction={onRemoveBookmark}
                             />
@@ -80,7 +75,7 @@ const BookUi = observer(
                         wrap="nowrap"
                         style={{ flexBasis: "100%", overflow: "hidden" }}
                     >
-                        {uiState.prevPage && (
+                        {bookReadStore.uiState.prevPage && (
                             <FlipPageButton
                                 className={classes.backwardButton}
                                 direction="left"
@@ -90,10 +85,8 @@ const BookUi = observer(
                                 onHighClick={onPrevSection}
                             />
                         )}
-                        <Box style={{ height: "100%", width: "100%", position: "relative" }}>
-                            {children}
-                        </Box>
-                        {uiState.nextPage && (
+                        <Box className={classes.bookContainer}>{children}</Box>
+                        {bookReadStore.uiState.nextPage && (
                             <FlipPageButton
                                 className={classes.forwardButton}
                                 direction="right"
@@ -106,12 +99,12 @@ const BookUi = observer(
                     </Group>
                     <Group justify="space-between" px="md" wrap="nowrap">
                         <Text c="dimmed" className={classes.lineClamp}>
-                            {uiState.currentSectionTitle}
+                            {bookReadStore.uiState.currentSectionTitle}
                         </Text>
                         <Text c="dimmed">
-                            <span>{uiState.currentSectionPage + 1}</span>
+                            <span>{bookReadStore.uiState.currentSectionPage + 1}</span>
                             <span>/</span>
-                            <span>{uiState.totalSectionPages}</span>
+                            <span>{bookReadStore.uiState.totalSectionPages}</span>
                         </Text>
                     </Group>
                 </Stack>

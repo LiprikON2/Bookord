@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Box } from "@mantine/core";
 import { useDisclosure, useHotkeys, useMergedRef } from "@mantine/hooks";
 import { observer } from "mobx-react-lite";
 import { action, when } from "mobx";
@@ -30,7 +31,7 @@ export const Reading = observer(() => {
             );
 
             const didSwitchBook = bookReadStore.book !== null;
-            if (didSwitchBook) bookReadStore.bookComponent?.unloadBook?.();
+            if (didSwitchBook) bookReadStore.unloadBook();
 
             bookReadStore.setBook(bookKey);
             return unsub;
@@ -52,39 +53,45 @@ export const Reading = observer(() => {
 
     const bookComponentCallbackRef = useCallbackRef<BookWebComponent>(
         action((bookComponent) => {
-            bookReadStore.setBookComponent(bookComponent);
-            bookReadStore.bookComponent.setOnDisconnect(bookReadStore.unload);
+            bookReadStore.setLeftPageComponent(bookComponent);
+            bookReadStore.pageComponents.left.setOnDisconnect(bookReadStore.unload);
+        })
+    );
+    const bookComponentCallbackRef2 = useCallbackRef<BookWebComponent>(
+        action((bookComponent2) => {
+            bookReadStore.setRightPageComponent(bookComponent2);
+            bookReadStore.pageComponents.right.setOnDisconnect(bookReadStore.unload);
         })
     );
     const handleNextPage = action(() => {
         closeTranslationTooltip();
         closeDictionaryTooltip();
-        bookReadStore.bookComponent?.pageForward?.();
+        bookReadStore.pageForward();
     });
     const handlePrevPage = action(() => {
         closeTranslationTooltip();
         closeDictionaryTooltip();
-        bookReadStore.bookComponent?.pageBackward?.();
+        bookReadStore.pageBackward();
     });
     const handleNextFivePage = action(() => {
         closeTranslationTooltip();
         closeDictionaryTooltip();
-        bookReadStore.bookComponent?.flipNPages?.(5);
+        bookReadStore.flipNPages(5);
     });
     const handlePrevFivePage = action(() => {
         closeTranslationTooltip();
         closeDictionaryTooltip();
-        bookReadStore.bookComponent?.flipNPages?.(-5);
+        bookReadStore.flipNPages(-5);
     });
     const handleNextSection = action(() => {
         closeTranslationTooltip();
         closeDictionaryTooltip();
-        bookReadStore.bookComponent?.sectionForward?.();
+        bookReadStore.sectionForward();
     });
     const handlePrevSection = action(() => {
         closeTranslationTooltip();
         closeDictionaryTooltip();
-        bookReadStore.bookComponent?.sectionBackward?.();
+        bookReadStore.sectionBackward();
     });
 
     // Usage of actions prevents `Observable being read outside a reactive context` warning
@@ -119,17 +126,17 @@ export const Reading = observer(() => {
         { open: openDictionaryTooltip, close: closeDictionaryTooltip },
     ] = useDisclosure(false);
 
-    const eventsRef = useReadingEvents(setTranslateTarget, setDictionaryTarget, {
-        icon: classes.icon,
-    });
+    const [outgoingEventsRef, incomingEventsRef1, incomingEventsRef2] = useReadingEvents(
+        setTranslateTarget,
+        setDictionaryTarget,
+        {
+            icon: classes.icon,
+        }
+    );
 
     return (
         <>
             <BookUi
-                isReady={bookReadStore.isReady}
-                title={bookReadStore.metadata.title}
-                uiState={bookReadStore.uiState}
-                bookmarked={bookReadStore.isManualBookmarked}
                 onAddBookmark={bookReadStore.addManualBookmark}
                 onRemoveBookmark={bookReadStore.removeManualBookmark}
                 onNextPage={handleNextPage}
@@ -139,8 +146,31 @@ export const Reading = observer(() => {
                 onPrevFivePage={handlePrevFivePage}
                 onPrevSection={handlePrevSection}
             >
-                <BookSkeleton visible={bookReadStore.isReady} />
-                <book-web-component ref={useMergedRef(bookComponentCallbackRef, eventsRef)} />
+                <Box className={classes.pageContainer}>
+                    <BookSkeleton
+                        className={classes.pageSkeleton}
+                        visible={bookReadStore.isReady}
+                    />
+                    <book-web-component
+                        ref={useMergedRef(
+                            bookComponentCallbackRef,
+                            outgoingEventsRef,
+                            incomingEventsRef1
+                        )}
+                    />
+                </Box>
+                <Box
+                    className={classes.pageContainer}
+                    display={bookReadStore.layout === "two-page" ? undefined : "none"}
+                >
+                    <BookSkeleton
+                        className={classes.pageSkeleton}
+                        visible={bookReadStore.isReady}
+                    />
+                    <book-web-component
+                        ref={useMergedRef(bookComponentCallbackRef2, incomingEventsRef2)}
+                    />
+                </Box>
             </BookUi>
             <TranslationTooltip
                 target={translateTarget}

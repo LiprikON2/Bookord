@@ -114,7 +114,7 @@ export const useTocNav = () => {
 
     const tocNavTo = action((sectionId: Structure["sectionId"]) => {
         if (!sectionId || !bookReadStore.isReady) return;
-        bookReadStore.bookComponent.navToLink(sectionId);
+        bookReadStore.navToLink(sectionId);
     });
 
     const tocProps = useMemo(
