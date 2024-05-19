@@ -1,7 +1,7 @@
 {
     "name": "bookord",
     "productName": "Bookord",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "description": "E-book reader electron app",
     "main": ".webpack/main",
     "scripts": {
