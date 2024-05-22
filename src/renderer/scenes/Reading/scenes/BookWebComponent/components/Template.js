@@ -68,7 +68,7 @@ export const style = /*css*/ `
         max-width: var(--book-component-width);
         height: 100%;
 
-        margin: auto;
+        /* margin: auto; */
         overflow: hidden;
     }
     .book-content {

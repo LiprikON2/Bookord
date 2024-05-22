@@ -32,6 +32,7 @@ export const SettingsPanels = observer(
                                 h="100%"
                                 type="auto"
                                 offsetScrollbars
+                                scrollbarSize={8}
                                 styles={{ scrollbar: { margin: "-1px", marginTop: rem(8) } }}
                             >
                                 <Container p="lg">{children(settings)}</Container>

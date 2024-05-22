@@ -57,13 +57,14 @@
 
 .bookContainer {
     height: 100%;
-    width: 100%;
+    margin: auto;
     gap: rem(24);
 
     display: flex;
     & > * {
         flex: 1;
         min-width: 0;
+        flex-basis: 50%;
     }
 }
 

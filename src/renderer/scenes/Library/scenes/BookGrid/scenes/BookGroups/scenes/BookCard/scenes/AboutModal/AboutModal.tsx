@@ -8,6 +8,7 @@ import {
     ScrollArea,
     Divider,
     CloseButton,
+    Group,
 } from "@mantine/core";
 import { IconNotebook } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
@@ -33,10 +34,27 @@ export const AboutModal = observer(({ bookKey, opened = false, onClose }: AboutM
         onClose();
     };
 
-    const { setActiveTag, getCategoryName } = bookViewStore.useTags("subjects");
+    const { setActiveTag: setActiveSubjectTag, getCategoryName: getSubjectCategoryName } =
+        bookViewStore.useTags("subjects");
     const handleSubjectClick = (subject: string) => {
         bookViewStore.resetTags();
-        setActiveTag(subject, true);
+        setActiveSubjectTag(subject, true);
+        onClose();
+    };
+
+    const { setActiveTag: setActiveYearTag, getCategoryName: getYearCategoryName } =
+        bookViewStore.useTags("publishYears");
+    const handleYearClick = (year: string) => {
+        bookViewStore.resetTags();
+        setActiveYearTag(year, true);
+        onClose();
+    };
+
+    const { setActiveTag: setActiveLanuageTag, getCategoryName: getLanguageCategoryName } =
+        bookViewStore.useTags("languages");
+    const handleLanguageClick = (language: string) => {
+        bookViewStore.resetTags();
+        setActiveLanuageTag(language, true);
         onClose();
     };
 
@@ -84,18 +102,30 @@ export const AboutModal = observer(({ bookKey, opened = false, onClose }: AboutM
                         />
                     </Skeletonize>
 
+                    <Divider my="lg" label="Tags" labelPosition="center" />
+                    <Skeletonize visible={isMetadataParsed} skeletonCount={2}>
+                        <Group mt="md">
+                            <TagsGroup
+                                getName={getSubjectCategoryName}
+                                getTagNames={() => metadata.subjects}
+                                onTagClick={handleSubjectClick}
+                            />
+                            <TagsGroup
+                                getName={getYearCategoryName}
+                                getTagNames={() => bookViewStore.getBookYears(bookKey)}
+                                onTagClick={handleYearClick}
+                            />
+                            <TagsGroup
+                                getName={getLanguageCategoryName}
+                                getTagNames={() => bookViewStore.getBookLanguages(bookKey)}
+                                onTagClick={handleLanguageClick}
+                            />
+                        </Group>
+                    </Skeletonize>
+
                     <Divider my="lg" label="Description" labelPosition="center" />
                     <Skeletonize visible={isMetadataParsed}>
                         <DescriptionGroup metadata={metadata} />
-                    </Skeletonize>
-
-                    <Divider my="lg" label={getCategoryName()} labelPosition="center" />
-                    <Skeletonize visible={isMetadataParsed} skeletonCount={2}>
-                        <TagsGroup
-                            getName={getCategoryName}
-                            getTagNames={() => metadata.subjects}
-                            onTagClick={handleSubjectClick}
-                        />
                     </Skeletonize>
                 </Paper>
             </Container>

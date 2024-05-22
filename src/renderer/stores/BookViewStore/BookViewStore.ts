@@ -550,4 +550,15 @@ export class BookViewStore {
             { label: "Year", value: "publishYears" },
         ];
     }
+
+    getBookYears(bookKey: string) {
+        const metadata = this.rootStore.bookStore.getBookMetadata(bookKey);
+        const years = this.metadataGetter.getPublishYears(metadata);
+        return years;
+    }
+    getBookLanguages(bookKey: string) {
+        const metadata = this.rootStore.bookStore.getBookMetadata(bookKey);
+        const languages = this.metadataGetter.getLanguages(metadata);
+        return languages;
+    }
 }

@@ -15,8 +15,7 @@ export const TagsGroup = observer(({ getName, getTagNames, onTagClick }: TagsGro
     const tagNames = getTagNames();
 
     return (
-        <Group mt="md">
-            {!tagNames.length && <Text fz="sm">No {categoryName.toLocaleLowerCase()} listed</Text>}
+        <>
             {tagNames.map((tagName) => (
                 <Badge
                     tabIndex={0}
@@ -28,6 +27,6 @@ export const TagsGroup = observer(({ getName, getTagNames, onTagClick }: TagsGro
                     {tagName}
                 </Badge>
             ))}
-        </Group>
+        </>
     );
 });
