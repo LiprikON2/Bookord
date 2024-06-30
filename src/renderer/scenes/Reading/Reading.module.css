@@ -17,6 +17,7 @@
 
 .pageContainer {
     position: relative;
+    min-width: 25vw;
 }
 
 .pageSkeleton {

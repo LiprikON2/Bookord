@@ -20,11 +20,12 @@ export const Comments = observer(({}: CommentsProps) => {
     const [mode, toggleMode] = useToggle(modes);
 
     const bookTitle = bookReadStore.metadata.title;
-    const chapterNum = bookReadStore.autobookmark.elementSection;
+    const chapter = bookReadStore.tocState.currentSectionTitle ?? "Unknown chapter";
+    // const chapterNum = bookReadStore.autobookmark.elementSection;
 
     const getGiscusTitle = () => {
         if (mode === "Book") return bookTitle;
-        if (mode === "Chapter") return `${bookTitle} (section ${chapterNum})`;
+        if (mode === "Chapter") return `${bookTitle} (${chapter})`;
     };
     const giscusTitle = getGiscusTitle();
     useDocumentTitle(giscusTitle);
@@ -44,9 +45,14 @@ export const Comments = observer(({}: CommentsProps) => {
                 position="right"
                 withCloseButton={false}
             >
-                {/* TODO fix floating indicator, move to the right of title*/}
-                <SegmentedControl onChange={toggleMode} data={modes} />
-                <Giscus key={giscusTitle} />
+                {/* TODO move it to the right of title*/}
+                <SegmentedControl
+                    key={"control" + giscusTitle}
+                    onChange={toggleMode}
+                    value={mode}
+                    data={modes}
+                />
+                <Giscus key={"giscus" + giscusTitle} />
             </Drawer>
 
             {bookReadStore.isReady && (
