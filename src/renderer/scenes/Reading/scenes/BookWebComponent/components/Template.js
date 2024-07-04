@@ -13,7 +13,7 @@ export const style = /*css*/ `
         /* The intrinsic width of the underline stroke (in pixels). This is 
         * the same as the height of the cap images. Don't specify the
         * units! This is because of some of the calculations we do later on. */
-        --underline-intrinsic-width: 8;
+        --underline-intrinsic-width: 8.5;
         
         /* The actual width of the underline stroke we want to render (in pixels).
         * You can modify this, and the sizing and positioning should be calculated
@@ -133,17 +133,25 @@ export const style = /*css*/ `
         cursor: pointer;
     }
     
-    .highlighted::before {
+    /* Using pseudo-element allows to change background image fill color with 
+       a filter without affecting text color,
+       but it break highlight on multi-line text  */
+       
+    /* .highlighted::before {
         content: '';
         position: absolute;
         z-index: -1;
         left: 0px;
         right: 0px;
         top: 0px;
-        bottom: 0px;
+        bottom: 0px; 
+        filter: hue-rotate(0deg) saturate(5);
+        
+    */
+    .highlighted {
 
         display: inline;
-        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
         background-repeat: no-repeat;
         background-image:
             linear-gradient(180deg, var(--underline-color), var(--underline-color)),
@@ -161,15 +169,14 @@ export const style = /*css*/ `
             auto calc(var(--underline-width) * 1px * var(--underline-hover-height));
 
         transition: all 100ms ease;
-        
-        filter: hue-rotate(0deg) saturate(5);
+            
     }
 
     .highlighted:hover {
         --underline-hover-height: 2;
     }
 
-    .highlighted-red::before {}
+    /* .highlighted-red::before {}
 
     .highlighted-orange::before { 
         filter: hue-rotate(40deg) saturate(0.5) brightness(390%) saturate(4); 
@@ -261,7 +268,7 @@ export const style = /*css*/ `
 
     .highlighted-black::before  {
         filter: grayscale(100%) brightness(0);
-    }
+    } */
 
     .book-container {
         max-width: var(--book-component-width);

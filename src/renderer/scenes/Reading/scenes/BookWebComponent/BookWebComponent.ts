@@ -66,6 +66,7 @@ interface ElementVisibility {
     elementIndex: number | null;
     intersectionRatio: number | null;
 }
+
 /**
  * Book web component
  */
@@ -524,6 +525,87 @@ export default class BookWebComponent extends HTMLElement {
         }
 
         return doesSectionExist;
+    }
+
+    wrapSelection(selection: Selection = null, tag = "span", attrs = { class: "highlighted" }) {
+        if (selection === null) {
+            // @ts-ignore
+            selection = this.shadowRoot.getSelection();
+        }
+        if (!selection || selection.rangeCount < 1) return;
+
+        const range = selection.getRangeAt(0).cloneRange();
+        const ranges = this.splitRange(range);
+
+        ranges.forEach((range) => this.wrapBlockRange(range, tag, attrs));
+    }
+
+    /**
+     * Splits range with multi-block containers into multiple ranges with a single-block container, which supports `range.surroundContents(...)`
+     */
+    splitRange(range: Range) {
+        const getDirectDescendant = (ancestor: HTMLElement, descendant: HTMLElement) => {
+            const isDirectDescendant = descendant.parentNode === ancestor;
+            if (isDirectDescendant) return descendant;
+
+            return getDirectDescendant(ancestor, descendant.parentNode as HTMLElement);
+        };
+
+        const { startContainer, endContainer, commonAncestorContainer } = range.cloneRange();
+
+        const isSingleBlock = commonAncestorContainer === startContainer;
+        if (isSingleBlock) return [range];
+
+        const startRange = document.createRange();
+
+        startRange.setStart(range.startContainer, range.startOffset);
+        startRange.setEndAfter(range.startContainer);
+
+        const endRange = document.createRange();
+        endRange.setStartBefore(range.endContainer);
+        endRange.setEnd(range.endContainer, range.endOffset);
+
+        let nonTextCommonAncestor: HTMLElement;
+        if (commonAncestorContainer instanceof Text) {
+            nonTextCommonAncestor = commonAncestorContainer.parentNode as HTMLElement;
+        } else nonTextCommonAncestor = commonAncestorContainer as HTMLElement;
+
+        let nonTextStart: HTMLElement;
+        if (startContainer instanceof Text) {
+            nonTextStart = startContainer.parentNode as HTMLElement;
+        } else nonTextStart = startContainer as HTMLElement;
+
+        let nonTextEnd: HTMLElement;
+        if (endContainer instanceof Text) {
+            nonTextEnd = endContainer.parentNode as HTMLElement;
+        } else nonTextEnd = endContainer as HTMLElement;
+
+        const startIndex = Array.from(nonTextCommonAncestor.children).indexOf(
+            getDirectDescendant(nonTextCommonAncestor, nonTextStart)
+        );
+        const endIndex = Array.from(nonTextCommonAncestor.children).indexOf(
+            getDirectDescendant(nonTextCommonAncestor, nonTextEnd)
+        );
+
+        const inbetweenElems = Array.from(nonTextCommonAncestor.children).slice(
+            startIndex + 1,
+            endIndex
+        );
+
+        const inbetweenRanges = inbetweenElems.map((elem) => {
+            const inbetweenRange = document.createRange();
+            inbetweenRange.selectNodeContents(elem);
+            return inbetweenRange;
+        });
+
+        return [startRange, ...inbetweenRanges, endRange];
+    }
+
+    wrapBlockRange(range: Range, tag: string, attrs: { [attr: string]: string }) {
+        const wrapper = document.createElement(tag);
+        Object.keys(attrs).forEach((key) => wrapper.setAttribute(key, attrs[key]));
+
+        range.surroundContents(wrapper);
     }
 
     /**

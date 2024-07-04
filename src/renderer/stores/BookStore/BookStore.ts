@@ -183,6 +183,8 @@ export interface BookInteractionState {
         manual: Bookmark[];
     };
     reading: TimeRecord[];
+
+    highlights: any[][];
 }
 
 export type BookmarkTypes = keyof BookInteractionState["bookmarks"];
@@ -347,6 +349,7 @@ export class BookStore {
                     manual: [],
                 },
                 reading: [],
+                highlights: [],
             };
 
             runInAction(() => this.setBookInteraction(bookKey, defaultInteractionState));
