@@ -39,7 +39,7 @@ export interface Person {
 export class BookReadStore {
     rootStore: RootStore;
 
-    layout: Layout = "two-page";
+    layout: Layout = "single-page";
 
     pageComponents: { left: BookWebComponent | null; right: BookWebComponent | null } = {
         left: null,

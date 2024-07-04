@@ -1,3 +1,6 @@
+import highlightLeft from "~/assets/icons/highlight/highlight-left.svg";
+import highlightRight from "~/assets/icons/highlight/highlight-right.svg";
+
 export const style = /*css*/ `
     :host {
         --columns-count: 1;
@@ -6,6 +9,40 @@ export const style = /*css*/ `
         --column-gap-total: calc(calc(var(--columns-count) - 1) * var(--column-gap));
 
         --book-component-width: calc(calc(30rem * var(--columns-count)) + var(--column-gap-total));
+
+        /* The intrinsic width of the underline stroke (in pixels). This is 
+        * the same as the height of the cap images. Don't specify the
+        * units! This is because of some of the calculations we do later on. */
+        --underline-intrinsic-width: 8;
+        
+        /* The actual width of the underline stroke we want to render (in pixels).
+        * You can modify this, and the sizing and positioning should be calculated
+        * accordingly. Again, Don't specify the units! */
+        --underline-width: 12;
+        
+        /* The colour used to draw the underline. It should match the colour
+        * used in the cap images... unfortunately we can't modify the SVG
+        * fill via CSS because it's a background image. */
+        --underline-color: red;
+        
+        /* We need to know the width of the cap images so that we
+        * can position everything on the x axis accordingly. */
+        --underline-cap-width: 4px;
+        
+        /* The border is positioned relative to the bottom of the line.
+        * We can move it upwards a little to create an overlap effect. */
+        --underline-offset-y: -2px;
+        
+        /* The padding to add to the x axis. By default, the caps would be
+        * aligned with the beginning and end of the line. */
+        --underline-padding-x: 0.12em;
+        
+        /* The cap images to use that form the left and right rounded
+        * shape. I guess these could be any shape, they don't
+        * necessarily have to be round 🙂.
+        */
+        --cap-image-left: url(${highlightLeft});
+        --cap-image-right: url(${highlightRight});
     }
     
     :host {
@@ -62,7 +99,169 @@ export const style = /*css*/ `
         /* font-size: var(--fs-book-paragraph) !important; */
     }
 
+    .marked {
+        color: pink;
+        position: relative;
+    }
 
+    .marked::before {
+        content: "";
+        position: absolute;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        width: 90%;
+        height: 0.4em;
+        transform: skew(-12deg) translateX(5%);
+        background: rgba(238, 111, 87, 0.5);
+        z-index: -1;
+    }
+
+    /** Ref
+     * - https://dev.to/sharkcoder/css-underline-10-examples-3k7m
+     * - https://codepen.io/noahblon/post/coloring-svgs-in-css-background-images#css-masks-1
+     */
+    .highlighted {
+        position: relative;
+        
+        --underline-hover-height: 1;
+        --underline-width: 6;
+        --underline-offset-y: -2px;
+        --underline-width-scale: calc(var(--underline-width) / var(--underline-intrinsic-width) * var(--underline-hover-height));
+        
+        padding: 0 calc(var(--underline-padding-x) + calc(var(--underline-cap-width) * var(--underline-width-scale) / var(--underline-hover-height)));
+        cursor: pointer;
+    }
+    
+    .highlighted::before {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        bottom: 0px;
+
+        display: inline;
+        box-decoration-break: clone;
+        background-repeat: no-repeat;
+        background-image:
+            linear-gradient(180deg, var(--underline-color), var(--underline-color)),
+            var(--cap-image-left),
+            var(--cap-image-right);
+        
+        background-position-x:
+            calc(var(--underline-cap-width) * var(--underline-width-scale)),
+            0,
+            100%;
+        background-position-y: calc(100% - var(--underline-offset-y) * -1);
+        background-size:
+            calc(100% - calc(var(--underline-cap-width) * var(--underline-width-scale) * 2)) calc(var(--underline-width) * 1px * var(--underline-hover-height)),
+            auto calc(var(--underline-width) * 1px * var(--underline-hover-height)),
+            auto calc(var(--underline-width) * 1px * var(--underline-hover-height));
+
+        transition: all 100ms ease;
+        
+        filter: hue-rotate(0deg) saturate(5);
+    }
+
+    .highlighted:hover {
+        --underline-hover-height: 2;
+    }
+
+    .highlighted-red::before {}
+
+    .highlighted-orange::before { 
+        filter: hue-rotate(40deg) saturate(0.5) brightness(390%) saturate(4); 
+    }
+
+    .highlighted-yellow::before {
+        filter: hue-rotate(70deg) saturate(100);
+    }
+
+    .highlighted-green::before{
+        filter: hue-rotate(120deg) saturate(1.5);    
+    }
+
+    .highlighted-blue::before { 
+        filter: hue-rotate(240deg) saturate(5); 
+    }
+
+    .highlighted-indigo::before {
+        filter: hue-rotate(276deg) saturate(0.1) saturate(6.25) brightness(73%)
+    }
+
+    .highlighted-violet::before { 
+        filter: hue-rotate(260deg) saturate(100) saturate(.2) brightness(220%);
+    }
+
+    .highlighted-cyan::before { 
+        filter: invert(1);
+    }
+
+    .highlighted-magenta::before { 
+        filter: hue-rotate(260deg) saturate(100); 
+    }
+
+    .highlighted-lime::before {
+        filter: hue-rotate(80deg) saturate(100);
+    }
+
+    .highlighted-olive::before {
+        filter: hue-rotate(35deg) saturate(.5) brightness(630%) saturate(100) brightness(50%);
+    }
+
+    .highlighted-maroon::before {
+        filter: hue-rotate(35deg) saturate(.5) brightness(288%) saturate(100) brightness(50%);
+    }
+
+    .highlighted-purple::before {
+        filter: hue-rotate(300deg) saturate(.64);
+    }
+
+    .highlighted-white::before {
+        filter: grayscale(100%) brightness(5);
+    }
+
+    .highlighted-gray10::before {
+        filter: grayscale(100%) brightness(5) brightness(.9); 
+    }
+
+    .highlighted-gray20::before { 
+        filter: grayscale(100%) brightness(5) brightness(80%);
+    }
+
+    .highlighted-gray30::before { 
+        filter: grayscale(100%) brightness(500%) brightness(70%);
+    }
+
+    .highlighted-gray40::before { 
+        filter: grayscale(100%) brightness(500%) brightness(60%);
+    }
+
+    .highlighted-gray50::before { 
+        filter: grayscale(100%) brightness(500%) brightness(50%);
+    }
+
+    .highlighted-gray60::before { 
+        filter: grayscale(100%) brightness(500%) brightness(40%);
+    }
+
+    .highlighted-gray70::before { 
+        filter: grayscale(100%) brightness(500%) brightness(30%); 
+    }
+
+    .highlighted-gray80::before { 
+        filter: grayscale(100%) brightness(500%) brightness(20%);
+    }
+
+    .highlighted-gray90::before { 
+        filter: grayscale(100%) brightness(500%) brightness(10%); 
+    }
+
+    .highlighted-black::before  {
+        filter: grayscale(100%) brightness(0);
+    }
 
     .book-container {
         max-width: var(--book-component-width);
