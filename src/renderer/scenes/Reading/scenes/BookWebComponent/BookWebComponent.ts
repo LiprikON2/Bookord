@@ -3,6 +3,13 @@ import debounce from "lodash/debounce";
 import PageCounter from "./components/PageCounter";
 import StyleLoader from "./components/StyleLoader";
 import StateManager from "./components/StateManager";
+import QuerySerializer from "./components/QuerySerializer";
+import {
+    deserializeRange,
+    getDirectDescendant,
+    getFirstNonTextElement,
+    serializeRange,
+} from "./components/DomHelpers";
 import { template } from "./components/Template";
 import { BookContent, BookContentState, BookMetadata, Bookmark } from "~/renderer/stores";
 import { isDev } from "~/common/helpers";
@@ -157,7 +164,18 @@ export default class BookWebComponent extends HTMLElement {
                 }
             });
         });
+
+        this.contentElem.addEventListener(
+            "contextmenu",
+            (e) => new QuerySerializer(this.contentElem, e.target)
+        );
     }
+
+    serializeQuery(element: HTMLElement | Node) {
+        const querySerializer = new QuerySerializer(this.contentElem, element);
+        return querySerializer.needle;
+    }
+
     updateElementVisibility(element: Element, intersectionRatio: number) {
         const elementIndex = this.contentParagraphs.indexOf(element);
 
@@ -535,22 +553,54 @@ export default class BookWebComponent extends HTMLElement {
         if (!selection || selection.rangeCount < 1) return;
 
         const range = selection.getRangeAt(0).cloneRange();
+        this.wrapRange(range, tag, attrs);
+    }
+
+    wrapRange(range: Range, tag: string, attrs: { [attr: string]: string }) {
         const ranges = this.splitRange(range);
 
-        ranges.forEach((range) => this.wrapBlockRange(range, tag, attrs));
+        const [ss] = getFirstNonTextElement(ranges[0].startContainer);
+        // console.log("serializeQuery", this.serializeQuery(ss));
+        // console.log("startContainer", ss);
+
+        // ranges.forEach((range) => {
+        //     console.log("");
+        //     console.log("og range", range);
+        //     console.log(
+        //         "start",
+        //         range.startContainer,
+        //         "end",
+        //         range.endContainer,
+        //         "commonAncestor",
+        //         range.commonAncestorContainer
+        //     );
+
+        //     console.log("vs");
+        //     console.log(
+        //         "hydrated",
+        //         deserializeRange(serializeRange(range, this.contentElem), this.contentElem)
+        //     );
+        //     console.log("");
+        // });
+
+        const serializedRanges = ranges.map((range) => serializeRange(range, this.contentElem));
+
+        serializedRanges.forEach((range) =>
+            this.wrapBlockRange(deserializeRange(range, this.contentElem), tag, attrs)
+        );
+        // ranges.forEach((range) =>
+        //     this.wrapBlockRange(
+        //         range,
+        //         tag,
+        //         attrs
+        //     )
+        // );
     }
 
     /**
      * Splits range with multi-block containers into multiple ranges with a single-block container, which supports `range.surroundContents(...)`
      */
-    splitRange(range: Range) {
-        const getDirectDescendant = (ancestor: HTMLElement, descendant: HTMLElement) => {
-            const isDirectDescendant = descendant.parentNode === ancestor;
-            if (isDirectDescendant) return descendant;
-
-            return getDirectDescendant(ancestor, descendant.parentNode as HTMLElement);
-        };
-
+    private splitRange(range: Range) {
         const { startContainer, endContainer, commonAncestorContainer } = range.cloneRange();
 
         const isSingleBlock = commonAncestorContainer === startContainer;
@@ -565,20 +615,9 @@ export default class BookWebComponent extends HTMLElement {
         endRange.setStartBefore(range.endContainer);
         endRange.setEnd(range.endContainer, range.endOffset);
 
-        let nonTextCommonAncestor: HTMLElement;
-        if (commonAncestorContainer instanceof Text) {
-            nonTextCommonAncestor = commonAncestorContainer.parentNode as HTMLElement;
-        } else nonTextCommonAncestor = commonAncestorContainer as HTMLElement;
-
-        let nonTextStart: HTMLElement;
-        if (startContainer instanceof Text) {
-            nonTextStart = startContainer.parentNode as HTMLElement;
-        } else nonTextStart = startContainer as HTMLElement;
-
-        let nonTextEnd: HTMLElement;
-        if (endContainer instanceof Text) {
-            nonTextEnd = endContainer.parentNode as HTMLElement;
-        } else nonTextEnd = endContainer as HTMLElement;
+        const [nonTextCommonAncestor] = getFirstNonTextElement(commonAncestorContainer);
+        const [nonTextStart] = getFirstNonTextElement(startContainer);
+        const [nonTextEnd] = getFirstNonTextElement(endContainer);
 
         const startIndex = Array.from(nonTextCommonAncestor.children).indexOf(
             getDirectDescendant(nonTextCommonAncestor, nonTextStart)
@@ -601,7 +640,7 @@ export default class BookWebComponent extends HTMLElement {
         return [startRange, ...inbetweenRanges, endRange];
     }
 
-    wrapBlockRange(range: Range, tag: string, attrs: { [attr: string]: string }) {
+    private wrapBlockRange(range: Range, tag: string, attrs: { [attr: string]: string }) {
         const wrapper = document.createElement(tag);
         Object.keys(attrs).forEach((key) => wrapper.setAttribute(key, attrs[key]));
 
