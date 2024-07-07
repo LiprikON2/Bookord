@@ -9,6 +9,7 @@ import { autosave } from "../utils";
 import { RaceConditionGuard } from "./utils";
 import { Bookmark } from "../BookReadStore";
 import context from "./ipc/storeContextApi";
+import { Wrapper } from "~/renderer/scenes/Reading/scenes/BookWebComponent";
 
 export type BookState = {
     isInStorage: boolean;
@@ -177,14 +178,16 @@ export interface TimeRecord {
     progress: number;
 }
 
+export interface SectionWrapppers {
+    highlights: Wrapper[];
+}
 export interface BookInteractionState {
     bookmarks: {
         auto: Bookmark;
         manual: Bookmark[];
     };
     reading: TimeRecord[];
-
-    highlights: any[][];
+    wrappers: SectionWrapppers[];
 }
 
 export type BookmarkTypes = keyof BookInteractionState["bookmarks"];
@@ -335,6 +338,16 @@ export class BookStore {
         runInAction(() => this.setReady());
     }
 
+    addBookInteractionWrap(bookKey: BookKey, highlight: Wrapper) {
+        const interactionState = this.getBookInteraction(bookKey);
+
+        if (!interactionState.wrappers.length) {
+            const contentState = this.getBookContentState(bookKey);
+            interactionState.wrappers = contentState.sectionNames.map(() => ({ highlights: [] }));
+        }
+        interactionState.wrappers[highlight.sectionIndex].highlights.push(highlight);
+    }
+
     addBookInteractionTimeRecord(bookKey: BookKey, timeRecord: TimeRecord) {
         const interactionState = this.getBookInteraction(bookKey);
         interactionState.reading.push(timeRecord);
@@ -343,24 +356,32 @@ export class BookStore {
     getBookInteraction(bookKey: BookKey): BookInteractionState {
         const interactionState = this.interactionRecords.get(bookKey);
         if (!interactionState) {
-            const defaultInteractionState: BookInteractionState = {
-                bookmarks: {
-                    auto: { elementSection: 0, elementIndex: 0, elementSelector: null },
-                    manual: [],
-                },
-                reading: [],
-                highlights: [],
-            };
-
-            runInAction(() => this.setBookInteraction(bookKey, defaultInteractionState));
+            runInAction(() => this.setBookInteraction(bookKey, {}));
 
             return this.getBookInteraction(bookKey);
         }
 
+        if (!interactionState.wrappers.length) {
+            const contentState = this.getBookContentState(bookKey);
+            interactionState.wrappers = contentState.sectionNames.map(() => ({ highlights: [] }));
+        }
+
         return interactionState;
     }
-    setBookInteraction(bookKey: BookKey, interactionState: BookInteractionState) {
-        this.interactionRecords.set(bookKey, interactionState);
+    setBookInteraction(bookKey: BookKey, interactionState: Partial<BookInteractionState>) {
+        const defaultInteractionState: BookInteractionState = {
+            bookmarks: {
+                auto: { elementSection: 0, elementIndex: 0, elementSelector: null },
+                manual: [],
+            },
+            reading: [],
+            wrappers: [],
+        };
+
+        this.interactionRecords.set(
+            bookKey,
+            _.merge({}, defaultInteractionState, interactionState)
+        );
     }
     addBookInteractionBookmark(bookKey: BookKey, bookmark: Bookmark, type: BookmarkTypes) {
         const interactionState = this.getBookInteraction(bookKey);

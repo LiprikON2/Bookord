@@ -21,47 +21,48 @@ export const getFirstNonTextElement = (
     return [element as HTMLElement, wasText];
 };
 
-export const getTextElement = (element: Element | HTMLElement) => {
+export const getTextNode = (element: Element | HTMLElement, nodeValue: string = null) => {
     if (element instanceof Text) return element;
 
     for (const childNode of element.childNodes) {
         if (childNode.nodeType === Node.TEXT_NODE) {
-            const textNode = childNode;
-            return textNode;
+            if (nodeValue === null || childNode.nodeValue === nodeValue) return childNode;
         }
     }
 };
 
-interface SerializedRange {
-    isCommonAncestorAText: boolean;
+export interface SerializedRange {
     isStartAText: boolean;
+    startNodeValue: string | null;
     isEndAText: boolean;
-    commonAncestorSelector: string;
+    endNodeValue: string | null;
     startSelector: string;
     endSelector: string;
     endOffset: number;
     startOffset: number;
 }
 
-export const serializeRange = (range: Range, dom: Document | ShadowRoot | HTMLElement) => {
-    const [nonTextCommonAncestor, isCommonAncestorAText] = getFirstNonTextElement(
-        range.commonAncestorContainer
-    );
+export const serializeRange = (
+    range: Range,
+    dom: Document | ShadowRoot | HTMLElement
+): SerializedRange => {
     const [nonTextStart, isStartAText] = getFirstNonTextElement(range.startContainer);
     const [nonTextEnd, isEndAText] = getFirstNonTextElement(range.endContainer);
 
-    const commonAncestorSelector = new QuerySerializer(dom, nonTextCommonAncestor).needle;
+    const startNodeValue = isStartAText ? range.startContainer.nodeValue : null;
+    const endNodeValue = isEndAText ? range.endContainer.nodeValue : null;
+
     const startSelector = new QuerySerializer(dom, nonTextStart).needle;
     const endSelector = new QuerySerializer(dom, nonTextEnd).needle;
 
     const { endOffset, startOffset } = range;
 
     return {
-        isCommonAncestorAText,
         isStartAText,
+        startNodeValue,
         isEndAText,
+        endNodeValue,
 
-        commonAncestorSelector,
         startSelector,
         endSelector,
 
@@ -75,37 +76,45 @@ export const deserializeRange = (
     dom: Document | ShadowRoot | HTMLElement
 ) => {
     const {
-        isCommonAncestorAText,
         isStartAText,
         isEndAText,
 
-        commonAncestorSelector,
+        startNodeValue,
         startSelector,
         endSelector,
+        endNodeValue,
 
         endOffset,
         startOffset,
     } = serializedRange;
 
-    const commonAncestor = dom.querySelector(commonAncestorSelector);
-    const commonAncestorContainer = isCommonAncestorAText
-        ? getTextElement(commonAncestor)
-        : commonAncestor;
-
     const start = dom.querySelector(startSelector);
-    const startContainer = isStartAText ? getTextElement(start) : start;
+    const startContainer = isStartAText ? getTextNode(start, startNodeValue) : start;
 
     const end = dom.querySelector(endSelector);
-    const endContainer = isEndAText ? getTextElement(end) : end;
+    const endContainer = isEndAText ? getTextNode(end, endNodeValue) : end;
 
     const range = document.createRange();
 
     range.setStart(startContainer, startOffset);
     range.setEnd(endContainer, endOffset);
 
-    console.log("start", start, "end", end, "commonAncestor", commonAncestor);
-
-    console.log("startOffset", startOffset, "endOffset", endOffset);
-
     return range;
+};
+
+export const doesRangeContainsClass = (
+    dom: Document | ShadowRoot | HTMLElement,
+    range: Range,
+    className: string
+) => {
+    return [...dom.querySelectorAll("." + className.replaceAll(" ", "."))].some((node) =>
+        range.intersectsNode(node)
+    );
+};
+
+export const appendUniqueClass = (className: string) => {
+    const firstClassName = className.split(" ")[0];
+    const uuid = Math.random().toString(36).slice(2, 11);
+
+    return `${className} ${firstClassName}-${uuid}`;
 };

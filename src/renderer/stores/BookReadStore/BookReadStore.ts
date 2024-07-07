@@ -2,8 +2,12 @@ import _ from "lodash";
 import { makeAutoObservable, observable, runInAction, toJS, when } from "mobx";
 
 import type BookWebComponent from "~/renderer/scenes/Reading/scenes/BookWebComponent";
-import type { Position, TocState } from "~/renderer/scenes/Reading/scenes/BookWebComponent";
-import { BookKey, TimeRecord } from "../BookStore";
+import type {
+    Position,
+    TocState,
+    Wrapper,
+} from "~/renderer/scenes/Reading/scenes/BookWebComponent";
+import { BookKey, SectionWrapppers, TimeRecord } from "../BookStore";
 import { RootStore } from "../RootStore";
 import { Interface } from "readline/promises";
 
@@ -142,6 +146,7 @@ export class BookReadStore {
             toJS(this.metadata),
             this.initSectionIndex,
             sectionNames,
+            this.wrappers,
             { elementIndex, elementSelector },
             1
         );
@@ -150,6 +155,7 @@ export class BookReadStore {
             toJS(this.metadata),
             this.initSectionIndex,
             sectionNames,
+            this.wrappers,
             { elementIndex, elementSelector }
         );
         this.pageComponents.right.setOnResize(this.syncPages);
@@ -220,9 +226,17 @@ export class BookReadStore {
         return this.rootStore.bookStore.getBookInteraction(this.bookKey).bookmarks.auto;
     }
 
+    get wrappers(): SectionWrapppers[] {
+        return this.rootStore.bookStore.getBookInteraction(this.bookKey).wrappers;
+    }
+
     get initSectionIndex() {
         const initSectionIndex = this.autobookmark.elementSection;
         return initSectionIndex;
+    }
+
+    addHighlight(highlight: Wrapper) {
+        this.rootStore.bookStore.addBookInteractionWrap(this.bookKey, highlight);
     }
 
     setAutobookmark(bookmark: Bookmark) {
@@ -556,5 +570,12 @@ export class BookReadStore {
 
         left?.unloadBook?.();
         right?.unloadBook?.();
+    }
+
+    highlight() {
+        const { left, right } = this.pageComponents;
+
+        left?.highlight?.();
+        right?.highlight?.();
     }
 }

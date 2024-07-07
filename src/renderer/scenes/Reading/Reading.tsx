@@ -94,7 +94,6 @@ export const Reading = observer(() => {
         bookReadStore.sectionBackward();
     });
 
-    // Usage of actions prevents `Observable being read outside a reactive context` warning
     useHotkeys([
         ["ArrowRight", handleNextPage],
         ["ArrowLeft", handlePrevPage],

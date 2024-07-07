@@ -1,6 +1,12 @@
 import React from "react";
 import { useContextMenu } from "mantine-contextmenu";
-import { IconCopy, IconLanguage, IconSpeakerphone, IconVocabulary } from "@tabler/icons-react";
+import {
+    IconCopy,
+    IconHighlight,
+    IconLanguage,
+    IconSpeakerphone,
+    IconVocabulary,
+} from "@tabler/icons-react";
 
 import { useBookReadStore } from "~/renderer/stores/hooks";
 import { EventMap, useEvents } from "../hooks";
@@ -25,6 +31,12 @@ export const useReadingEvents = (
                     key: "copy",
                     icon: <IconCopy className={classNames?.icon} />,
                     onClick: () => navigator.clipboard.writeText(e.detail.selectedText),
+                },
+                {
+                    key: "highlight",
+                    icon: <IconHighlight className={classNames?.icon} />,
+                    onClick: () => bookReadStore.highlight(),
+                    hidden: !e.detail.canBeHighlighted,
                 },
 
                 {
@@ -76,6 +88,10 @@ export const useReadingEvents = (
         bookmarkPositionsEvent: (e) => {
             bookReadStore.setBookmarkablePositions(e.detail.manual);
             bookReadStore.setAutobookmark(e.detail.auto);
+        },
+        wrapEvent: (e) => {
+            console.log("wrap! e.detail", e.detail);
+            bookReadStore.addHighlight(e.detail);
         },
     });
 
