@@ -13,6 +13,19 @@
 ![](https://i.imgur.com/k8MDUEz.png)
 
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [Demo Video - Library](https://www.youtube.com/watch?v=i9kWWFO5MVY) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [Demo Video - Reading](https://www.youtube.com/watch?v=95-NBEa5OIw) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [Demo Video - AI Recaps](https://www.youtube.com/watch?v=i9kWWFO5MVY)
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=lXqP77dod8o
+" target="_blank"><img src="http://img.youtube.com/vi/lXqP77dod8o/0.jpg" 
+alt="Bookord Library - Demo" width="240" height="180" border="10" /></a>
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=95-NBEa5OIw
+" target="_blank"><img src="http://img.youtube.com/vi/95-NBEa5OIw/0.jpg" 
+alt="Bookord Reading - Demo" width="240" height="180" border="10" /></a>
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=i9kWWFO5MVY
+" target="_blank"><img src="http://img.youtube.com/vi/i9kWWFO5MVY/0.jpg" 
+alt="Bookord AI Recaps - Demo" width="240" height="180" border="10" /></a>
+
+
 <div style="width:300px;vertical-align:top;font-family: Arial;font-size:9pt;line-height: normal">
 <a rel="license" href="//responsivevoice.org/"><img title="ResponsiveVoice Text To Speech" src="https://responsivevoice.org/wp-content/uploads/2014/08/120x31.png" style="float:left;padding-right:2px" /></a><span xmlns:dct="https://purl.org/dc/terms/" property="dct:title"><a href="//responsivevoice.org/" target="_blank" title="ResponsiveVoice Text To Speech">ResponsiveVoice</a></span> used under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" title="Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License">Non-Commercial License</a></div>
 <div style="clear:both;">&nbsp;</div>
