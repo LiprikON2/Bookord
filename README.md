@@ -12,7 +12,7 @@
 ![](https://i.imgur.com/k8MDUEz.png)
 
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [Demo Video - Library](https://www.youtube.com/watch?v=i9kWWFO5MVY) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [Demo Video - Reading](https://www.youtube.com/watch?v=95-NBEa5OIw) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [Demo Video - AI Recaps](https://www.youtube.com/watch?v=i9kWWFO5MVY)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [Demo Video - Library](https://www.youtube.com/watch?v=lXqP77dod8o) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [Demo Video - Reading](https://www.youtube.com/watch?v=95-NBEa5OIw) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [Demo Video - AI Recaps](https://www.youtube.com/watch?v=i9kWWFO5MVY)
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=lXqP77dod8o
 " target="_blank"><img src="http://img.youtube.com/vi/lXqP77dod8o/mqdefault.jpg" 
