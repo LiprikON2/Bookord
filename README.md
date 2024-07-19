@@ -15,14 +15,14 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [Demo Video - Library](https://www.youtube.com/watch?v=i9kWWFO5MVY) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [Demo Video - Reading](https://www.youtube.com/watch?v=95-NBEa5OIw) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [Demo Video - AI Recaps](https://www.youtube.com/watch?v=i9kWWFO5MVY)
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=lXqP77dod8o
-" target="_blank"><img src="http://img.youtube.com/vi/lXqP77dod8o/0.jpg" 
-alt="Bookord Library - Demo" width="240" height="180" border="10" /></a>
+" target="_blank"><img src="http://img.youtube.com/vi/lXqP77dod8o/mqdefault.jpg" 
+alt="Bookord Library - Demo" width="240" height="135" border="10" /></a>
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=95-NBEa5OIw
-" target="_blank"><img src="http://img.youtube.com/vi/95-NBEa5OIw/0.jpg" 
-alt="Bookord Reading - Demo" width="240" height="180" border="10" /></a>
+" target="_blank"><img src="http://img.youtube.com/vi/95-NBEa5OIw/mqdefault.jpg" 
+alt="Bookord Reading - Demo" width="240" height="135" border="10" /></a>
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=i9kWWFO5MVY
-" target="_blank"><img src="http://img.youtube.com/vi/i9kWWFO5MVY/0.jpg" 
-alt="Bookord AI Recaps - Demo" width="240" height="180" border="10" /></a>
+" target="_blank"><img src="http://img.youtube.com/vi/i9kWWFO5MVY/mqdefault.jpg" 
+alt="Bookord AI Recaps - Demo" width="240" height="135" border="10" /></a>
 
 
 <div style="width:300px;vertical-align:top;font-family: Arial;font-size:9pt;line-height: normal">
