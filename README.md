@@ -31,21 +31,6 @@ alt="Bookord AI Recaps - Demo" width="240" height="180" border="10" /></a>
 <div style="clear:both;">&nbsp;</div>
 
 
-
-## [RU] 
-
-### Установка
-
-1. Скачать и запустить [установщик для Windows](https://github.com/LiprikON2/bookord/releases/latest)
-
-- Поддерживаются книги формата `.epub`
-- Приложение хранит свои настройки по пути `%APPDATA%/Roaming/bookord`
-- Книги добавленные в приложение копируются по пути `%APPDATA%/Roaming/bookord/Books`
-
-
-___ 
-
-## [EN]
 > Based on [Electron React Webpack Typescript](https://github.com/codesbiome/electron-react-webpack-typescript-2024) template by @codesbiome
 
 
