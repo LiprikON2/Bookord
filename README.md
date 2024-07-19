@@ -5,8 +5,7 @@
 [![Github All Releases](https://img.shields.io/github/downloads/liprikon2/bookord/total.svg)]()
 
 
-
-![](assets/icons/brand/bookord-logo.svg)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src="assets/icons/brand/bookord-logo.svg" height="240" border="10" />
 
 ![](https://i.imgur.com/I25O50n.png)
 
