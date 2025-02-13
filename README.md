@@ -5,34 +5,31 @@
 [![Github All Releases](https://img.shields.io/github/downloads/liprikon2/bookord/total.svg)]()
 
 
-
-![](assets/icons/brand/bookord-logo.svg)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src="assets/icons/brand/bookord-logo.svg" height="240" border="10" />
 
 ![](https://i.imgur.com/I25O50n.png)
 
 ![](https://i.imgur.com/k8MDUEz.png)
 
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [Demo Video - Library](https://www.youtube.com/watch?v=lXqP77dod8o) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [Demo Video - Reading](https://www.youtube.com/watch?v=95-NBEa5OIw) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [Demo Video - AI Recaps](https://www.youtube.com/watch?v=i9kWWFO5MVY)
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=lXqP77dod8o
+" target="_blank"><img src="http://img.youtube.com/vi/lXqP77dod8o/mqdefault.jpg" 
+alt="Bookord Library - Demo" width="240" height="135" border="10" /></a>
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=95-NBEa5OIw
+" target="_blank"><img src="http://img.youtube.com/vi/95-NBEa5OIw/mqdefault.jpg" 
+alt="Bookord Reading - Demo" width="240" height="135" border="10" /></a>
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=i9kWWFO5MVY
+" target="_blank"><img src="http://img.youtube.com/vi/i9kWWFO5MVY/mqdefault.jpg" 
+alt="Bookord AI Recaps - Demo" width="240" height="135" border="10" /></a>
+
+
 <div style="width:300px;vertical-align:top;font-family: Arial;font-size:9pt;line-height: normal">
-<a rel="license" href="//responsivevoice.org/"><img title="ResponsiveVoice Text To Speech" src="https://responsivevoice.org/wp-content/uploads/2014/08/120x31.png" style="float:left;padding-right:2px" /></a><span xmlns:dct="https://purl.org/dc/terms/" property="dct:title"><a href="//responsivevoice.org/" target="_blank" title="ResponsiveVoice Text To Speech">ResponsiveVoice</a></span> used under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" title="Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License">Non-Commercial License</a></div>
+<a rel="license" href="//responsivevoice.org/"><img title="ResponsiveVoice Text To Speech" src="https://responsivevoice.org/wp-content/uploads/2014/08/120x31.png" style="float:left;padding-right:2px" /></a><span xmlns:dct="https://purl.org/dc/terms/" property="dct:title">&nbsp;<a href="//responsivevoice.org/" target="_blank" title="ResponsiveVoice Text To Speech">ResponsiveVoice</a></span> used under<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" title="Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License">Non-Commercial License</a></div>
 <div style="clear:both;">&nbsp;</div>
 
 
-
-## [RU] 
-
-### Установка
-
-1. Скачать и запустить [установщик для Windows](https://github.com/LiprikON2/bookord/releases/latest)
-
-- Поддерживаются книги формата `.epub`
-- Приложение хранит свои настройки по пути `%APPDATA%/Roaming/bookord`
-- Книги добавленные в приложение копируются по пути `%APPDATA%/Roaming/bookord/Books`
-
-
-___ 
-
-## [EN]
 > Based on [Electron React Webpack Typescript](https://github.com/codesbiome/electron-react-webpack-typescript-2024) template by @codesbiome
 
 
