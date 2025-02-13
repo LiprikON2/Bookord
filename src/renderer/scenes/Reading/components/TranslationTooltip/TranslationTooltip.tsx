@@ -68,8 +68,9 @@ export const TranslationTooltip = observer(
                     imperativeModeOnly
                     variant={colorSceme}
                     opacity={1}
+                    clickable
                 />
-                {opened && <Overlay onClick={onClose} opacity={0} />}
+                {opened && <Overlay onClick={onClose} zIndex={10} opacity={0} />}
             </Portal>
         );
     }

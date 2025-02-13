@@ -9,7 +9,11 @@ import { autosave } from "../utils";
 import { RaceConditionGuard } from "./utils";
 import { Bookmark } from "../BookReadStore";
 import context from "./ipc/storeContextApi";
-import { Wrapper } from "~/renderer/scenes/Reading/scenes/BookWebComponent";
+import {
+    SerializedSectionWrappers,
+    SerializedWrapper,
+    Wrapper,
+} from "~/renderer/scenes/Reading/scenes/BookWebComponent";
 
 export type BookState = {
     isInStorage: boolean;
@@ -178,16 +182,13 @@ export interface TimeRecord {
     progress: number;
 }
 
-export interface SectionWrapppers {
-    highlights: Wrapper[];
-}
 export interface BookInteractionState {
     bookmarks: {
         auto: Bookmark;
         manual: Bookmark[];
     };
     reading: TimeRecord[];
-    wrappers: SectionWrapppers[];
+    wrappers: SerializedSectionWrappers[];
 }
 
 export type BookmarkTypes = keyof BookInteractionState["bookmarks"];
@@ -338,7 +339,7 @@ export class BookStore {
         runInAction(() => this.setReady());
     }
 
-    addBookInteractionWrap(bookKey: BookKey, highlight: Wrapper) {
+    addBookInteractionWrap(bookKey: BookKey, highlight: SerializedWrapper) {
         const interactionState = this.getBookInteraction(bookKey);
 
         if (!interactionState.wrappers.length) {
@@ -361,8 +362,8 @@ export class BookStore {
             return this.getBookInteraction(bookKey);
         }
 
-        if (!interactionState.wrappers.length) {
-            const contentState = this.getBookContentState(bookKey);
+        const contentState = this.getBookContentState(bookKey);
+        if (contentState.isInitSectionParsed && !interactionState.wrappers.length) {
             interactionState.wrappers = contentState.sectionNames.map(() => ({ highlights: [] }));
         }
 

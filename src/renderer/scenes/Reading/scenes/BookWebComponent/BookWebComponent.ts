@@ -5,22 +5,17 @@ import StyleLoader from "./components/StyleLoader";
 import StateManager from "./components/StateManager";
 import QuerySerializer from "./components/QuerySerializer";
 import {
-    appendUniqueClass,
+    appendIdToClassName,
     deserializeRange,
     doesRangeContainsClass,
     getDirectDescendant,
     getFirstNonTextElement,
     SerializedRange,
     serializeRange,
+    splitRange,
 } from "./components/DomHelpers";
 import { template } from "./components/Template";
-import {
-    BookContent,
-    BookContentState,
-    BookMetadata,
-    Bookmark,
-    SectionWrapppers,
-} from "~/renderer/stores";
+import { BookContent, BookContentState, BookMetadata, Bookmark } from "~/renderer/stores";
 import { isDev } from "~/common/helpers";
 
 export type Position = {
@@ -50,6 +45,12 @@ interface ContextMenuEventDetail {
     selectedText: string;
     selectionPosition: { x: number; y: number };
     canBeHighlighted: boolean;
+    wrapper: SerializedWrapper;
+}
+interface WrapContextMenuEventDetail {
+    event: MouseEvent;
+    instanceAttrs: Wrapper["instanceAttrs"];
+    firstWrapBlockPosition: { x: number; y: number };
 }
 
 interface BookmarkPositionsEventDetail {
@@ -62,22 +63,31 @@ interface ImgClickEventDetail {
 }
 
 export interface Wrapper {
-    sectionIndex: number;
+    ranges: Range[];
     serializedRanges: SerializedRange[];
-    tag: string;
-    attrs: {
-        [attr: string]: string;
-    };
-    uniqueAttrs: {
+    sectionIndex: number;
+    wrapperConfig: { tag: string; attrs: { [attr: string]: string } };
+    instanceAttrs: {
         [attr: string]: string;
     };
 }
+
+export type SerializedWrapper = Omit<Wrapper, "ranges">;
+
+export interface SerializedSectionWrappers {
+    highlights: SerializedWrapper[];
+}
+export type SectionWrappers = {
+    highlights: Wrapper[];
+};
+
 export interface BookWebComponentEventMap extends HTMLElementEventMap {
     imgClickEvent: MouseEvent & { detail: ImgClickEventDetail };
     uiStateUpdateEvent: Event & { detail: UiState };
     tocStateUpdateEvent: Event & { detail: TocState };
     contextMenuEvent: MouseEvent & { detail: ContextMenuEventDetail };
-    wrapEvent: MouseEvent & { detail: Wrapper };
+    wrapEvent: MouseEvent & { detail: SerializedWrapper };
+    wrapContextMenuEvent: MouseEvent & { detail: WrapContextMenuEventDetail };
 
     bookmarkPositionsEvent: Event & {
         detail: BookmarkPositionsEventDetail;
@@ -102,7 +112,7 @@ interface ElementVisibility {
  */
 export default class BookWebComponent extends HTMLElement {
     private book: Book = null;
-    private wrappers: SectionWrapppers[];
+    private wrappers: SectionWrappers[];
     private rootElem: HTMLElement;
     contentElem: HTMLElement;
     private styleElem: HTMLElement;
@@ -142,7 +152,10 @@ export default class BookWebComponent extends HTMLElement {
     private onDisconnect = () => {};
     private onResize: () => void = null;
 
-    readonly highlightStyles = { tag: "span", attrs: { class: "highlighted" } };
+    readonly highlightConfig: Wrapper["wrapperConfig"] = {
+        tag: "span",
+        attrs: { class: "highlighted" },
+    };
 
     constructor() {
         super();
@@ -381,7 +394,7 @@ export default class BookWebComponent extends HTMLElement {
         metadata: BookMetadata,
         sectionIndex: number,
         sectionNames: BookContentState["sectionNames"],
-        wrap: SectionWrapppers[],
+        serializedSectionWrappers: SerializedSectionWrappers[],
         position?: Position,
         pageOffset = 0
     ) {
@@ -390,7 +403,12 @@ export default class BookWebComponent extends HTMLElement {
         if (isInitialLoad) {
             this.pageOffset = pageOffset;
             this.book = { ...content, sectionNames, metadata };
-            this.wrappers = wrap;
+            this.wrappers = serializedSectionWrappers.map((serializedSectionWrapper) => ({
+                highlights: serializedSectionWrapper.highlights.map((highlight) => ({
+                    ...highlight,
+                    ranges: [],
+                })),
+            }));
             this.loadSection(sectionIndex, position);
             this.state.setInitBookInfo(this.book.sectionNames.length);
         }
@@ -455,14 +473,20 @@ export default class BookWebComponent extends HTMLElement {
         const { currentSection } = this.state.book;
 
         this.wrappers[currentSection].highlights.forEach(
-            ({ serializedRanges, tag, uniqueAttrs }) => {
-                serializedRanges.forEach((serializedRange) =>
-                    this.wrapBlockRange(
-                        deserializeRange(serializedRange, this.contentElem),
-                        tag,
-                        uniqueAttrs
-                    )
-                );
+            ({ serializedRanges, wrapperConfig, instanceAttrs }) => {
+                const firstRange = deserializeRange(serializedRanges[0], this.contentElem);
+
+                serializedRanges.forEach((serializedRange) => {
+                    const range = deserializeRange(serializedRange, this.contentElem);
+                    const wrapperElem = this.wrapBlockRange(
+                        range,
+                        wrapperConfig.tag,
+                        instanceAttrs
+                    );
+                    wrapperElem.addEventListener("click", (e) =>
+                        this.emitWrapContextMenuEvent(e, firstRange, instanceAttrs)
+                    );
+                });
             }
         );
     }
@@ -510,7 +534,8 @@ export default class BookWebComponent extends HTMLElement {
             const y = rect.top;
             const selectionPosition = { x, y };
 
-            const canBeHighlighted = this.canBeHighlighted();
+            const wrapper = this.createWrapper();
+            const canBeHighlighted = wrapper !== null;
 
             if (startElement && startElementSelectedText) {
                 e.stopPropagation();
@@ -520,7 +545,8 @@ export default class BookWebComponent extends HTMLElement {
                     startElementSelectedText,
                     selectedText,
                     selectionPosition,
-                    canBeHighlighted
+                    canBeHighlighted,
+                    wrapper
                 );
             }
         });
@@ -532,7 +558,8 @@ export default class BookWebComponent extends HTMLElement {
         startElementSelectedText: string,
         selectedText: string,
         selectionPosition: { x: number; y: number },
-        canBeHighlighted: boolean
+        canBeHighlighted: boolean,
+        wrapper: SerializedWrapper
     ) {
         const contextMenuEvent = new CustomEvent<ContextMenuEventDetail>("contextMenuEvent", {
             bubbles: true,
@@ -545,6 +572,7 @@ export default class BookWebComponent extends HTMLElement {
                 selectedText,
                 selectionPosition,
                 canBeHighlighted,
+                wrapper,
             },
         });
 
@@ -593,161 +621,163 @@ export default class BookWebComponent extends HTMLElement {
         return doesSectionExist;
     }
 
-    wrapSelection(
-        selection: Selection = null,
-        tag = "span",
-        attrs: { [attr: string]: string } = {}
+    private createWrapper(wrapperConfig = this.highlightConfig) {
+        // @ts-ignore
+        const selection: Selection = this.shadowRoot.getSelection();
+        if (!selection || selection.rangeCount < 1) return;
+
+        const range = selection.getRangeAt(0).cloneRange();
+        const wrapper = this.createWrapperFromRange(range, wrapperConfig);
+
+        return wrapper;
+    }
+
+    wrap(wrapper: SerializedWrapper, wrapperConfig = this.highlightConfig) {
+        // // @ts-ignore
+        // const selection = this.shadowRoot.getSelection();
+        // this.getWrapper(selection, wrapperConfig.tag, wrapperConfig.attrs);
+    }
+
+    getWrapperByClassName(
+        className: string,
+        sectionIndex: number = this.state.book.currentSection
     ) {
-        if (selection === null) {
-            // @ts-ignore
-            selection = this.shadowRoot.getSelection();
+        // TODO remove 'highlights
+        return this.wrappers[sectionIndex].highlights.find(
+            (highlight) => highlight.instanceAttrs.class === className
+        );
+    }
+
+    unwrap(ranges: Range[], instanceAttrs: { [attr: string]: string }) {
+        const wrappers = this.contentElem.querySelectorAll(
+            "." + instanceAttrs.class.replaceAll(" ", ".")
+        );
+
+        if (ranges.length !== wrappers.length) return;
+
+        for (let i = 0; i < ranges.length; i++) {
+            const parentElement = wrappers[i].parentNode;
+            while (wrappers[i].firstChild) {
+                parentElement.insertBefore(wrappers[i].firstChild, wrappers[i]);
+            }
+
+            parentElement.removeChild(wrappers[i]);
+
+            const childNodes = [...ranges[i].commonAncestorContainer.childNodes];
+            childNodes.forEach((node) => parentElement.appendChild(node));
         }
-        if (!selection || selection.rangeCount < 1) return;
-
-        const range = selection.getRangeAt(0).cloneRange();
-        this.wrapRange(range, tag, attrs);
     }
 
-    highlight() {
-        // @ts-ignore
-        const selection = this.shadowRoot.getSelection();
-        this.wrapSelection(selection, this.highlightStyles.tag, this.highlightStyles.attrs);
-    }
-
-    canBeHighlighted() {
-        // @ts-ignore
-        const selection = this.shadowRoot.getSelection();
-        if (!selection || selection.rangeCount < 1) return;
-        const range = selection.getRangeAt(0).cloneRange();
-
-        const isAlreadyHighlighted = doesRangeContainsClass(
+    private createWrapperFromRange(range: Range, wrapperConfig: Wrapper["wrapperConfig"]) {
+        const doesIntersectWrapOfTheSameType = doesRangeContainsClass(
             this.contentElem,
             range,
-            this.highlightStyles.attrs.class
+            wrapperConfig.attrs.class
         );
-        return !isAlreadyHighlighted;
+
+        if (doesIntersectWrapOfTheSameType) return null;
+
+        const sectionIndex = this.state.book.currentSection;
+        const instanceAttrs = {
+            ...wrapperConfig.attrs,
+            class: appendIdToClassName(wrapperConfig.attrs.class),
+        };
+
+        const serializedRange = serializeRange(range, this.contentElem);
+        const deserializedRange = deserializeRange(serializedRange, this.contentElem);
+
+        const wrapper = {
+            sectionIndex,
+            serializedRanges: [serializedRange],
+            wrapperConfig,
+            instanceAttrs,
+        };
+
+        try {
+            this.validateWrapper(wrapper, wrapperConfig);
+        } catch (e) {
+            // Range is not a single block and cannot be wrapped so it needs to be split first
+            if (e instanceof DOMException) {
+                const ranges = splitRange(range);
+
+                const serializedRanges = ranges.map((range) =>
+                    serializeRange(range, this.contentElem)
+                );
+                wrapper.serializedRanges = serializedRanges;
+            }
+        }
+        return wrapper;
+    }
+
+    private validateWrapper(wrapper: SerializedWrapper, wrapperConfig: Wrapper["wrapperConfig"]) {
+        const deserializedRange = deserializeRange(wrapper.serializedRanges[0], this.contentElem);
+
+        const treeRoot = getFirstNonTextElement(deserializedRange.commonAncestorContainer)[0]
+            .parentNode as HTMLElement;
+
+        const tempTree = treeRoot.cloneNode(true);
+        const tempFrag = this.shadowRoot.getElementById("temp-document-fragment");
+        tempFrag.innerHTML = "";
+        tempFrag.append(tempTree);
+
+        const serializedRangeReduced = serializeRange(deserializedRange, treeRoot);
+        const deserializedRangeReduced = deserializeRange(serializedRangeReduced, tempFrag);
+
+        this.wrapBlockRange(deserializedRangeReduced, wrapperConfig.tag, wrapperConfig.attrs);
+    }
+
+    private wrapBlockRange(range: Range, tag: string, instanceAttrs: { [attr: string]: string }) {
+        const wrapperElem = document.createElement(tag);
+        Object.keys(instanceAttrs).forEach((key) =>
+            wrapperElem.setAttribute(key, instanceAttrs[key])
+        );
+
+        range.surroundContents(wrapperElem);
+
+        return wrapperElem;
     }
 
     /**
      * Emits "wrapEvent"
      */
-    private emitWrapEvent(
-        serializedRanges: SerializedRange[],
-        tag: string,
-        attrs: { [attr: string]: string },
-        uniqueAttrs: { [attr: string]: string }
-    ) {
-        const { currentSection } = this.state.book;
-        const wrapEvent = new CustomEvent<Wrapper>("wrapEvent", {
+    private emitWrapEvent(wrapper: SerializedWrapper) {
+        const wrapEvent = new CustomEvent<SerializedWrapper>("wrapEvent", {
             bubbles: true,
             cancelable: false,
             composed: true,
-            detail: { sectionIndex: currentSection, serializedRanges, tag, attrs, uniqueAttrs },
+            detail: wrapper,
         });
         this.dispatchEvent(wrapEvent);
     }
 
-    wrapRange(range: Range, tag: string, attrs: { [attr: string]: string }) {
-        const doesContainWrappedContent = doesRangeContainsClass(
-            this.contentElem,
-            range,
-            attrs.class
-        );
-        if (doesContainWrappedContent) return;
-
-        const uniqueAttrs = { ...attrs, class: appendUniqueClass(attrs.class) };
-
-        try {
-            const serializedRange = serializeRange(range, this.contentElem);
-            const deserializedRange = deserializeRange(serializedRange, this.contentElem);
-
-            this.wrapBlockRange(deserializedRange, tag, uniqueAttrs);
-
-            this.emitWrapEvent([serializedRange], tag, attrs, uniqueAttrs);
-        } catch (e) {
-            if (e instanceof DOMException) {
-                // Range is not a single block and cannot be wrapped so it needs to be split first
-                const ranges = this.splitRange(range);
-
-                const serializedRanges = ranges.map((range) =>
-                    serializeRange(range, this.contentElem)
-                );
-
-                serializedRanges.forEach((serializedRange) =>
-                    this.wrapBlockRange(
-                        deserializeRange(serializedRange, this.contentElem),
-                        tag,
-                        uniqueAttrs
-                    )
-                );
-                this.emitWrapEvent(serializedRanges, tag, attrs, uniqueAttrs);
-            } else {
-                console.error("Unhandled wrapRange error:", e);
-            }
-        }
-    }
-
     /**
-     * Splits range with multi-block containers into multiple ranges with a single-block container, which supports `range.surroundContents(...)`
+     * Emits "wrapContextMenuEvent"
      */
-    private splitRange(range: Range) {
-        const { startContainer, endContainer, commonAncestorContainer } = range.cloneRange();
+    private emitWrapContextMenuEvent(
+        event: MouseEvent,
+        firstRange: Range,
+        instanceAttrs: WrapContextMenuEventDetail["instanceAttrs"]
+    ) {
+        const rect = firstRange.getBoundingClientRect();
+        const x = rect.left + rect.width / 2;
+        const y = rect.top;
+        const firstWrapBlockPosition = { x, y };
 
-        const startRange = document.createRange();
-        startRange.setStart(range.startContainer, range.startOffset);
-        startRange.setEndAfter(range.startContainer);
-
-        const endRange = document.createRange();
-        endRange.setStartBefore(range.endContainer);
-        endRange.setEnd(range.endContainer, range.endOffset);
-
-        const [nonTextCommonAncestor] = getFirstNonTextElement(commonAncestorContainer);
-        const [nonTextStart] = getFirstNonTextElement(startContainer);
-        const [nonTextEnd] = getFirstNonTextElement(endContainer);
-
-        const startIndex = Array.from(nonTextCommonAncestor.children).indexOf(
-            getDirectDescendant(nonTextCommonAncestor, nonTextStart)
-        );
-        const endIndex = Array.from(nonTextCommonAncestor.children).indexOf(
-            getDirectDescendant(nonTextCommonAncestor, nonTextEnd)
-        );
-
-        const inbetweenElems = Array.from(nonTextCommonAncestor.children).slice(
-            startIndex + 1,
-            endIndex
+        const contextMenuEvent = new CustomEvent<WrapContextMenuEventDetail>(
+            "wrapContextMenuEvent",
+            {
+                bubbles: true,
+                cancelable: false,
+                composed: true,
+                detail: {
+                    event,
+                    firstWrapBlockPosition,
+                    instanceAttrs,
+                },
+            }
         );
 
-        const inbetweenRanges = inbetweenElems.map((elem) => {
-            const inbetweenRange = document.createRange();
-            inbetweenRange.selectNodeContents(elem);
-            return inbetweenRange;
-        });
-
-        return [startRange, ...inbetweenRanges, endRange];
-    }
-
-    private wrapBlockRange(range: Range, tag: string, uniqueAttrs: { [attr: string]: string }) {
-        const wrapper = document.createElement(tag);
-        Object.keys(uniqueAttrs).forEach((key) => wrapper.setAttribute(key, uniqueAttrs[key]));
-
-        range.surroundContents(wrapper);
-        // this.unwrapBlockRange(range, uniqueAttrs);
-    }
-
-    private unwrapBlockRange(range: Range, uniqueAttrs: { [attr: string]: string }) {
-        const wrapper = this.contentElem.querySelector(
-            "." + uniqueAttrs.class.replaceAll(" ", ".")
-        );
-
-        const parentElement = wrapper.parentNode;
-        while (wrapper.firstChild) {
-            parentElement.insertBefore(wrapper.firstChild, wrapper);
-        }
-
-        parentElement.removeChild(wrapper);
-
-        const childNodes = [...range.commonAncestorContainer.childNodes];
-        childNodes.forEach((node) => parentElement.appendChild(node));
+        this.dispatchEvent(contextMenuEvent);
     }
 
     /**

@@ -4,10 +4,12 @@ import { makeAutoObservable, observable, runInAction, toJS, when } from "mobx";
 import type BookWebComponent from "~/renderer/scenes/Reading/scenes/BookWebComponent";
 import type {
     Position,
+    SerializedSectionWrappers,
+    SerializedWrapper,
     TocState,
     Wrapper,
 } from "~/renderer/scenes/Reading/scenes/BookWebComponent";
-import { BookKey, SectionWrapppers, TimeRecord } from "../BookStore";
+import { BookKey, TimeRecord } from "../BookStore";
 import { RootStore } from "../RootStore";
 import { Interface } from "readline/promises";
 
@@ -145,8 +147,8 @@ export class BookReadStore {
             this.content,
             toJS(this.metadata),
             this.initSectionIndex,
-            sectionNames,
-            this.wrappers,
+            toJS(sectionNames),
+            toJS(this.wrappers),
             { elementIndex, elementSelector },
             1
         );
@@ -154,8 +156,8 @@ export class BookReadStore {
             this.content,
             toJS(this.metadata),
             this.initSectionIndex,
-            sectionNames,
-            this.wrappers,
+            toJS(sectionNames),
+            toJS(this.wrappers),
             { elementIndex, elementSelector }
         );
         this.pageComponents.right.setOnResize(this.syncPages);
@@ -226,7 +228,7 @@ export class BookReadStore {
         return this.rootStore.bookStore.getBookInteraction(this.bookKey).bookmarks.auto;
     }
 
-    get wrappers(): SectionWrapppers[] {
+    get wrappers(): SerializedSectionWrappers[] {
         return this.rootStore.bookStore.getBookInteraction(this.bookKey).wrappers;
     }
 
@@ -235,7 +237,7 @@ export class BookReadStore {
         return initSectionIndex;
     }
 
-    addHighlight(highlight: Wrapper) {
+    addHighlight(highlight: SerializedWrapper) {
         this.rootStore.bookStore.addBookInteractionWrap(this.bookKey, highlight);
     }
 
@@ -572,10 +574,17 @@ export class BookReadStore {
         right?.unloadBook?.();
     }
 
-    highlight() {
+    highlight(wrapper: SerializedWrapper) {
         const { left, right } = this.pageComponents;
 
-        left?.highlight?.();
-        right?.highlight?.();
+        left?.wrap?.(wrapper);
+        right?.wrap?.(wrapper);
+    }
+
+    unhighlight(uniqueAttrs: { [attr: string]: string }) {
+        const { left, right } = this.pageComponents;
+
+        // left?.unwrap?.(uniqueAttrs);
+        // right?.unwrap?.(uniqueAttrs);
     }
 }

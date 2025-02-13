@@ -10,21 +10,24 @@ import {
 
 import { useBookReadStore } from "~/renderer/stores/hooks";
 import { EventMap, useEvents } from "../hooks";
-import { TooltipTarget } from "../components";
+import { HighlightContextMenuTooltipTarget, TooltipTarget } from "../components";
 import type BookWebComponent from "../scenes/BookWebComponent";
 import type { BookWebComponentEventMap } from "../scenes/BookWebComponent";
 
 export const useReadingEvents = (
     setTranslateTarget: (target: TooltipTarget) => void,
     setDictionaryTarget: (target: TooltipTarget) => void,
+    setHighlightContextMenuTarget: (target: HighlightContextMenuTooltipTarget) => void,
     classNames?: { icon: string }
 ) => {
     const bookReadStore = useBookReadStore();
 
     const { showContextMenu } = useContextMenu();
+    const { showContextMenu: showWrapContextMenu } = useContextMenu();
 
     const incomingEvents: EventMap<BookWebComponentEventMap> = {
         imgClickEvent: (e) => console.log("click"),
+
         contextMenuEvent: (e) => {
             showContextMenu([
                 {
@@ -35,7 +38,7 @@ export const useReadingEvents = (
                 {
                     key: "highlight",
                     icon: <IconHighlight className={classNames?.icon} />,
-                    onClick: () => bookReadStore.highlight(),
+                    onClick: () => bookReadStore.highlight(e.detail.wrapper),
                     hidden: !e.detail.canBeHighlighted,
                 },
 
@@ -74,6 +77,23 @@ export const useReadingEvents = (
                 },
             ])(e.detail.event as any);
         },
+
+        wrapContextMenuEvent: (e) => {
+            const { firstWrapBlockPosition, instanceAttrs } = e.detail;
+
+            setHighlightContextMenuTarget({
+                instanceAttrs,
+                position: firstWrapBlockPosition,
+            });
+
+            // showWrapContextMenu([
+            //     {
+            //         key: "highlight",
+            //         icon: <IconHighlight className={classNames?.icon} />,
+            //         onClick: () => console.log("hey"),
+            //     },
+            // ])(e.detail.event as any);
+        },
     };
 
     const incomingEventsRef1 = useEvents<BookWebComponentEventMap, BookWebComponent>(
@@ -91,6 +111,8 @@ export const useReadingEvents = (
         },
         wrapEvent: (e) => {
             console.log("wrap! e.detail", e.detail);
+            // TODO make e.detail a wrapEvent with type of {wrapper: Wrapper; type: "add" | "remove"}
+            // TODO rename addHighlight to pushWrapEvent
             bookReadStore.addHighlight(e.detail);
         },
     });

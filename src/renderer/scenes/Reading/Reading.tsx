@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box } from "@mantine/core";
-import { useDisclosure, useHotkeys, useMergedRef } from "@mantine/hooks";
+import { useDisclosure, useHotkeys, useMergedRef, useViewportSize } from "@mantine/hooks";
 import { observer } from "mobx-react-lite";
 import { action, when } from "mobx";
 
@@ -11,6 +11,8 @@ import {
     BookSkeleton,
     BookUi,
     DictionaryTooltip,
+    HighlightContextMenuTooltip,
+    HighlightContextMenuTooltipTarget,
     TooltipTarget,
     TranslationTooltip,
 } from "./components";
@@ -125,13 +127,31 @@ export const Reading = observer(() => {
         { open: openDictionaryTooltip, close: closeDictionaryTooltip },
     ] = useDisclosure(false);
 
+    const [highlightContextMenuTarget, setHighlightContextMenuTarget] =
+        useState<HighlightContextMenuTooltipTarget>({
+            instanceAttrs: null,
+            position: null,
+        });
+    const [
+        highlightContextMenuTooltipOpened,
+        { open: openHighlightContextMenuTooltip, close: closeHighlightContextMenuTooltip },
+    ] = useDisclosure(false);
+
     const [outgoingEventsRef, incomingEventsRef1, incomingEventsRef2] = useReadingEvents(
         setTranslateTarget,
         setDictionaryTarget,
+        setHighlightContextMenuTarget,
         {
             icon: classes.icon,
         }
     );
+
+    const { height, width } = useViewportSize();
+    useEffect(() => {
+        closeHighlightContextMenuTooltip();
+        closeDictionaryTooltip();
+        closeTranslationTooltip();
+    }, [height, width]);
 
     return (
         <>
@@ -175,13 +195,37 @@ export const Reading = observer(() => {
                 target={translateTarget}
                 opened={translationTooltipOpened}
                 onOpen={openTranslationTooltip}
-                onClose={closeTranslationTooltip}
+                onClose={() => {
+                    closeTranslationTooltip();
+                    setTranslateTarget({
+                        text: null,
+                        position: null,
+                    });
+                }}
             />
             <DictionaryTooltip
                 target={dictionaryTarget}
                 opened={dictionaryTooltipOpened}
                 onOpen={openDictionaryTooltip}
-                onClose={closeDictionaryTooltip}
+                onClose={() => {
+                    closeDictionaryTooltip();
+                    setDictionaryTarget({
+                        text: null,
+                        position: null,
+                    });
+                }}
+            />
+            <HighlightContextMenuTooltip
+                target={highlightContextMenuTarget}
+                opened={highlightContextMenuTooltipOpened}
+                onOpen={openHighlightContextMenuTooltip}
+                onClose={() => {
+                    closeHighlightContextMenuTooltip();
+                    setHighlightContextMenuTarget({
+                        instanceAttrs: null,
+                        position: null,
+                    });
+                }}
             />
         </>
     );

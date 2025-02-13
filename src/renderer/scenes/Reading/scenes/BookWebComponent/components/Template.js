@@ -338,6 +338,7 @@ template.innerHTML = /*html*/ `
         </style>
       
         <div id="book-content" class="book-content"></div>
+        <div id="temp-document-fragment"></div>
         
     </section>
 `;

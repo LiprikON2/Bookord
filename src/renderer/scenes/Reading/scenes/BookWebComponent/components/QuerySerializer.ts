@@ -207,7 +207,7 @@ export default class QuerySerializer {
             const blank = /^\s+$/;
             const spaces = /\s{2,}/g;
             let selector = "";
-            if (node.attrs) {
+            if (node.attrs && false) {
                 if (node.attrs.id) {
                     id = "#" + node.attrs.id.trim();
                 }

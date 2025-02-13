@@ -7,3 +7,4 @@ export * from "./DictionaryTooltip";
 export * from "./TextToSpeech";
 export * from "./Toc";
 export * from "./TranslationTooltip";
+export * from "./HighlightContextMenuTooltip";
