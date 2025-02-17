@@ -406,7 +406,7 @@ export default class BookWebComponent extends HTMLElement {
             this.wrappers = serializedSectionWrappers.map((serializedSectionWrapper) => ({
                 highlights: serializedSectionWrapper.highlights.map((highlight) => ({
                     ...highlight,
-                    ranges: [],
+                    ranges: [] as Range[],
                 })),
             }));
             this.loadSection(sectionIndex, position);

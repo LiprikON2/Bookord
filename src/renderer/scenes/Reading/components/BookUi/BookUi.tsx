@@ -1,10 +1,10 @@
 import React, { forwardRef } from "react";
-import { Box, Group, SegmentedControl, Stack, Text, VisuallyHidden } from "@mantine/core";
-import { IconBookmark, IconBookmarkFilled, IconColumns1, IconColumns2 } from "@tabler/icons-react";
+import { Box, Group, Stack, Text } from "@mantine/core";
+import { IconBookmark, IconBookmarkFilled } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
 import clsx from "clsx";
 
-import { Layout, useBookReadStore } from "~/renderer/stores";
+import { useBookReadStore } from "~/renderer/stores";
 import { ToggleActionIcon } from "~/renderer/components";
 import { FlipPageButton } from "./components";
 import { useKeyboardStrength } from "./hooks";
