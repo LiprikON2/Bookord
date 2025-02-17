@@ -1,5 +1,6 @@
 import { ipcMain } from "electron";
 import axios from "axios";
+
 import { MainWindow } from "~/main/mainWindow";
 
 export const registerThirdPartyApiIpc = (
@@ -41,7 +42,7 @@ export const registerThirdPartyApiIpc = (
                     {
                         headers: {
                             Authorization: `Bearer ${yandexIamToken}`,
-                            "x-folder-id": "yandexFolderId",
+                            "x-folder-id": yandexFolderId,
                         },
                     }
                 )

@@ -135,19 +135,20 @@ app.on("web-contents-created", (event, contents) => {
         },
         (details, callback) => {
             const domain = new URL(details.url).hostname;
-            console.log("onHeadersReceived", domain);
 
-            if (domain === "giscus.app") {
-                // TODO handle gicus header `frame-ancestors * null` properly
-                console.log("deleting csp for giscus");
-                delete details.responseHeaders["content-security-policy"];
-                // details.responseHeaders["Content-Security-Policy"] = [
-                //     new URL(APP_WINDOW_WEBPACK_ENTRY).host,
-                // ];
-            } else {
-                details.responseHeaders["Access-Control-Allow-Origin"] = [
-                    new URL(APP_WINDOW_WEBPACK_ENTRY).host,
-                ];
+            switch (domain) {
+                case "giscus.app":
+                    details.responseHeaders["Content-Security-Policy"] = [
+                        `frame-ancestors 'self' ${new URL(APP_WINDOW_WEBPACK_ENTRY).origin};`,
+                    ];
+                    details.responseHeaders["Access-Control-Allow-Origin"] = [
+                        `${new URL(APP_WINDOW_WEBPACK_ENTRY).origin}`,
+                    ];
+                    break;
+                default:
+                    details.responseHeaders["Access-Control-Allow-Origin"] = [
+                        `${new URL(APP_WINDOW_WEBPACK_ENTRY).origin}`,
+                    ];
             }
 
             callback({ responseHeaders: details.responseHeaders });
