@@ -195,10 +195,12 @@ export default class BookWebComponent extends HTMLElement {
                 if (!isVisible) {
                     if (entry.target instanceof HTMLElement) {
                         entry.target.style.visibility = "hidden";
+                        entry.target.style.userSelect = "none";
                     }
                 } else {
                     if (entry.target instanceof HTMLElement) {
                         entry.target.style.visibility = "";
+                        entry.target.style.userSelect = "";
                     }
                 }
             });

@@ -151,12 +151,10 @@ export default class QuerySerializer {
      * next iteration: ['.bar'];
      * etc...
      */
-    maxLeftTrim(
-        path: string[],
-        origin = this.dom.querySelector(path.join(" ")),
-        trim = 0,
-        previous?: string[]
-    ): string[] {
+    maxLeftTrim(path: string[], origin: Element = null, trim = 0, previous?: string[]): string[] {
+        console.log("origin", origin, path.join(" "));
+        if (origin === null) origin = this.dom.querySelector(path.join(" "));
+
         const branch = path.slice(trim);
         const selector = branch.join(" ");
         if (branch.length === 1) {
