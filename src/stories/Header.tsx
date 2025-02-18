@@ -1,3 +1,4 @@
+/* eslint-disable mobx/missing-observer */
 import React from "react";
 
 import { Button } from "./Button";

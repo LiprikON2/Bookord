@@ -26,5 +26,5 @@
         // Mobx
         "useDefineForClassFields": true
     },
-    "include": ["src/**/*", "tools/**/*", "assets/**/*"]
+    "include": ["src/**/*", "tools/**/*", "assets/**/*", ".storybook/preview.ts"]
 }

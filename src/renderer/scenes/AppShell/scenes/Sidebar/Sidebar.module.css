@@ -30,6 +30,7 @@
 }
 
 .bottom {
+    margin-top: auto !important;
     @media (min-width: $mantine-breakpoint-sm) {
         &[data-position="left"] {
             margin-right: var(--mantine-spacing-sm);
