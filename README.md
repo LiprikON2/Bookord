@@ -70,8 +70,14 @@ npm run dev
 ## Test : Development
 
 
+Storbook component tests
 ```bash
 npm run storybook
+```
+
+Vitest unit tests
+```bash
+npm run test
 ```
 
 <br />
