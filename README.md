@@ -79,6 +79,11 @@ Vitest unit tests
 npm run test
 ```
 
+Vitest unit tests with code coverage
+```bash
+npm run test-coverage
+```
+
 <br />
 
 ## Package : Production
