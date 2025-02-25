@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { ColorSchemeScript, MantineProvider, useMantineColorScheme } from "@mantine/core";
+import { MantineProvider, useMantineColorScheme } from "@mantine/core";
 import { Preview } from "@storybook/react";
 import { addons } from "@storybook/preview-api";
 import { DARK_MODE_EVENT_NAME } from "storybook-dark-mode";
@@ -36,30 +36,20 @@ const preview: Preview = {
         },
     },
     decorators: [
-        (renderStory: any) => <ColorSchemeWrapper>{renderStory()}</ColorSchemeWrapper>,
-        (renderStory: any) => {
+        (Story) => (
+            <ColorSchemeWrapper>
+                <Story />
+            </ColorSchemeWrapper>
+        ),
+        (Story) => {
             const appTheme = useAppTheme();
 
             return (
                 <MantineProvider defaultColorScheme="dark" theme={appTheme}>
-                    {renderStory()}
+                    <Story />
                 </MantineProvider>
             );
         },
-
-        // (Story) => {
-        //     const appTheme = useAppTheme();
-
-        //     return (
-        //         <>
-        //             <ColorSchemeScript defaultColorScheme="dark" />
-        //             <MantineProvider defaultColorScheme="dark" theme={appTheme}>
-        //                 {/* 👇 Decorators in Storybook also accept a function. Replace <Story/> with Story() to enable it  */}
-        //                 <Story />
-        //             </MantineProvider>
-        //         </>
-        //     );
-        // },
     ],
 };
 
