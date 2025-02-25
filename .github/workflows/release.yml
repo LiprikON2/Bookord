@@ -43,9 +43,6 @@ jobs:
             - name: Bump package.json version
               run: npm version ${{ inputs.version_type }}
 
-            - name: Generate release notes
-              run: npx --package light-release light-release
-
             - name: Push changes
               run: |
                   git show
