@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { within, userEvent, screen } from "@storybook/testing-library";
-import { expect, fn, waitFor } from "@storybook/test";
+import { within, userEvent, screen, waitFor } from "@storybook/testing-library";
+import { expect, fn } from "@storybook/test";
 
 import { LanguagePicker, Selection } from "./LanguagePicker";
 import flags from "~/assets/images/flags/language";
@@ -28,7 +28,7 @@ export const Static: Story = {
     parameters: {
         layout: "centered",
     },
-    play: async ({ canvasElement }) => {
+    play: async ({ canvasElement, args }) => {
         const canvas = within(canvasElement);
 
         const picker = await canvas.findByRole("button");
@@ -37,11 +37,11 @@ export const Static: Story = {
         // Wait for options in portal
         const [_, englishOption] = await screen.findAllByText(/english/i);
 
-        console.log("englishOption", englishOption);
         await userEvent.click(englishOption);
 
         // Verify onSelect was called with Russian language object
-        expect(Static.args.onSelect).toHaveBeenCalledWith(englishOptionData);
+        expect(args.onSelect).toHaveBeenCalledTimes(1);
+        expect(args.onSelect).toHaveBeenCalledWith(englishOptionData);
     },
 };
 
