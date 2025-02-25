@@ -1,0 +1,86 @@
+name: Release
+on:
+    workflow_call:
+        inputs:
+            version_type:
+                required: true
+                type: string
+                description: "The type of version bump (major, minor, or patch)"
+    workflow_dispatch:
+        inputs:
+            version_type:
+                description: "Type of version bump"
+                required: true
+                type: choice
+                options:
+                    - major
+                    - minor
+                    - patch
+
+jobs:
+    increment-semver:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            - name: Github checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+
+            - name: Set up git name
+              run: |
+                  git config --global user.email "44316968+LiprikON2@users.noreply.github.com"
+                  git config --global user.name "LiprikON2"
+
+            - name: Bump package.json version
+              run: npm version ${{ inputs.version_type }}
+
+            - name: Push changes
+              run: |
+                  git show
+                  git push
+                  git push --tags
+
+    build:
+        needs: [increment-semver]
+        environment: CI
+        strategy:
+            matrix:
+                os:
+                    [
+                        { name: "windows", image: "windows-latest" },
+                        { name: "linux", image: "ubuntu-latest" },
+                        { name: "macos", image: "macos-15" },
+                    ]
+            fail-fast: true
+        runs-on: ${{ matrix.os.image }}
+        steps:
+            - name: Github checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+                  ref: main
+
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+
+            # Prevents `Making a dmg distributable for darwin/arm64 [FAILED: Cannot find module 'appdmg'` error in `npm run publish`
+            - name: Delete package-lock.json on macOS
+              if: matrix.os.name == 'macos'
+              run: rm -f package-lock.json
+
+            - name: Install dependencies
+              run: npm install
+
+            - name: Publish app
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GH_BOOKORD_RELEASE_TOKEN }}
+              run: npm run publish
