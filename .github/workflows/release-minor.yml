@@ -31,6 +31,7 @@ jobs:
               run: |
                   git show
                   git push
+                  git push --tags
 
     build:
         needs: [increment-semver]
@@ -48,6 +49,9 @@ jobs:
         steps:
             - name: Github checkout
               uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+                  ref: master
 
             - name: Use Node.js
               uses: actions/setup-node@v4
