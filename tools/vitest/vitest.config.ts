@@ -14,7 +14,6 @@ export default defineConfig({
             provider: "v8",
             include: ["src/**/*.{js,jsx,ts,tsx}"], // specify files to include
             exclude: ["src/**/index.ts", "src/**/*.stories.{js,jsx,ts,tsx}"], // specify files to exclude
-            reporter: ["html"],
         },
     },
     resolve: {
