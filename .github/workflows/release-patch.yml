@@ -1,65 +1,10 @@
-# ref: https://sevic.dev/notes/electron-forge-publish-github/
-
-name: Release patch
+name: Release Patch
 on:
     workflow_dispatch:
+
 jobs:
-    increment-semver:
-        runs-on: ubuntu-latest
-        permissions:
-            contents: write # 'write' access to repository contents
-        steps:
-            - name: Github checkout
-              uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
-
-            - name: Use Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-
-            - name: Set up git name
-              run: |
-                  git config --global user.email "44316968+LiprikON2@users.noreply.github.com"
-                  git config --global user.name "LiprikON2"
-
-            - name: Bump package.json version
-              run: npm version patch
-
-            - name: Commit new version
-              run: |
-                  git show
-                  git push
-                  git push --tags
-
-    build:
-        needs: [increment-semver]
-        environment: CI
-        strategy:
-            matrix:
-                os:
-                    [
-                        { name: "windows", image: "windows-latest" },
-                        { name: "linux", image: "ubuntu-latest" },
-                        { name: "macos", image: "macos-15" },
-                    ]
-            fail-fast: true
-        runs-on: ${{ matrix.os.image }}
-        steps:
-            - name: Github checkout
-              uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
-                  ref: master
-
-            - name: Use Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-
-            - run: npm install
-            - name: Publish app
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GH_BOOKORD_RELEASE_TOKEN }}
-              run: npm run publish
+    release:
+        uses: ./.github/workflows/release.yml
+        with:
+            version_type: patch
+        secrets: inherit
