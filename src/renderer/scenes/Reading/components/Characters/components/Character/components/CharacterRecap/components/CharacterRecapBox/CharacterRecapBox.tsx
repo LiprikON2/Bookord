@@ -124,12 +124,12 @@ export const CharacterRecapBox = observer(({ person }: CharacterRecapBoxProps) =
                 <LanguagePicker
                     data={selectLanguageData}
                     selected={selectedLang}
-                    setSelected={setSelectedLang}
+                    onSelect={setSelectedLang}
                 />
                 <LanguagePicker
                     data={selectLengthData}
                     selected={selectedLen}
-                    setSelected={setSelectedLen}
+                    onSelect={setSelectedLen}
                 />
             </Group>
             <Paper py="xl" px="md" classNames={{ root: classes.paperRoot }}>

@@ -55,5 +55,22 @@
                 "ignoreReadBeforeAssign": false
             }
         ]
-    }
+    },
+    "overrides": [
+        {
+            "files": [
+                "*.test.ts",
+                "*.test.tsx",
+                "*.stories.ts",
+                "*.stories.tsx",
+                "*.test.js",
+                "*.test.jsx",
+                "*.stories.js",
+                "*.stories.jsx"
+            ],
+            "rules": {
+                "mobx/missing-observer": "off"
+            }
+        }
+    ]
 }

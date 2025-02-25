@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 
 import classes from "./LanguagePicker.module.css";
 
-type Selection = { label: string; image: string; Icon?: Icon };
+export type Selection = { label: string; image: string; Icon?: Icon };
 
 interface ImageOrIconProps {
     image: Selection["image"];
@@ -22,9 +22,9 @@ const ImageOrIcon = observer(({ Icon, image, className }: ImageOrIconProps) => {
 interface LanguagePickerProps {
     data: Selection[];
     selected: Selection;
-    setSelected: (...args: any[]) => void;
+    onSelect: (...args: any[]) => void;
 }
-export const LanguagePicker = observer(({ data, selected, setSelected }: LanguagePickerProps) => {
+export const LanguagePicker = observer(({ data, selected, onSelect }: LanguagePickerProps) => {
     const [opened, { open, close }] = useDisclosure(false);
 
     const items = data.map((item) => (
@@ -36,7 +36,7 @@ export const LanguagePicker = observer(({ data, selected, setSelected }: Languag
                     className={classes.leftIconSmall}
                 />
             }
-            onClick={() => setSelected(item)}
+            onClick={() => onSelect(item)}
             key={item.label}
         >
             {item.label}
