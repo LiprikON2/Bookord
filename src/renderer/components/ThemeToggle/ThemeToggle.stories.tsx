@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { within, fireEvent } from "@storybook/testing-library";
-import { expect } from "@storybook/test";
+import { within, userEvent } from "@storybook/testing-library";
+import { expect, waitFor } from "@storybook/test";
 
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -12,25 +12,23 @@ export default meta;
 
 type Story = StoryObj<typeof ThemeToggle>;
 
-export const DefaultThemeToggle: Story = {
+const getDocumentTheme = () => document.documentElement.getAttribute("data-mantine-color-scheme");
+
+export const ToggleThemeTwice: Story = {
     args: {},
+    parameters: {
+        layout: "centered",
+    },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
         const toggleButton = canvas.getByRole("button");
 
-        const initialTheme = document.documentElement.getAttribute("data-mantine-color-scheme");
-        await fireEvent.click(toggleButton, {
-            // Delay between mouseDown and mouseUp
-            delay: 50,
-        });
+        const initialTheme = getDocumentTheme();
 
-        const newTheme = document.documentElement.getAttribute("data-mantine-color-scheme");
-        await expect(newTheme).not.toBe(initialTheme);
+        userEvent.click(toggleButton);
+        await waitFor(() => expect(getDocumentTheme()).not.toBe(initialTheme));
 
-        await fireEvent.click(toggleButton, { delay: 50 });
-        const themeAfterSecondClick = document.documentElement.getAttribute(
-            "data-mantine-color-scheme"
-        );
-        await expect(themeAfterSecondClick).toBe(initialTheme);
+        userEvent.click(toggleButton);
+        await waitFor(() => expect(getDocumentTheme()).toBe(initialTheme));
     },
 };

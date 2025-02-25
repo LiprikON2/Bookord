@@ -3,7 +3,7 @@ import { composeStories } from "@storybook/react";
 
 import * as stories from "./ThemeToggle.stories";
 
-const { DefaultThemeToggle } = composeStories(stories);
+const { ToggleThemeTwice: DefaultThemeToggle } = composeStories(stories);
 
 test("renders and executes the play function", async () => {
     // Mount story and run interactions
