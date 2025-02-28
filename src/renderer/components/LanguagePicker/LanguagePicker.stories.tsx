@@ -3,8 +3,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { within, userEvent, screen, waitFor } from "@storybook/testing-library";
 import { expect, fn } from "@storybook/test";
 
-import { LanguagePicker, Selection } from "./LanguagePicker";
+import { LanguagePicker } from "./LanguagePicker";
 import flags from "~/assets/images/flags/language";
+import { IconFlag } from "@tabler/icons-react";
 
 const meta: Meta<typeof LanguagePicker> = {
     component: LanguagePicker,
@@ -14,16 +15,18 @@ export default meta;
 
 type Story = StoryObj<typeof LanguagePicker>;
 
-const englishOptionData = { label: "English", image: flags.en };
-const russianOptionData = { label: "Russian", image: flags.ru };
+const englishOptionData = { value: "en", label: "English", image: flags.en };
+const russianOptionData = { value: "ru", label: "Russian", image: flags.ru };
+const flagOptionData = { value: "flag", label: "Icon", Icon: IconFlag };
+const noIconOptionData = { value: "no", label: "No Icon" };
 
-const data = [englishOptionData, russianOptionData];
+const data = [englishOptionData, russianOptionData, flagOptionData, noIconOptionData];
 
 export const Static: Story = {
     args: {
         data,
-        selected: data[0],
-        onSelect: fn(),
+        selected: "en",
+        onChange: fn(),
     },
     parameters: {
         layout: "centered",
@@ -39,23 +42,23 @@ export const Static: Story = {
 
         await userEvent.click(englishOption);
 
-        // Verify onSelect was called with Russian language object
-        expect(args.onSelect).toHaveBeenCalledTimes(1);
-        expect(args.onSelect).toHaveBeenCalledWith(englishOptionData);
+        // Verify onChange was called with Russian language object
+        expect(args.onChange).toHaveBeenCalledTimes(1);
+        expect(args.onChange).toHaveBeenCalledWith("en");
     },
 };
 
 const WithState = (Story: any) => {
-    const [selected, setSelected] = useState<Selection>(englishOptionData);
+    const [selected, setSelected] = useState("en");
 
     return (
         <Story
             args={{
                 data,
                 selected,
-                onSelect: (selection: Selection) => {
-                    setSelected(selection);
-                    console.log("Language selected:", selection);
+                onChange: (value: string) => {
+                    setSelected(value);
+                    console.log("Language selected:", value);
                 },
             }}
         />
@@ -66,8 +69,8 @@ export const Interactive: Story = {
     decorators: [WithState],
     args: {
         data,
-        selected: data[0],
-        onSelect: fn(),
+        selected: "en",
+        onChange: fn(),
     },
     parameters: {
         layout: "centered",
