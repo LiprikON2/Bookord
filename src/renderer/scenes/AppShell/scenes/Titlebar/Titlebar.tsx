@@ -43,15 +43,16 @@ export const Titlebar = observer(({ showBurger, toggleBurger, showFilterMenu }: 
             justify="space-between"
             wrap="nowrap"
         >
-            <Group p={0} wrap="nowrap">
+            <Group p={0} wrap="nowrap" style={{ flexShrink: 0 }}>
                 <Burger
                     className={classes.burger}
                     opened={showBurger}
                     onClick={toggleBurger}
                     hiddenFrom="sm"
                     size="sm"
+                    lineSize={2}
                 />
-                <Group wrap="nowrap">
+                <Group wrap="nowrap" miw="fit-content">
                     <Image
                         className={classes.logo}
                         mx={4}

@@ -13,7 +13,7 @@
     padding: 0;
 
     @media (max-width: $mantine-breakpoint-sm) {
-        flex-basis: 30%;
+        flex-basis: 60%;
     }
 }
 
