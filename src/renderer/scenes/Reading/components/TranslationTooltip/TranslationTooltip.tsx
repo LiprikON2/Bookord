@@ -57,7 +57,7 @@ export const TranslationTooltip = observer(
             else translationTooltipRef.current?.close();
         }, [opened]);
 
-        const { colorSceme } = useColorScheme();
+        const { colorScheme } = useColorScheme();
 
         return (
             <Portal>
@@ -66,7 +66,7 @@ export const TranslationTooltip = observer(
                     className={classes.tooltip}
                     ref={translationTooltipRef}
                     imperativeModeOnly
-                    variant={colorSceme}
+                    variant={colorScheme}
                     opacity={1}
                     clickable
                 />

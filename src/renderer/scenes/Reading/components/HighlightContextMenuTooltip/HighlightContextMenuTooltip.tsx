@@ -37,7 +37,7 @@ export const HighlightContextMenuTooltip = observer(
             else highlightContextMenuRef.current?.close();
         }, [opened]);
 
-        const { colorSceme } = useColorScheme();
+        const { colorScheme } = useColorScheme();
         const bookReadStore = useBookReadStore();
 
         return (
@@ -47,7 +47,7 @@ export const HighlightContextMenuTooltip = observer(
                     className={classes.tooltip}
                     ref={highlightContextMenuRef}
                     imperativeModeOnly
-                    variant={colorSceme}
+                    variant={colorScheme}
                     opacity={1}
                     clickable
                 >

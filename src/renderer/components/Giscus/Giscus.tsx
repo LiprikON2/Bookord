@@ -15,7 +15,7 @@ export const Giscus = observer(({}: GiscusProps) => {
     const [giscusParam, setGiscusParam] = useLocalStorage<string>({
         key: "giscus-session",
     });
-    const { colorSceme } = useColorScheme();
+    const { colorScheme } = useColorScheme();
 
     useEffect(() => {
         const unsub = context.handleOauthGiscus((giscusParam) => {
@@ -42,7 +42,7 @@ export const Giscus = observer(({}: GiscusProps) => {
             reactionsEnabled="1"
             emitMetadata="1"
             inputPosition="top"
-            theme={colorSceme}
+            theme={colorScheme}
             lang="en"
             loading="lazy"
         />

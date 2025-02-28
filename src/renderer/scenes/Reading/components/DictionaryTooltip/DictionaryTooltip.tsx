@@ -51,7 +51,7 @@ export const DictionaryTooltip = observer(
             else definitionTooltipRef.current?.close();
         }, [opened]);
 
-        const { colorSceme } = useColorScheme();
+        const { colorScheme } = useColorScheme();
 
         return (
             <Portal>
@@ -60,7 +60,7 @@ export const DictionaryTooltip = observer(
                     className={classes.tooltip}
                     ref={definitionTooltipRef}
                     imperativeModeOnly
-                    variant={colorSceme}
+                    variant={colorScheme}
                     opacity={1}
                     clickable
                 />

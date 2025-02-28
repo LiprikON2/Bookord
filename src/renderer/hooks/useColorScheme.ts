@@ -6,5 +6,5 @@ export const useColorScheme = () => {
     const dark = computedColorScheme === "dark";
     const light = computedColorScheme === "light";
 
-    return { colorSceme: computedColorScheme, dark, light, setColorScheme };
+    return { colorScheme: computedColorScheme, dark, light, setColorScheme };
 };
