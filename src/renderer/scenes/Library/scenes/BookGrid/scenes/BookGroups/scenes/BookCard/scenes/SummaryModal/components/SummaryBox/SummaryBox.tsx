@@ -13,12 +13,12 @@ import classes from "./SummaryBox.module.css";
 import { useYandexCloudIamAuth } from "~/renderer/hooks";
 
 const selectLanguageData = [
-    { label: "English", image: flags.en },
-    { label: "Russian", image: flags.ru },
+    { value: "en", label: "English", image: flags.en },
+    { value: "ru", label: "Russian", image: flags.ru },
 ];
 const selectLengthData = [
-    { label: "Short", image: "", Icon: IconBaselineDensityMedium },
-    { label: "Long", image: "", Icon: IconBaselineDensitySmall },
+    { value: "short", label: "Short", Icon: IconBaselineDensityMedium },
+    { value: "long", label: "Long", Icon: IconBaselineDensitySmall },
 ];
 
 type Language = "English" | "Russian";
@@ -26,7 +26,7 @@ type TextLength = "Long" | "Short";
 
 const makeSystemPrompt = (language: Language, length: TextLength) => {
     if (language === "English") {
-        let prompt = `Respond in English. Make summaries about books based on provided titles and authors. Use new lines, denoted by "\\n" (unicode newline character). Use markdown to format the response. `;
+        let prompt = `Respond in English. Make summaries about books based on provided titles and authors. Break your text into paragraphs. Use markdown to format the response. `;
         if (length === "Long") {
             prompt += "Recap must be around 150 words or 2 paragraphs. ";
         } else if (length === "Short") {
@@ -34,7 +34,7 @@ const makeSystemPrompt = (language: Language, length: TextLength) => {
         }
         return prompt.trim();
     } else if (language === "Russian") {
-        let prompt = `Отвечай на русском языке. Создавай краткие пересказы о книгах на основе предоставленных названий и авторах. Используй переходы на новые строки, обозначаемые "\\n" (юникод символом новой строки). Используй маркдаун чтобы оформить ответ. `;
+        let prompt = `Отвечай на русском языке. Создавай краткие пересказы о книгах на основе предоставленных названий и авторах. Разбивай текст на абзацы. Используй маркдаун чтобы оформить ответ. `;
         if (length === "Long") {
             prompt += "Краткое содержание должно быть около 150 слов или 2 абзаца. ";
         } else if (length === "Short") {
@@ -60,8 +60,11 @@ interface SummaryBoxProps {
 }
 
 export const SummaryBox = observer(({ getTitle, getAuthor }: SummaryBoxProps) => {
-    const [selectedLang, setSelectedLang] = useState(selectLanguageData[0]);
-    const [selectedLen, setSelectedLen] = useState(selectLengthData[0]);
+    const [selectedLangValue, setSelectedLang] = useState(selectLanguageData[0].value);
+    const [selectedLenValue, setSelectedLen] = useState(selectLengthData[0].value);
+
+    const selectedLang = selectLanguageData.find(({ value }) => value === selectedLangValue);
+    const selectedLen = selectLengthData.find(({ value }) => value === selectedLenValue);
 
     const { getSetting } = useSettingsStore();
 
@@ -105,13 +108,13 @@ export const SummaryBox = observer(({ getTitle, getAuthor }: SummaryBoxProps) =>
                 </Button>
                 <LanguagePicker
                     data={selectLanguageData}
-                    selected={selectedLang}
-                    onSelect={setSelectedLang}
+                    selected={selectedLangValue}
+                    onChange={setSelectedLang}
                 />
                 <LanguagePicker
                     data={selectLengthData}
-                    selected={selectedLen}
-                    onSelect={setSelectedLen}
+                    selected={selectedLenValue}
+                    onChange={setSelectedLen}
                 />
             </Group>
             <Paper py="xl" px="md" classNames={{ root: classes.paperRoot }}>
@@ -132,8 +135,8 @@ export const SummaryBox = observer(({ getTitle, getAuthor }: SummaryBoxProps) =>
                 {readyToGenerate &&
                     isPending &&
                     !isFetching &&
-                    `Press 'generate' to generate a ${selectedLen.label.toLowerCase()} summary in ${
-                        selectedLang.label
+                    `Press 'generate' to generate a ${selectedLang.label.toLowerCase()} summary in ${
+                        selectedLen.label
                     } for the "${title}".`}
                 {isFetching && "Generating..."}
                 {error && <Text c="red">{`An error has occurred: ${error.message}`}</Text>}

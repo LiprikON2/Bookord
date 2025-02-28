@@ -1,5 +1,4 @@
 .paperRoot {
-    white-space: pre-line;
     background-color: var(--mantine-color-dark-6);
 
     @mixin light {
