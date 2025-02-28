@@ -9,7 +9,7 @@ import context from "~/renderer/ipc/thirdPartyApi";
 import flags from "~/assets/images/flags/language";
 import { useYandexCloudIamAuth } from "~/renderer/hooks";
 import { Person, useBookReadStore, useSettingsStore } from "~/renderer/stores";
-import { LanguagePicker } from "~/renderer/components";
+import { Combobox } from "~/renderer/components";
 import classes from "./CharacterRecapBox.module.css";
 
 const selectLanguageData = [
@@ -124,12 +124,12 @@ export const CharacterRecapBox = observer(({ person }: CharacterRecapBoxProps) =
                 <Button size="md" onClick={() => refetch()} disabled={!readyToGenerate}>
                     Generate
                 </Button>
-                <LanguagePicker
+                <Combobox
                     data={selectLanguageData}
                     selected={selectedLangValue}
                     onChange={setSelectedLang}
                 />
-                <LanguagePicker
+                <Combobox
                     data={selectLengthData}
                     selected={selectedLenValue}
                     onChange={setSelectedLen}

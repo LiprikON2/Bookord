@@ -4,7 +4,7 @@ import { type Icon, IconChevronDown } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { observer } from "mobx-react-lite";
 
-import classes from "./LanguagePicker.module.css";
+import classes from "./Combobox.module.css";
 
 interface DataItem {
     value: string;
@@ -29,13 +29,13 @@ const ItemDisplay = observer(({ item, className }: ItemDisplayProps) => {
     return null;
 });
 
-interface LanguagePickerProps {
+interface ComboboxProps {
     data: DataItem[];
     selected: string;
     onChange: (value: string) => void;
 }
 
-export const LanguagePicker = observer(({ data, selected, onChange }: LanguagePickerProps) => {
+export const Combobox = observer(({ data, selected, onChange }: ComboboxProps) => {
     const [opened, { open, close }] = useDisclosure(false);
 
     const selectedItem = data.find((item) => item.value === selected);

@@ -1,7 +1,7 @@
 import { beforeEach, test, vi } from "vitest";
 import { composeStories } from "@storybook/react";
 
-import * as stories from "./LanguagePicker.stories";
+import * as stories from "./Combobox.stories";
 
 const { Static, Interactive } = composeStories(stories);
 

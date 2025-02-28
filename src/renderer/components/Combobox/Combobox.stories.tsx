@@ -3,17 +3,17 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { within, userEvent, screen, waitFor } from "@storybook/testing-library";
 import { expect, fn } from "@storybook/test";
 
-import { LanguagePicker } from "./LanguagePicker";
+import { Combobox } from "./Combobox";
 import flags from "~/assets/images/flags/language";
 import { IconFlag } from "@tabler/icons-react";
 
-const meta: Meta<typeof LanguagePicker> = {
-    component: LanguagePicker,
+const meta: Meta<typeof Combobox> = {
+    component: Combobox,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof LanguagePicker>;
+type Story = StoryObj<typeof Combobox>;
 
 const englishOptionData = { value: "en", label: "English", image: flags.en };
 const russianOptionData = { value: "ru", label: "Russian", image: flags.ru };

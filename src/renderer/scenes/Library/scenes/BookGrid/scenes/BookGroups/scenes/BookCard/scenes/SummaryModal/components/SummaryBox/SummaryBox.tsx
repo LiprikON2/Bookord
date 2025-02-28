@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
 import Markdown from "react-markdown";
 
-import { LanguagePicker } from "~/renderer/components";
+import { Combobox } from "~/renderer/components";
 import { useSettingsStore } from "~/renderer/stores";
 import flags from "~/assets/images/flags/language";
 import context from "~/renderer/ipc/thirdPartyApi";
@@ -106,12 +106,12 @@ export const SummaryBox = observer(({ getTitle, getAuthor }: SummaryBoxProps) =>
                 <Button size="md" onClick={() => refetch()} disabled={!readyToGenerate}>
                     Generate
                 </Button>
-                <LanguagePicker
+                <Combobox
                     data={selectLanguageData}
                     selected={selectedLangValue}
                     onChange={setSelectedLang}
                 />
-                <LanguagePicker
+                <Combobox
                     data={selectLengthData}
                     selected={selectedLenValue}
                     onChange={setSelectedLen}
