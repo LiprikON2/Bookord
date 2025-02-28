@@ -1,11 +1,6 @@
 import { app, BrowserWindow, session } from "electron";
 import electronDebug from "electron-debug";
 import path from "path";
-import {
-    installChromeWebStore,
-    installExtension,
-    updateExtensions,
-} from "electron-chrome-web-store";
 
 import { isDev } from "~/common/helpers";
 import { registerMainIpc } from "./mainIpc";
@@ -32,7 +27,6 @@ export let mainWindow: MainWindow;
  * @returns {MainWindow} Application Window Instance
  */
 export const createMainWindow = async (): Promise<MainWindow> => {
-    const browserSession = session.defaultSession;
     // Create new window instance
     mainWindow = new BrowserWindow({
         width: 1024,
@@ -54,13 +48,8 @@ export const createMainWindow = async (): Promise<MainWindow> => {
             // TODO consider process sandboxing
             // https://www.electronjs.org/docs/latest/tutorial/sandbox
             sandbox: false,
-            session: browserSession,
         },
     });
-    // await installChromeWebStore({
-    //     modulePath: path.join(__dirname, "../../node_modules/electron-chrome-extensions"),
-    //     session: browserSession,
-    // });
 
     // Enable pinch-to-zoom
     mainWindow.webContents.setVisualZoomLevelLimits(1, 3);
@@ -82,6 +71,7 @@ export const createMainWindow = async (): Promise<MainWindow> => {
                 permCallback(false); // Deny
             }
         });
+
     // TODO consider i18nextMainBackend
     // TODO consider electronegativity
 
@@ -99,12 +89,6 @@ export const createMainWindow = async (): Promise<MainWindow> => {
 
     // Only do these things when in development
     if (isDev()) {
-        // await installExtension("fmkadmapgofadopljbjfkapdkoienihi", {
-        //     loadExtensionOptions: { allowFileAccess: true },
-        // });
-        // await updateExtensions();
-        // await  launchExtensionBackgroundWorkers();
-
         // Errors are thrown if the dev tools are opened
         // before the DOM is ready
         mainWindow.webContents.once("dom-ready", async () => {
