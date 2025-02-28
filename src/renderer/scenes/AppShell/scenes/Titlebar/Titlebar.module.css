@@ -1,8 +1,11 @@
 .titlebarGroup {
     -webkit-app-region: drag; /* Draggable */
-    * {
-        -webkit-app-region: no-drag;
+    *:not(.logo) {
+        -webkit-app-region: no-drag; /* excude interactable children */
     }
+}
+.logo {
+    -webkit-app-region: drag; /* Draggable */
 }
 
 .searchGroup {
@@ -17,6 +20,10 @@
 .windowControlsGroup {
     align-self: flex-start;
     padding: 0;
+}
+
+.burger {
+    --burger-color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0));
 }
 
 .icon {

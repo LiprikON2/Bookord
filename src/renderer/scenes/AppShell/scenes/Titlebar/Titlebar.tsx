@@ -44,10 +44,28 @@ export const Titlebar = observer(({ showBurger, toggleBurger, showFilterMenu }: 
             wrap="nowrap"
         >
             <Group p={0} wrap="nowrap">
-                <Burger opened={showBurger} onClick={toggleBurger} hiddenFrom="sm" size="sm" />
+                <Burger
+                    className={classes.burger}
+                    opened={showBurger}
+                    onClick={toggleBurger}
+                    hiddenFrom="sm"
+                    size="sm"
+                />
                 <Group wrap="nowrap">
-                    <Image mx={4} h={24} src={icons.bookordStandalone} hiddenFrom="sm" />
-                    <Image mx={4} h={24} src={icons.bookordLogoStandalone} visibleFrom="sm" />
+                    <Image
+                        className={classes.logo}
+                        mx={4}
+                        h={24}
+                        src={icons.bookordStandalone}
+                        hiddenFrom="sm"
+                    />
+                    <Image
+                        className={classes.logo}
+                        mx={4}
+                        h={24}
+                        src={icons.bookordLogoStandalone}
+                        visibleFrom="sm"
+                    />
                 </Group>
             </Group>
             <Group className={classes.searchGroup} wrap="nowrap">
