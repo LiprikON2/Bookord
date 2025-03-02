@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box } from "@mantine/core";
+import { Box, Group } from "@mantine/core";
 import { useDisclosure, useHotkeys, useMergedRef, useViewportSize } from "@mantine/hooks";
 import { observer } from "mobx-react-lite";
 import { action, when } from "mobx";
@@ -8,7 +8,7 @@ import { useBookReadStore } from "~/renderer/stores/hooks";
 import { bookKeyRoute } from "~/renderer/appRenderer";
 import { useCallbackRef, useReadingEvents, useTimeTracker } from "./hooks";
 import {
-    BookSkeleton,
+    PageSkeleton,
     BookUi,
     DictionaryTooltip,
     HighlightContextMenuTooltip,
@@ -166,7 +166,7 @@ export const Reading = observer(() => {
                 onPrevSection={handlePrevSection}
             >
                 <Box className={classes.pageContainer}>
-                    <BookSkeleton
+                    <PageSkeleton
                         className={classes.pageSkeleton}
                         visible={bookReadStore.isReady}
                     />
@@ -182,7 +182,7 @@ export const Reading = observer(() => {
                     className={classes.pageContainer}
                     display={bookReadStore.layout === "two-page" ? undefined : "none"}
                 >
-                    <BookSkeleton
+                    <PageSkeleton
                         className={classes.pageSkeleton}
                         visible={bookReadStore.isReady}
                     />

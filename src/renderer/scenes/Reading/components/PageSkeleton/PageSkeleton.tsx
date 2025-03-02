@@ -1,11 +1,11 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { Box, Skeleton, SkeletonProps } from "@mantine/core";
-
-import classes from "./BookSkeleton.module.css";
 import clsx from "clsx";
 
-interface BookSkeletonProps {
+import classes from "./PageSkeleton.module.css";
+
+interface PageSkeletonProps {
     visible: boolean;
     className?: string;
     skeletonProps?: SkeletonProps;
@@ -18,7 +18,7 @@ const defaultProps = {
     radius: "sm",
 };
 
-export const BookSkeleton = observer(({ className, visible, skeletonProps }: BookSkeletonProps) => {
+export const PageSkeleton = observer(({ className, visible, skeletonProps }: PageSkeletonProps) => {
     if (!visible) {
         return (
             <Box className={clsx(classes.box, className)}>
@@ -31,5 +31,5 @@ export const BookSkeleton = observer(({ className, visible, skeletonProps }: Boo
         );
     }
 
-    return <></>;
+    return null;
 });

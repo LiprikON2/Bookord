@@ -1,5 +1,5 @@
 export * from "./Bookmarks";
-export * from "./BookSkeleton";
+export * from "./PageSkeleton";
 export * from "./BookUi";
 export * from "./Characters";
 export * from "./Comments";
