@@ -165,28 +165,38 @@ export const Reading = observer(() => {
                 onPrevFivePage={handlePrevFivePage}
                 onPrevSection={handlePrevSection}
             >
-                <Box className={classes.pageContainer}>
+                <Box className={classes.bookContainer}>
                     <PageSkeleton
-                        className={classes.pageSkeleton}
+                        className={
+                            bookReadStore.layout === "two-page"
+                                ? classes.leftPage
+                                : classes.singlePage
+                        }
                         visible={bookReadStore.isReady}
                     />
                     <book-web-component
+                        class={
+                            bookReadStore.layout === "two-page"
+                                ? classes.leftPage
+                                : classes.singlePage
+                        }
                         ref={useMergedRef(
                             bookComponentCallbackRef,
                             outgoingEventsRef,
                             incomingEventsRef1
                         )}
                     />
-                </Box>
-                <Box
-                    className={classes.pageContainer}
-                    display={bookReadStore.layout === "two-page" ? undefined : "none"}
-                >
-                    <PageSkeleton
-                        className={classes.pageSkeleton}
-                        visible={bookReadStore.isReady}
-                    />
+                    {bookReadStore.layout === "two-page" && (
+                        <PageSkeleton
+                            className={classes.rightPage}
+                            visible={bookReadStore.isReady}
+                        />
+                    )}
                     <book-web-component
+                        class={classes.rightPage}
+                        style={{
+                            display: bookReadStore.layout === "two-page" ? undefined : "none",
+                        }}
                         ref={useMergedRef(bookComponentCallbackRef2, incomingEventsRef2)}
                     />
                 </Box>

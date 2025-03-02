@@ -15,12 +15,31 @@
     }
 }
 
-.pageContainer {
-    position: relative;
-    min-width: 25vw;
-}
+.bookContainer {
+    display: grid;
+    width: 100%;
+    height: 100%;
 
-.pageSkeleton {
-    position: absolute;
-    inset: 0;
+    & > * {
+        min-height: 0;
+    }
+    .singlePage {
+        grid-area: singlePage;
+        justify-self: center;
+    }
+
+    .leftPage {
+        grid-area: leftPage;
+        justify-self: end;
+    }
+    .rightPage {
+        grid-area: rightPage;
+        justify-self: start;
+    }
+
+    grid-template-rows:
+        [singlePage-start leftPage-start rightPage-start]
+        auto
+        [singlePage-end leftPage-end rightPage-end];
+    grid-template-columns: auto [singlePage-start leftPage-start] 1fr [leftPage-end] 2rem [rightPage-start] 1fr [rightPage-end singlePage-end] auto;
 }

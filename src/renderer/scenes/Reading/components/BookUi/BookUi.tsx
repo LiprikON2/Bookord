@@ -85,7 +85,7 @@ const BookUi = observer(
                                 onHighClick={onPrevSection}
                             />
                         )}
-                        <Box className={classes.bookContainer}>{children}</Box>
+                        {children}
                         {bookReadStore.uiState.nextPage && (
                             <FlipPageButton
                                 className={classes.forwardButton}
