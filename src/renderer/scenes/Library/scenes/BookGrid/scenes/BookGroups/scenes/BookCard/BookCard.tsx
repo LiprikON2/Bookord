@@ -72,7 +72,6 @@ export const BookCard = observer(({ bookKey, onClick, visible = true }: BookCard
                 <Indicator disabled={openedTimeAgoStr !== "never" || !isMetadataParsed}>
                     <Paper
                         shadow="md"
-                        p="md"
                         radius="md"
                         className={classes.card}
                         style={{ backgroundImage: `url(${metadata.cover})` }}
@@ -89,13 +88,7 @@ export const BookCard = observer(({ bookKey, onClick, visible = true }: BookCard
                             h="3rem"
                             onClick={(e) => e.preventDefault()}
                         >
-                            <Paper
-                                color="cyan.3"
-                                style={{ flexGrow: 1 }}
-                                h="100%"
-                                p="0.5rem"
-                                styles={{ root: { display: "flex", position: "relative" } }}
-                            >
+                            <Paper className={classes.titlePaper}>
                                 <TitleObserver order={3} className={classes.title}>
                                     {() => metadata.title}
                                 </TitleObserver>

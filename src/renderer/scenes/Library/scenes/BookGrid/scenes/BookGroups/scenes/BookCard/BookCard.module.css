@@ -1,7 +1,4 @@
 .card {
-    height: 100%;
-    min-height: rem(250px);
-    max-height: rem(400px);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -18,6 +15,35 @@
         bottom: 0;
         left: 0;
         right: 0;
+    }
+
+    @media (max-width: $mantine-breakpoint-xs) {
+        padding: var(--mantine-spacing-xs);
+    }
+    @media (min-width: $mantine-breakpoint-xs) {
+        padding: var(--mantine-spacing-sm);
+    }
+    @media (min-width: $mantine-breakpoint-sm) {
+        padding: var(--mantine-spacing-md);
+    }
+}
+
+.titlePaper {
+    display: flex;
+    position: relative;
+    height: 100%;
+    flex-grow: 1;
+
+    /* Used as padding, ref: https://stackoverflow.com/a/15364783 */
+    padding: 0;
+    @media (max-width: $mantine-breakpoint-xs) {
+        border: calc(rem(4px) * var(--mantine-scale)) solid transparent;
+    }
+    @media (min-width: $mantine-breakpoint-xs) {
+        border: calc(rem(6px) * var(--mantine-scale)) solid transparent;
+    }
+    @media (min-width: $mantine-breakpoint-sm) {
+        border: calc(rem(8px) * var(--mantine-scale)) solid transparent;
     }
 }
 
@@ -53,8 +79,13 @@
 
 .link {
     text-decoration: none;
+    /* width: min-content; */
     width: 100%;
     height: 100%;
+    /* display: block; */
+
+    /* min-height: rem(250px);
+    max-height: rem(400px); */
 
     user-select: none;
     -webkit-user-drag: none;

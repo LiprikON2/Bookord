@@ -45,7 +45,7 @@ export const BookGroups = observer(({ getBookGroups, visible = true }: BookGroup
                             xl: "calc(var(--mantine-spacing-xl) * 1.5)",
                         }}
                         verticalSpacing="xl"
-                        cols={{ base: 2, xs: 2, sm: 3, md: 3, lg: 4, xl: 4 }}
+                        cols={{ base: 2, xs: 3, sm: 3, md: 3, lg: 4, xl: 4 }}
                         style={{ justifyItems: "center" }}
                     >
                         {visible ? (
