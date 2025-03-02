@@ -15,7 +15,7 @@ export const AddBooksButton = observer(({}: AddBooksButtonProps) => {
         <Button
             onClick={openFileDialog}
             leftSection={<IconCirclePlus className={classes.icon} />}
-            variant="outline"
+            variant="light"
             mx="xs"
         >
             Add books

@@ -58,6 +58,7 @@
 .bookContainer {
     height: 100%;
     margin: auto;
+    min-width: 0;
     gap: rem(24);
 
     display: flex;
