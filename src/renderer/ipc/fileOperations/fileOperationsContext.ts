@@ -9,6 +9,13 @@ const fileOperationsContext = {
     openFileDialog(): Promise<number> {
         return ipcRenderer.invoke("open-file-dialog");
     },
+    openFolder(absolutePath: string): Promise<boolean> {
+        return ipcRenderer.invoke("open-folder", absolutePath);
+    },
+    openAppDirFolder(): Promise<boolean> {
+        return ipcRenderer.invoke("open-appdir-folder");
+    },
+
     deleteFile(fileName: string): Promise<void> {
         return ipcRenderer.invoke("delete-file", fileName);
     },

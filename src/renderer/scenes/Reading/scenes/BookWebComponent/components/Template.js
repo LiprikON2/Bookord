@@ -3,18 +3,16 @@ import highlightRight from "~/assets/icons/highlight/highlight-right.svg";
 
 export const style = /*css*/ `
     :host {
-        /* --columns-count: 1;
+        --columns-count: 1;
         --column-gap: 50px;
-
-        --column-gap-total: calc(calc(var(--columns-count) - 1) * var(--column-gap));
-        --book-component-width: calc(calc(30rem * var(--columns-count)) + var(--column-gap-total)); */
-
+        
         --page-max-width: 30rem;
 
         /* TODO put this into setting that would do something like this:
         
-            document.documentElement.style.setProperty('--book-max-width', LAYOUT_CONSTANTS.BOOK_COMPONENT_MAX_WIDTH);
+            document.documentElement.style.setProperty('--page-max-width', LAYOUT_CONSTANTS.BOOK_COMPONENT_MAX_WIDTH);
         */
+
 
 
         /* The intrinsic width of the underline stroke (in pixels). This is 

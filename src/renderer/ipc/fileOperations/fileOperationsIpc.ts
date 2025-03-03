@@ -1,4 +1,4 @@
-import { dialog, ipcMain } from "electron";
+import { dialog, ipcMain, shell } from "electron";
 import path from "path";
 
 import { MainWindow, appDir } from "~/main/mainWindow";
@@ -55,6 +55,29 @@ export const registerFileOperationsIpc = (
             }));
 
             return io.addFiles(appDir, files);
+        }
+    });
+
+    ipcMain.handle("open-folder", async (e, absolutePath: string) => {
+        if (!validateSender(e)) return null;
+
+        try {
+            await shell.openPath(absolutePath);
+            return true;
+        } catch (error) {
+            console.error(`Failed to open folder ${absolutePath}:`, error);
+            return false;
+        }
+    });
+    ipcMain.handle("open-appdir-folder", async (e) => {
+        if (!validateSender(e)) return null;
+
+        try {
+            await shell.openPath(appDir);
+            return true;
+        } catch (error) {
+            console.error(`Failed to open appDir folder ${appDir}:`, error);
+            return false;
         }
     });
 
