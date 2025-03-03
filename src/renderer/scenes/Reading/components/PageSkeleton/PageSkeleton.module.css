@@ -21,17 +21,10 @@
 }
 
 .box {
-    --columns-count: 2;
-    --column-gap: 2rem;
+    /* TODO use single source of truth */
+    --page-max-width: 30rem;
 
-    --columns-count: 1;
-    --column-gap: 50px;
-
-    --column-gap-total: calc(calc(var(--columns-count) - 1) * var(--column-gap));
-
-    /* TODO properly share styles (CSS variables) https://lamplightdev.com/blog/2021/03/23/how-to-share-styles-in-the-shadow-dom/ */
-
-    max-width: 30rem;
+    max-width: var(--page-max-width);
     width: 100%;
     z-index: 1;
 

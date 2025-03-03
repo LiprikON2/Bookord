@@ -28,6 +28,7 @@ const SkeletonLine = observer(({ containerRef, ...rest }: SkeletonLineProps) => 
         root: containerRef.current,
         threshold: 1,
     });
+    console.log("entry?.isIntersecting", entry?.isIntersecting);
 
     return (
         <Skeleton
@@ -39,17 +40,44 @@ const SkeletonLine = observer(({ containerRef, ...rest }: SkeletonLineProps) => 
     );
 });
 
-export const PageSkeleton = observer(({ className, visible, skeletonProps }: PageSkeletonProps) => {
-    const containerRef = useRef<HTMLDivElement>(null);
-    if (!visible) {
-        return (
-            <Box ref={containerRef} className={clsx(classes.box, className)}>
-                {[...Array(30).keys()].map((num) => {
-                    return <SkeletonLine key={num} containerRef={containerRef} />;
-                })}
-            </Box>
-        );
+const createIndentProps = (index: number, n: number = 6) => {
+    if (index % n === 0) {
+        return {
+            ml: "auto",
+            mt: "lg",
+            width: "92.5%",
+        };
+    }
+    if (index % n === n - 1) {
+        return {
+            width: "85%",
+        };
     }
 
-    return null;
-});
+    return {};
+};
+
+export const PageSkeleton = observer(
+    ({ className, visible = true, skeletonProps }: PageSkeletonProps) => {
+        const containerRef = useRef<HTMLDivElement>(null);
+
+        if (visible) {
+            return (
+                <Box ref={containerRef} className={clsx(classes.box, className)}>
+                    {[...Array(30).keys()].map((index) => {
+                        return (
+                            <SkeletonLine
+                                key={index}
+                                containerRef={containerRef}
+                                {...skeletonProps}
+                                {...createIndentProps(index)}
+                            />
+                        );
+                    })}
+                </Box>
+            );
+        }
+
+        return null;
+    }
+);

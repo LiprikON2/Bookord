@@ -3,12 +3,19 @@ import highlightRight from "~/assets/icons/highlight/highlight-right.svg";
 
 export const style = /*css*/ `
     :host {
-        --columns-count: 1;
+        /* --columns-count: 1;
         --column-gap: 50px;
 
         --column-gap-total: calc(calc(var(--columns-count) - 1) * var(--column-gap));
+        --book-component-width: calc(calc(30rem * var(--columns-count)) + var(--column-gap-total)); */
 
-        --book-component-width: calc(calc(30rem * var(--columns-count)) + var(--column-gap-total));
+        --page-max-width: 30rem;
+
+        /* TODO put this into setting that would do something like this:
+        
+            document.documentElement.style.setProperty('--book-max-width', LAYOUT_CONSTANTS.BOOK_COMPONENT_MAX_WIDTH);
+        */
+
 
         /* The intrinsic width of the underline stroke (in pixels). This is 
         * the same as the height of the cap images. Don't specify the
@@ -271,7 +278,7 @@ export const style = /*css*/ `
     } */
 
     .book-container {
-        max-width: var(--book-component-width);
+        max-width: var(--page-max-width);
         height: 100%;
 
         /* margin: auto; */

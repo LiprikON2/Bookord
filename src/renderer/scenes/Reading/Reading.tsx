@@ -172,7 +172,7 @@ export const Reading = observer(() => {
                                 ? classes.leftPage
                                 : classes.singlePage
                         }
-                        visible={bookReadStore.isReady}
+                        visible={!bookReadStore.isReady}
                     />
                     <book-web-component
                         class={
@@ -189,7 +189,7 @@ export const Reading = observer(() => {
                     {bookReadStore.layout === "two-page" && (
                         <PageSkeleton
                             className={classes.rightPage}
-                            visible={bookReadStore.isReady}
+                            visible={!bookReadStore.isReady}
                         />
                     )}
                     <book-web-component
